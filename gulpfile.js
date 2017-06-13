@@ -15,9 +15,9 @@ gulp.task('scripts', function() {
       ])
       .pipe(concat('custom.js'))
       .pipe(gulp.dest(DEST+'/js'))
-      .pipe(rename({suffix: '.min'}))
-      .pipe(uglify())
-      .pipe(gulp.dest(DEST+'/js'))
+      //.pipe(rename({suffix: '.min'}))
+      //.pipe(uglify())
+      //.pipe(gulp.dest(DEST+'/js'))
       .pipe(browserSync.stream());
 });
 
