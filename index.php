@@ -4,7 +4,7 @@ get_header();
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="/" class="site_title"><i class="fa fa-paw"></i> <span>Plotter</span></a>
+              <a href="/" class="site_title"><i class="fa fa-pagelines"></i> <span>Plotter</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -12,101 +12,82 @@ get_header();
             <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div class="menu_section">
-                <h3>彼と彼女のソネット</h3>
+                <h3>構成管理</h3>
                 <ul class="nav side-menu">
-                  <li><a><i class="fa fa-home"></i> 構成管理 <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-globe"></i> 作品設定</a></li>
+                  <li><a><i class="fa fa-pencil"></i> 全体構成 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="#">作品設定</a></li>
                       <li><a href="#">メインプロット</a></li>
                       <li><a href="#">サブプロット1</a></li>
                       <li><a href="#">サブプロット2</a></li>
+                      <li><a href="#">サブプロット3</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-edit"></i> ジャーナル管理 <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-sitemap"></i> シーン・シークエンス <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="#">キャラクター設定</a></li>
-                      <li><a href="#">用語設定</a></li>
-                      <li><a href="#">その他の設定</a></li>
-                      <li><a href="#">画像ギャラリー</a></li>
-                      <li><a href="#">Form Buttons</a></li>
-                    </ul>
-                  </li>
-                  <li><a><i class="fa fa-desktop"></i> シーン・シークエンス <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="#">アウトライン作成</a></li>
-                      <li><a href="#">アウトライン編集</a></li>
-                      <li><a href="#">シーン作成</a></li>
-                      <li><a href="#">シーン編集</a></li>
-                      <li><a href="#">ストーリー作成</a></li>
-                      <li><a href="#">ストーリー編集</a></li>
-                    </ul>
-                  </li>
-                  <li><a><i class="fa fa-table"></i> ユーティリティ <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="#">トリートメント作成</a></li>
-                      <li><a href="#">トリートメント編集</a></li>
-                      <li><a href="#">アイデア・メモ</a></li>
-                      <li><a href="#">エクスポート</a></li>
-                      <li><a href="#">インポート</a></li>
-                    </ul>
-                  </li>
-                  <li><a><i class="fa fa-bar-chart-o"></i> Data Presentation <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="chartjs.html">Chart JS</a></li>
-                      <li><a href="chartjs2.html">Chart JS2</a></li>
-                      <li><a href="morisjs.html">Moris JS</a></li>
-                      <li><a href="echarts.html">ECharts</a></li>
-                      <li><a href="other_charts.html">Other Charts</a></li>
-                    </ul>
-                  </li>
-                  <li><a><i class="fa fa-clone"></i>Layouts <span class="fa fa-chevron-down"></span></a>
-                    <ul class="nav child_menu">
-                      <li><a href="fixed_sidebar.html">Fixed Sidebar</a></li>
-                      <li><a href="fixed_footer.html">Fixed Footer</a></li>
+                      <li><a>アウトライン管理<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li class="sub_menu"><a href="#">アウトライン確認</a></li>
+                          <li><a href="#">アウトライン編集</a></li>
+                        </ul>
+                      </li>
+                      <li><a>シーン管理<span class="fa fa-chevron-down"></span></a>
+                        <ul class="nav child_menu">
+                          <li class="sub_menu"><a href="#">シーン一覧</a></li>
+                          <li><a href="#">シーン追加</a></li>
+                        </ul>
+                      </li>
                     </ul>
                   </li>
                 </ul>
               </div>
               <div class="menu_section">
-                <h3>Live On</h3>
+                <h3>ジャーナル管理</h3>
                 <ul class="nav side-menu">
-                  <li><a><i class="fa fa-bug"></i> Additional Pages <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-id-card-o"></i> キャラクター設定 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="e_commerce.html">E-commerce</a></li>
-                      <li><a href="projects.html">Projects</a></li>
-                      <li><a href="project_detail.html">Project Detail</a></li>
-                      <li><a href="contacts.html">Contacts</a></li>
-                      <li><a href="profile.html">Profile</a></li>
+                      <li><a href="#">キャラクター一覧</a></li>
+                      <li><a href="#">キャラクター追加</a></li>
+                      <li><a href="#">タイムライン</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-windows"></i> Extras <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-tags"></i> 用語設定 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="page_403.html">403 Error</a></li>
-                      <li><a href="page_404.html">404 Error</a></li>
-                      <li><a href="page_500.html">500 Error</a></li>
-                      <li><a href="plain_page.html">Plain Page</a></li>
-                      <li><a href="login.html">Login Page</a></li>
-                      <li><a href="pricing_tables.html">Pricing Tables</a></li>
+                      <li><a href="#">用語一覧</a></li>
+                      <li><a href="#">用語追加</a></li>
                     </ul>
                   </li>
-                  <li><a><i class="fa fa-sitemap"></i> Multilevel Menu <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-puzzle-piece"></i> アイテム設定 <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                        <li><a href="#level1_1">Level One</a>
-                        <li><a>Level One<span class="fa fa-chevron-down"></span></a>
-                          <ul class="nav child_menu">
-                            <li class="sub_menu"><a href="level2.html">Level Two</a>
-                            </li>
-                            <li><a href="#level2_1">Level Two</a>
-                            </li>
-                            <li><a href="#level2_2">Level Two</a>
-                            </li>
-                          </ul>
-                        </li>
-                        <li><a href="#level1_2">Level One</a>
-                        </li>
+                      <li><a href="#">アイテム一覧</a></li>
+                      <li><a href="#">アイテム追加</a></li>
                     </ul>
-                  </li>                  
-                  <li><a href="javascript:void(0)"><i class="fa fa-laptop"></i> Landing Page <span class="label label-success pull-right">Coming Soon</span></a></li>
+                  </li>
+                  <li><a><i class="fa fa-image"></i> 画像ギャラリー <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="#">画像一覧</a></li>
+                      <li><a href="#">画像追加</a></li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div class="menu_section">
+                <h3>ユーティリティ</h3>
+                <ul class="nav side-menu">
+                  <li><a><i class="fa fa-lightbulb-o"></i> アイデア・メモ</a></li>
+                  <li><a><i class="fa fa-archive"></i> トリートメント管理 <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="#">トリートメント一覧</a></li>
+                      <li><a href="#">トリートメント追加</a></li>
+                    </ul>
+                  </li>
+                  <li><a><i class="fa fa-exchange"></i> 外部連携 <span class="fa fa-chevron-down"></span></a>
+                    <ul class="nav child_menu">
+                      <li><a href="page_403.html">エクスポート</a></li>
+                      <li><a href="page_404.html">インポート</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="javascript:void(0)"><i class="fa fa-heart-o"></i> 新規メニュー <span class="label label-success pull-right">Coming Soon</span></a></li>
                 </ul>
               </div>
 
@@ -139,7 +120,7 @@ get_header();
           <div class="nav_menu">
             <nav>
               <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                <a id="menu_toggle"><i class="fa fa-angle-left"></i></a>
               </div>
 
               <ul class="nav navbar-nav navbar-right">

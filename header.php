@@ -43,12 +43,7 @@
     <!-- Custom Theme Style -->
     <link href="<?php echo WPGENT_DIR; ?>build/css/custom.min.css?<?= base64_encode( hash( 'sha384', filemtime( WPGENT_PATH . '/build/css/custom.min.css' ), true ) ); ?>" rel="stylesheet">
     <!-- Fonts -->
-<?php if ( 'ja' === get_bloginfo('language') ) : ?>
-    <style>body { font-family: "游明朝", YuMincho, "ヒラギノ明朝 ProN W3", "Hiragino Mincho ProN", "HG明朝E", "ＭＳ Ｐ明朝", "ＭＳ 明朝", serif; }</style>
-<?php else : ?>
-    <link href="//fonts.googleapis.com/css?family=Noto+Serif" rel="stylesheet">
-    <style>body { font-family: "Noto Serif", serif; }</style>
-<?php endif; ?>
+    <?php echo setFont( 'ja', true, 400 ); ?>
 
     <?php wp_head(); ?>
     <!--[if lt IE 9]>
