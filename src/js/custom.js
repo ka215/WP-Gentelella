@@ -236,7 +236,8 @@ $(document).ready(function() {
 
 // NProgress
 if (typeof NProgress != 'undefined') {
-    $(document).ready(function () {
+    //$(document).ready(function () {
+    $(window).on('unload',function() {
         NProgress.start();
     });
 

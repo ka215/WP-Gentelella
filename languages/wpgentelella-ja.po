@@ -1,0 +1,46 @@
+# Translation of Themes - WP-Gentelella in Japanese
+msgid ""
+msgstr ""
+"Project-Id-Version: WP-Gentelella\n"
+"POT-Creation-Date: 2017-06-16 17:08+0900\n"
+"PO-Revision-Date: 2017-06-16 17:37+0900\n"
+"Last-Translator: \n"
+"Language-Team: MAGICMETHODS <ka2@ka2.org>\n"
+"Language: ja_JP\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Poedit 1.8.9\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+"X-Poedit-KeywordsList: __;_e;_n:1,2;_x;_ex;_nx\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPathExcluded-0: .git\n"
+"X-Poedit-SearchPathExcluded-1: .sass-cache\n"
+"X-Poedit-SearchPathExcluded-2: build\n"
+"X-Poedit-SearchPathExcluded-3: documentation\n"
+"X-Poedit-SearchPathExcluded-4: languages\n"
+"X-Poedit-SearchPathExcluded-5: node_modules\n"
+"X-Poedit-SearchPathExcluded-6: production\n"
+"X-Poedit-SearchPathExcluded-7: vendors\n"
+
+#. Theme Name of the plugin/theme
+msgid "WP-Gentelella"
+msgstr "WP-Gentelella"
+
+#. Description of the plugin/theme
+msgid "a free bootstrap admin theme \"gentelella\" for using on WordPress"
+msgstr "WordPress用bootstrap管理画面テーマ「gentelella」"
+
+#. Author of the plugin/theme
+msgid "ka2"
+msgstr "ka2"
+
+#. Author URI of the plugin/theme
+msgid "https://ka2.org"
+msgstr "https://ka2.org"
+
+#. Theme URI of the plugin/theme
+msgid "https://github.com/ka215/WP-Gentelella"
+msgstr "https://github.com/ka215/WP-Gentelella"
