@@ -69,14 +69,16 @@ function wpgentelella_setup() {
   ) );
   
   
-  // Cleanup in head
-  remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-  remove_action( 'wp_print_styles', 'print_emoji_styles', 10 );
-  add_filter( 'emoji_svg_url', '__return_false' );
-  remove_action( 'wp_head', 'wp_generator' );
-  remove_action( 'wp_head', 'rsd_link' );
-  remove_action( 'wp_head', 'wlwmanifest_link' );
-  remove_action( 'wp_head', 'wp_shortlink_wp_head' );
+  if ( ! is_admin() ) {
+    // Cleanup in head
+    remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+    remove_action( 'wp_print_styles', 'print_emoji_styles', 10 );
+    add_filter( 'emoji_svg_url', '__return_false' );
+    remove_action( 'wp_head', 'wp_generator' );
+    remove_action( 'wp_head', 'rsd_link' );
+    remove_action( 'wp_head', 'wlwmanifest_link' );
+    remove_action( 'wp_head', 'wp_shortlink_wp_head' );
+  }
   
 }
 add_action( 'after_setup_theme', 'wpgentelella_setup' );
@@ -155,7 +157,29 @@ add_action( 'wp_enqueue_scripts', 'wpgentelella_scripts', 2 );
 
 
 
+function debug_code() {
+  if ( WP_DEBUG ) {
+    global $template;
+    $template_name = basename( $template, '.php' );
+    $console_logs = [];
+    $console_logs[] = "console.log('Current Page Template: {$template_name}');";
+    if ( is_user_logged_in() ) {
+      $current_user = wp_get_current_user();
+      $console_logs[] = "console.log('Current User: {$current_user->display_name} ({$current_user->ID} : {$current_user->user_nicename})');";
+    }
+    $_hash = wpgent_hash( date("Y-m-d H:i:s") );
+    $console_logs[] = "console.log('Current hash: {$_hash}');";
+    echo '<script>' . implode( PHP_EOL, $console_logs ) . '</script>' . PHP_EOL;
+  }
+}
+add_action( 'wp_footer', 'debug_code', PHP_INT_MAX );
 
-function wpgent_hash( $str ) {
-  return base64_encode( hash( 'sha384', $str, true ) );
+function wpgent_hash( $str, $short=true ) {
+  $os_bit = exec( 'uname -i' );
+  if ( trim( $os_bit ) === 'x86_64' ) {
+    $algo = boolval( $short ) ? 'sha384' : 'sha512';
+  } else {
+    $algo = boolval( $short ) ? 'sha1' : 'sha256';
+  }
+  return base64_encode( hash( $algo, $str, true ) );
 }
