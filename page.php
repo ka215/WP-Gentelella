@@ -7,21 +7,27 @@
  * @since 1.0
  * @version 1.0
  */
+$page_type = get_tml_pageinfo();
 
 get_header();
-?>
 
-<?php get_sidebar(); ?>
+if ( ! in_array( $page_type, array( 'login', 'lostpassword', 'register' ) ) ) {
 
-<?php get_template_part( 'partials/top-navi' ); ?>
+  get_sidebar();
 
-<?php // Show the selected frontpage content.
-  if ( have_posts() ) :
-    while ( have_posts() ) : the_post();
-      get_template_part( 'partials/content' );
-    endwhile;
-  else : // I'm not sure it's possible to have no posts when this page is shown, but WTH.
-    get_template_part( 'partials/content' );
-  endif; ?>
+  get_template_part( 'partials/top-navi' );
 
-<?php get_footer();
+  $template_name = '';
+} else {
+  $template_name = 'onecol';
+}
+
+if ( have_posts() ) {
+  while ( have_posts() ) : the_post();
+    get_template_part( 'partials/content', $template_name );
+  endwhile;
+} else {
+  get_template_part( 'partials/content', $template_name );
+}
+
+get_footer();

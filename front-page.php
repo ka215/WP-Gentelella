@@ -9,19 +9,15 @@
  */
 
 get_header();
+
+//get_template_part( 'partials/content' );
 ?>
 
-<?php get_sidebar(); ?>
+<h2>Static Front Page for Plotter</h2>
 
-<?php get_template_part( 'partials/top-navi' ); ?>
-
-<?php // Show the selected frontpage content.
-  if ( have_posts() ) :
-    while ( have_posts() ) : the_post();
-      get_template_part( 'partials/content' );
-    endwhile;
-  else : // I'm not sure it's possible to have no posts when this page is shown, but WTH.
-    get_template_part( 'partials/content' );
-  endif; ?>
+<ul>
+  <li><a href="<?= wp_login_url(); ?>" title="Sign In">Sign In</a></li>
+  <li><a href="<?= wp_registration_url(); ?>" title="Sign Up">Sign Up</a></li>
+</ul>
 
 <?php get_footer();
