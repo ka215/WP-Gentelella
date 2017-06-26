@@ -23,6 +23,8 @@ $page_type = get_tml_pageinfo();
 $prepend_contents = [];
 switch ( $page_type ) {
   case 'login':
+  case 'register':
+  case 'lostpassword':
     $add_class = 'login';
     $prepend_contents[] = '    <div>';
     $prepend_contents[] = '      <a class="hiddenanchor" id="signup"></a>';

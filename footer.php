@@ -5,21 +5,28 @@
  * @package WP-Gentelella
  */
 $page_type = get_tml_pageinfo();
-$append_contents = [];
+
 switch ( $page_type ) {
   case 'login':
-    
+  case 'register':
+  case 'lostpassword':
     echo '</div>' . PHP_EOL;
     break;
   default:
+    if ( is_front_page() ) {
+?>
+
+      </div>
+      <!-- /.main_container -->
+    </div>
+    <!-- /.container.body -->
+<?php
+    } else {
 ?>
         <!-- footer content -->
         <footer role="contentinfo">
           <div class="copyright pull-right">
-            <?php /* echo nl2br( wpgentelella_option( 'copyright' ) ); */ ?>
-            <div hidden>
-              Gentelella - Bootstrap Admin Template by <a href="https://colorlib.com">Colorlib</a>
-            </div>
+            <?php get_template_part( 'partials/copyright', 'inline' ); ?>
           </div>
           <div class="clearfix"></div>
         </footer>
@@ -30,6 +37,7 @@ switch ( $page_type ) {
     </div>
     <!-- /.container.body -->
 <?php
+    }
     break;
 }
 wp_footer();

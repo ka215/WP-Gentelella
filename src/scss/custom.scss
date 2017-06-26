@@ -3469,7 +3469,8 @@ a.hiddenanchor {
   max-width: 350px;
   position: relative;
 }
-.registration_form, .login_form {
+.registration_form, 
+.login_form {
   position: absolute;
   top: 0px;
   width: 100%;
@@ -3482,7 +3483,8 @@ a.hiddenanchor {
 .login_form {
   z-index: 22;
 }
-#signup:target ~ .login_wrapper .registration_form, #signin:target ~ .login_wrapper .login_form {
+#signup:target ~ .login_wrapper .registration_form, 
+#signin:target ~ .login_wrapper .login_form {
   z-index: 22;
   -webkit-animation-name: fadeInLeft;
   -moz-animation-name: fadeInLeft;
@@ -3495,7 +3497,8 @@ a.hiddenanchor {
   -ms-animation-delay: .1s;
   animation-delay: .1s;
 }
-#signup:target ~ .login_wrapper .login_form, #signin:target ~ .login_wrapper .registration_form {
+#signup:target ~ .login_wrapper .login_form, 
+#signin:target ~ .login_wrapper .registration_form {
   -webkit-animation-name: fadeOutLeft;
   -moz-animation-name: fadeOutLeft;
   -ms-animation-name: fadeOutLeft;
@@ -4390,3 +4393,10 @@ ul.notifications {
   border: 1px solid #e5e5e5;
 }
 /** /Dropzone.js **/
+
+/** Copyright **/
+.copyright strong {
+  font-size: 14px;
+  margin-right: 10px;
+}
+/** /Copyright **/

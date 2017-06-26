@@ -8,7 +8,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="/" class="site_title"><i class="fa fa-pagelines"></i> <span><?php _e('Plotter', 'wpgentelella') ?></span></a>
+              <a href="/dashboard/" class="site_title"><i class="fa fa-pagelines"></i> <span><?php _e('Plotter', 'wpgentelella') ?></span></a>
             </div>
 
             <div class="clearfix"></div>

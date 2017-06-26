@@ -8,10 +8,11 @@
  * @version 1.0
  */
 $page_type = get_tml_pageinfo();
+$is_fullwidth = in_array( $page_type, array( 'login', 'lostpassword', 'register' ) );
 
 get_header();
 
-if ( ! in_array( $page_type, array( 'login', 'lostpassword', 'register' ) ) ) {
+if ( ! $is_fullwidth ) {
 
   get_sidebar();
 
