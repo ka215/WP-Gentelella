@@ -164,6 +164,9 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0' );
   wp_enqueue_style( 'font-awesome' );
   
+  wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'build/css/icons.min.css' ) ) );
+  wp_enqueue_style( WPGENT_HANDLE . '-icon' );
+  
   wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, '' );
   wp_enqueue_style( 'nprogress' );
   
@@ -172,8 +175,7 @@ add_action( 'wp_enqueue_scripts', function() {
     wp_enqueue_style( 'animate' );
   }
   
-  $ver_hash = wpgent_hash( filemtime( WPGENT_PATH . 'build/css/custom.min.css' ) );
-  wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, $ver_hash );
+  wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'build/css/custom.min.css' ) ) );
   wp_enqueue_style( WPGENT_HANDLE );
   
   $font_params = array(
@@ -181,7 +183,7 @@ add_action( 'wp_enqueue_scripts', function() {
     0, // is serif: 1 = true | 0 = false
     400, // base weight
   );
-  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/fonts/font-face.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), '' );
+  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), '' );
   wp_enqueue_style( WPGENT_HANDLE . '-font' );
   
   
