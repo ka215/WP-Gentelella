@@ -14,7 +14,7 @@ get_header();
 ?>
 
 <div class="center-block">
-  <h2><i class="fa fa-pagelines"></i> Plotter</h2>
+  <h2><i class="plt-quill3"></i> Plotter</h2>
   <p>- Static Front Page -</p>
   
   <ul>

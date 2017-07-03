@@ -22,6 +22,6 @@ switch ( $page_type ) {
 }
 ?>
 <div>
-  <<?php echo $headline_level; ?>><i class="fa fa-pagelines"></i> <?php bloginfo( 'name' ); ?></<?php echo $headline_level; ?>>
+  <<?php echo $headline_level; ?>><i class="plt-quill3"></i> <?php bloginfo( 'name' ); ?></<?php echo $headline_level; ?>>
   <p><i class="fa fa-copyright"></i><?php echo date_i18n( 'Y' ); ?> <?php _e( 'All Rights Reserved.', WPGENT_DOMAIN ); ?></p>
 </div>
