@@ -11,18 +11,20 @@ if ( ! defined( 'WPGENT_HANDLE' ) )    define( 'WPGENT_HANDLE', 'wp-gentelella' 
 if ( ! defined( 'WPGENT_DOMAIN' ) )    define( 'WPGENT_DOMAIN', 'wpgentelella' );
 if ( ! defined( 'WPGENT_VERSION' ) )   define( 'WPGENT_VERSION', '1.0.0' );
 if ( ! defined( 'WPGENT_THEME_DIR' ) ) define( 'WPGENT_THEME_DIR', 'views' );
-if ( ! defined( 'USE_RELATIVE_URI' ) ) define( 'USE_RELATIVE_URI', true );
+if ( ! defined( 'USE_RELATIVE_URI' ) ) define( 'USE_RELATIVE_URI', false );
 
 add_filter( 'template_directory', function( $template_dir, $template, $theme_root ) {
   if ( 'plotter' === $template ) {
     $template_dir = WP_CONTENT_DIR . '/' . WPGENT_THEME_DIR;
   }
+//var_dump( $template_dir );
   return $template_dir;
 }, 10, 3 );
 add_filter( 'theme_root_uri', function( $theme_root_uri, $siteurl, $stylesheet_or_template ) {
   if ( 'plotter' === $stylesheet_or_template ) {
     $theme_root_uri = WP_CONTENT_URL . '/' . WPGENT_THEME_DIR;
   }
+//var_dump( $theme_root_uri );
   return $theme_root_uri;
 }, 10, 3 );
 add_filter( 'template_directory_uri', function( $template_dir_uri, $template, $theme_root_uri ) {
@@ -295,7 +297,17 @@ function cleanup_classes( $classes ) {
 }
 add_filter( 'body_class', 'cleanup_classes' );
 add_filter( 'post_class', 'cleanup_classes' );
+add_filter( 'login_body_class', 'cleanup_classes' );
 
+/**
+ * 
+ */
+add_action( 'login_form', function() {
+  //global $error;
+  //$error = TRUE;
+} );
+
+add_filter( 'enable_login_autofocus', function(){ return false; } ); // Since WP 4.8.0
 
 
 /**
