@@ -229,13 +229,13 @@ add_action( 'wp_enqueue_scripts', function() {
     $masking_styles = array( 'theme-my-login' => 'theme-my-login' );
     foreach ( $wp_styles->registered as $_k => $_v ) {
       if ( array_key_exists( $_k, $masking_styles ) ) {
-        $wp_styles->registered[$_k]->src = str_replace( $masking_styles[$_k], hash( 'crc32', $masking_styles[$_k] ), dirname( $_v->src ) ) . '/' . basename( $_v->src );
+        $wp_styles->registered[$_k]->src = str_replace( $masking_styles[$_k], '.' . hash( 'crc32', $masking_styles[$_k] ), dirname( $_v->src ) ) . '/' . basename( $_v->src );
       }
     }
     $masking_scripts = array( 'tml-themed-profiles' => 'theme-my-login' );
     foreach ( $wp_scripts->registered as $_k => $_v ) {
       if ( array_key_exists( $_k, $masking_scripts ) ) {
-        $wp_scripts->registered[$_k]->src = str_replace( $masking_scripts[$_k], hash( 'crc32', $masking_scripts[$_k] ), dirname( $_v->src ) ) . '/' . basename( $_v->src );
+        $wp_scripts->registered[$_k]->src = str_replace( $masking_scripts[$_k], '.' . hash( 'crc32', $masking_scripts[$_k] ), dirname( $_v->src ) ) . '/' . basename( $_v->src );
       }
     }
   }
@@ -310,6 +310,11 @@ add_action( 'login_form', function() {
 } );
 
 add_filter( 'enable_login_autofocus', function(){ return false; } ); // Since WP 4.8.0
+
+
+add_filter( 'pre_option_active_plugins', function( $value ){
+  return $value;
+});
 
 
 /**

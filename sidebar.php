@@ -14,21 +14,23 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
             <div class="clearfix"></div>
 
             <div class="main_menu_side hidden-print hidden-small">
-              <div class="form-group top_search">
-                <div class="input-group">
-                  <input type="text" class="form-control" placeholder="Search for...">
-                  <span class="input-group-btn">
-                    <button class="btn btn-default" type="button">Go!</button>
-                  </span>
+              <div id="search-section" class="menu_section">
+                <div class="form-group top_search">
+                  <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Search for...">
+                    <span class="input-group-btn">
+                      <button class="btn btn-default" type="button">Go!</button>
+                    </span>
+                  </div>
                 </div>
               </div>
+              <!-- #search-section -->
             </div>
 
             <div class="clearfix"></div>
 
-            <!-- sidebar menu -->
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
-              <div class="menu_section">
+              <div id="section-1" class="menu_section">
                 <h3><?php _e('Structures', 'wpgentelella') ?></h3>
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-globe"></i> <?php _e('Global Settings', 'wpgentelella') ?></a></li>
@@ -50,7 +52,8 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                   </li>
                 </ul>
               </div>
-              <div class="menu_section">
+              <!-- /#section-1 -->
+              <div id="section-2" class="menu_section">
                 <h3><?php _e('Journals', 'wpgentelella') ?></h3>
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-id-card-o"></i> <?php _e('Characters', 'wpgentelella') ?> <span class="fa fa-chevron-down"></span></a>
@@ -80,7 +83,8 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                   </li>
                 </ul>
               </div>
-              <div class="menu_section">
+              <!-- /#section-2 -->
+              <div id="section-3" class="menu_section">
                 <h3><?php _e('Utility', 'wpgentelella') ?></h3>
                 <ul class="nav side-menu">
                   <li><a><i class="fa fa-lightbulb-o"></i> <?php _e('Ideas', 'wpgentelella') ?></a></li>
@@ -99,12 +103,11 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                   <li><a href="javascript:void(0)"><i class="fa fa-heart-o"></i> <?php _e('New Function', 'wpgentelella') ?> <span class="label label-success pull-right"><?php _e('Coming Soon', 'wpgentelella') ?></span></a></li>
                 </ul>
               </div>
-
+              <!-- /#section-2 -->
             </div>
             <!-- /#sidebar-menu -->
 
-            <!-- /menu footer buttons -->
-            <div class="sidebar-footer hidden-small">
+            <div id="menu-footer-buttons" class="sidebar-footer hidden-small">
               <a data-toggle="tooltip" data-placement="top" title="Settings">
                 <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
               </a>
@@ -118,7 +121,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                 <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
               </a>
             </div>
-            <!-- /menu footer buttons -->
+            <!-- /#menu-footer-buttons -->
           </div>
           <!-- /.left_col.scroll-view -->
         </div>
