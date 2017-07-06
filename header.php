@@ -19,7 +19,7 @@
   </head>
 
 <?php
-$page_type = get_tml_pageinfo();
+$page_type = get_pageinfo();
 $prepend_contents = [];
 switch ( $page_type ) {
   case 'login':

@@ -4,7 +4,7 @@
  *
  * @package WP-Gentelella
  */
-$page_type = get_tml_pageinfo();
+$page_type = get_pageinfo();
 
 switch ( $page_type ) {
   case 'login':

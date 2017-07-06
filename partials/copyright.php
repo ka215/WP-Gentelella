@@ -8,7 +8,7 @@
  * @version 1.0
  */
 
-$page_type = get_tml_pageinfo();
+$page_type = get_pageinfo();
 
 switch ( $page_type ) {
   case 'login':

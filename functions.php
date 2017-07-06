@@ -9,7 +9,7 @@
 
 if ( ! defined( 'WPGENT_HANDLE' ) )    define( 'WPGENT_HANDLE', 'wp-gentelella' );
 if ( ! defined( 'WPGENT_DOMAIN' ) )    define( 'WPGENT_DOMAIN', 'wpgentelella' );
-if ( ! defined( 'WPGENT_VERSION' ) )   define( 'WPGENT_VERSION', '1.0.0' );
+if ( ! defined( 'WPGENT_VERSION' ) )   define( 'WPGENT_VERSION', '1.0' );
 if ( ! defined( 'WPGENT_THEME_DIR' ) ) define( 'WPGENT_THEME_DIR', 'views' );
 if ( ! defined( 'USE_RELATIVE_URI' ) ) define( 'USE_RELATIVE_URI', false );
 
@@ -106,7 +106,7 @@ add_action( 'after_setup_theme', function() {
   }
   
   if ( ! is_admin() ) {
-    // Cleanup in head
+    /* Cleanup in head - to do plugin
     remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
     remove_action( 'wp_print_styles', 'print_emoji_styles', 10 );
     add_filter( 'emoji_svg_url', '__return_false' );
@@ -121,14 +121,14 @@ add_action( 'after_setup_theme', function() {
     remove_action( 'template_redirect', 'rest_output_link_header', 11 );
     remove_action( 'wp_head', 'noindex', 1 );
     remove_action( 'wp_head', 'wp_resource_hints', 2 );
-
+    */
   }
   
 });
 
 /**
  * Disabled REST API other than specific namespaces
- */
+ * /
 add_filter( 'rest_pre_dispatch', function( $result, $wp_rest_server, $request ) {
 
   if ( ! is_front_page() ) {
@@ -148,7 +148,7 @@ add_filter( 'rest_pre_dispatch', function( $result, $wp_rest_server, $request ) 
 
   return new WP_Error( 'rest_disabled', __( 'Authorization Required.', WPGENT_DOMAIN ), array( 'status' => rest_authorization_required_code() ) );
 }, 10, 3 );
-
+*/
 
 
 
@@ -167,11 +167,11 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'build/css/icons.min.css' ) ) );
   wp_enqueue_style( WPGENT_HANDLE . '-icon' );
   
-  wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, '' );
+  wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.css' ) ) );
   wp_enqueue_style( 'nprogress' );
   
-  if ( in_array( get_tml_pageinfo(), array( 'login', 'register' ) ) ) {
-    wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, '' );
+  if ( in_array( get_pageinfo(), array( 'login', 'register' ) ) ) {
+    wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
     wp_enqueue_style( 'animate' );
   }
   
@@ -183,7 +183,7 @@ add_action( 'wp_enqueue_scripts', function() {
     0, // is serif: 1 = true | 0 = false
     400, // base weight
   );
-  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), '' );
+  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), wpgent_hash( filemtime( WPGENT_PATH . 'build/css/fonts.php' ) ) );
   wp_enqueue_style( WPGENT_HANDLE . '-font' );
   
   
@@ -198,13 +198,13 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ), '3.3.7', true );
   wp_enqueue_script( 'bootstrap' );
   
-  wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), '', true );
+  wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/fastclick/lib/fastclick.js' ) ), true );
   wp_enqueue_script( 'fastclick' );
   
-  wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), '', true );
+  wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
   wp_enqueue_script( 'nprogress' );
   
-  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . 'build/js/custom.js', array(), '', true );
+  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . 'build/js/custom.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'build/js/custom.js' ) ), true );
   wp_enqueue_script( WPGENT_HANDLE );
   
 }, 2 );
@@ -287,7 +287,7 @@ add_action( 'wp_head', function() {
 
 /**
  * Clean up body classes
- */
+ * /
 function cleanup_classes( $classes ) {
   foreach( $classes as $_ind => $_class ) {
     if ( strpos( $_class, 'page' ) !== false ) {
@@ -300,6 +300,7 @@ function cleanup_classes( $classes ) {
 add_filter( 'body_class', 'cleanup_classes' );
 add_filter( 'post_class', 'cleanup_classes' );
 add_filter( 'login_body_class', 'cleanup_classes' );
+*/
 
 /**
  * 
@@ -327,14 +328,15 @@ add_action( 'wp_footer', function() {
     $console_logs = [];
     $console_logs[] = "console.log('Current Page Template: {$template_name}');";
     if ( ! is_front_page() ) {
-      $page_name = get_tml_pageinfo( 'page_name' );
-      $post_guid = get_tml_pageinfo( 'guid' );
-      $page_type = get_tml_pageinfo();
+      $page_name = get_pageinfo( 'page_name' );
+      $post_guid = get_pageinfo( 'guid' );
+      $page_type = get_pageinfo();
       $console_logs[] = "console.log('Current Page Name: {$page_name} (GUID: {$post_guid}) | Page Type: {$page_type}');";
     }
     if ( is_user_logged_in() ) {
       $current_user = wp_get_current_user();
       $console_logs[] = "console.log('Current User: {$current_user->display_name} ({$current_user->ID} : {$current_user->user_nicename})');";
+      $console_logs[] = "console.log({ isFirstVisit: ". ( is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( is_profile() ? 'true' : 'false' ) ."});";
     }
     $_hash = wpgent_hash( date("Y-m-d H:i:s") );
     $console_logs[] = "console.log('Current hash: {$_hash}');";
@@ -357,18 +359,52 @@ function wpgent_hash( $str, $short=true ) {
   return base64_encode( hash( $algo, $str, true ) );
 }
 
-function get_tml_pageinfo( $info_type='' ) {
-  global $wp_query;
-  switch ( $info_type ) {
-    case 'page_name':
-      $result = $wp_query->query_vars['pagename'];
-      break;
-    case 'guid':
-      $result = ! empty( $wp_query->post ) ? $wp_query->post->guid : '';
-      break;
-    default:
-      $result = ! empty( $wp_query->post ) ? trim( str_replace( site_url(), '', $wp_query->post->guid ), '/' ) : '';
-      break;
-  }
-  return $result;
+function get_pageinfo( $info_type='' ) {
+    global $wp_query;
+    switch ( strtolower( $info_type ) ) {
+        case 'page_name':
+        case 'pagename':
+            if ( ! empty( $wp_query->query ) && array_key_exists( 'pagename', $wp_query->query ) ) {
+                $result = $wp_query->query['pagename'];
+            } else
+            if ( ! empty( $wp_query->query_vars ) && array_key_exists( 'pagename', $wp_query->query_vars ) ) {
+                $result = $wp_query->query_vars['pagename'];
+            } else
+            if ( ! empty( $wp_query->queried_object ) ) {
+                $result = $wp_query->queried_object->post_name;
+            } else {
+                $result = null;
+            }
+            break;
+        case 'id':
+            if ( ! empty( $wp_query->queried_object ) ) {
+                $result = $wp_query->queried_object->ID;
+            } else {
+                $result = null;
+            }
+            break;
+        case 'guid':
+        default:
+            if ( ! empty( $wp_query->queried_object ) ) {
+                $result = trim( str_replace( site_url(), '', $wp_query->queried_object->guid ), '/' );
+            } else {
+                $result = null;
+            }
+            break;
+    }
+    return $result;
 }
+
+function is_first_visit() {
+    // Determining whether it is the initial access to the dashboard.
+    return ( ! isset( $_COOKIE['visitedDashboard'] ) || $_COOKIE['visitedDashboard'] !== 'true' ? true : false );
+}
+
+function is_dashboard() {
+    return ( is_user_logged_in() && 'dashboard' === get_pageinfo( 'pagename' ) );
+}
+
+function is_profile() {
+    return ( is_user_logged_in() && 'profile' === get_pageinfo( 'pagename' ) );
+}
+

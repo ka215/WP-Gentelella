@@ -9,6 +9,6 @@
  */
 ?>
 <div>
-  <strong><i class="fa fa-pagelines"></i> <?php bloginfo( 'name' ); ?></strong>
-  <i class="plt-quill3"></i><?php echo date_i18n( 'Y' ); ?> <?php _e( 'All Rights Reserved.', WPGENT_DOMAIN ); ?>
+  <strong><i class="plt-quill3"></i> <?php bloginfo( 'name' ); ?></strong>
+  <i class="fa fa-copyright"></i><?php echo date_i18n( 'Y' ); ?> <?php _e( 'All Rights Reserved.', WPGENT_DOMAIN ); ?>
 </div>
