@@ -18,7 +18,7 @@ if ( ! $is_fullwidth ) {
 
   get_template_part( 'partials/top-navi' );
 
-  $template_name = '';
+  $template_name = $page_type;
 } else {
   $template_name = 'onecol';
 }
