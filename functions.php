@@ -155,9 +155,6 @@ add_filter( 'rest_pre_dispatch', function( $result, $wp_rest_server, $request ) 
 
 add_action( 'wp_enqueue_scripts', function() {
   // Stylesheets
-  if ( is_front_page() ) {
-    
-  }
   wp_register_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', false, '3.3.7' );
   wp_enqueue_style( 'bootstrap' );
   
@@ -172,8 +169,20 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_enqueue_style( 'nprogress' );
   
   if ( in_array( get_pageinfo(), array( 'login', 'register' ) ) ) {
+    // Login page & Register page only
     wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
     wp_enqueue_style( 'animate' );
+    
+  } else
+  if ( is_front_page() ) {
+    // Front page only
+  } else {
+    wp_register_style( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.css' ) ) );
+    wp_enqueue_style( 'pnotify' );
+    
+    wp_register_style( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.css' ) ) );
+    wp_enqueue_style( 'switchery' );
+    
   }
   
   wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'build/css/custom.min.css' ) ) );
@@ -189,9 +198,6 @@ add_action( 'wp_enqueue_scripts', function() {
   
   
   // JavaScripts
-  if ( is_front_page() ) {
-    
-  }
   wp_deregister_script( 'jquery' );
   wp_register_script( 'jquery', '//code.jquery.com/jquery-3.2.1.min.js', array(), '3.2.1' );
   wp_enqueue_script( 'jquery' );
@@ -205,8 +211,22 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
   wp_enqueue_script( 'nprogress' );
   
-  wp_register_script( 'validator', WPGENT_DIR . 'vendors/validator/validator.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/validator/validator.js' ) ), true );
-  wp_enqueue_script( 'validator' );
+  if ( in_array( get_pageinfo(), array( 'login', 'register' ) ) ) {
+    // Login page & Register page only
+  } else
+  if ( is_front_page() ) {
+    // Front page only
+  } else {
+    wp_register_script( 'validator', WPGENT_DIR . 'vendors/validator/validator.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/validator/validator.js' ) ), true );
+    wp_enqueue_script( 'validator' );
+    
+    wp_register_script( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.js' ) ), true );
+    wp_enqueue_script( 'pnotify' );
+    
+    wp_register_script( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.js' ) ), true );
+    wp_enqueue_script( 'switchery' );
+    
+  }
   
   wp_register_script( WPGENT_HANDLE, WPGENT_DIR . 'build/js/custom.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'build/js/custom.js' ) ), true );
   wp_enqueue_script( WPGENT_HANDLE );
@@ -326,7 +346,6 @@ add_filter( 'pre_option_active_plugins', function( $value ){
 add_action( 'wp_print_footer_scripts', function() {
   $inline_scripts = array();
   if ( is_user_logged_in() ) {
-    $inline_scripts[] = '<script>';
     if ( is_dashboard() ) {
       $notify_empty_title = __( 'Please be sure to fill here', 'wpgentelella' );
       $inline_scripts[] = <<<EOT
@@ -349,10 +368,12 @@ $('form').submit(function(e){
 });
 EOT;
     }
-    $inline_scripts[] = '</script>';
   }
-  if ( ! empty( $inline_scripts ) )
+  if ( ! empty( $inline_scripts ) ) {
+    echo '<script>' . PHP_EOL;
     echo implode( PHP_EOL, $inline_scripts );
+    echo '</script>' . PHP_EOL;
+  }
 } );
 
 
@@ -378,6 +399,9 @@ add_action( 'wp_footer', function() {
     }
     $_hash = wpgent_hash( date("Y-m-d H:i:s") );
     $console_logs[] = "console.log('Current hash: {$_hash}');";
+    if ( session_status() == PHP_SESSION_ACTIVE ) {
+      $console_logs[] = "console.log( JSON.parse('". json_encode( $_SESSION ) ."') );";
+    }
     
     echo '<script>' . implode( PHP_EOL, $console_logs ) . '</script>' . PHP_EOL;
   }
@@ -462,4 +486,5 @@ function is_dashboard() {
 function is_profile() {
     return ( is_user_logged_in() && 'profile' === get_pageinfo( 'pagename' ) );
 }
+
 
