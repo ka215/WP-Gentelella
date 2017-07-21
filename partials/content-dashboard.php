@@ -8,7 +8,7 @@
  * @version 1.0
  */
 
-$user_sources = plt_ctl()->get_sources( get_current_user_id() );
+$user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
 ?>
 
         <!-- page content -->
@@ -16,7 +16,7 @@ $user_sources = plt_ctl()->get_sources( get_current_user_id() );
           <div <?php post_class(); ?>>
             <div class="page-title">
               <div class="title_left">
-                <h3><?php if ( is_first_visit() ) {
+                <h3><?php if ( __ctl( 'lib' )::is_first_visit() ) {
                     _e( 'Welcome Plotter!', 'wpgentelella' );
                 } else {
                     echo empty( $user_sources ) ? _e( "Let's add a new story", 'wpgentelella' ) : $user_sources[0];
@@ -30,7 +30,7 @@ $user_sources = plt_ctl()->get_sources( get_current_user_id() );
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><?php if ( is_first_visit() || empty( $user_sources ) ) {
+                    <h2><?php if ( empty( $user_sources ) ) {
                         _e( "First of all, let's enter the title of your story.", 'wpgentelella' );
                     } else {
                         _e( "Let's get started!", 'wpgentelella' );
@@ -39,7 +39,7 @@ $user_sources = plt_ctl()->get_sources( get_current_user_id() );
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-<?php if ( is_first_visit() || empty( $user_sources ) ) : ?>
+<?php if ( empty( $user_sources ) ) : ?>
                     <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
                       <input type="hidden" name="from_page" value="<?php echo get_pageinfo( 'page_name' ); ?>">
                       <?php wp_nonce_field( 'initial-setting_' . get_current_user_id() ); ?>

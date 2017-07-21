@@ -11,7 +11,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
               <a href="/dashboard/" class="site_title"><i class="plt-quill3"></i> <span><?php _e('Plotter', 'wpgentelella') ?></span></a>
             </div>
 
-<?php if ( plt_ctl()->have_sources() ) : ?>
+<?php if ( __ctl( 'model' )->have_sources() ) : ?>
             <div class="clearfix"></div>
 
             <div class="main_menu_side hidden-print hidden-small">
@@ -35,7 +35,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                 <h3><?php _e('Structures', 'wpgentelella') ?></h3>
                 <ul class="nav side-menu">
                   <li><a href="/global/"><i class="fa fa-globe"></i> <?php _e('Global Settings', 'wpgentelella') ?></a></li>
-<?php if ( plt_ctl()->have_sources() ) : ?>
+<?php if ( __ctl( 'model' )->have_sources() ) : ?>
                   <li><a><i class="fa fa-pencil"></i> <?php _e('Whole Story', 'wpgentelella') ?> <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="#"><?php _e('Main Plot', 'wpgentelella') ?></a></li>
@@ -55,7 +55,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
 <?php endif; ?>
                 </ul>
               </div>
-<?php if ( plt_ctl()->have_sources() ) : ?>
+<?php if ( __ctl( 'model' )->have_sources() ) : ?>
               <!-- /#section-1 -->
               <div id="section-2" class="menu_section">
                 <h3><?php _e('Journals', 'wpgentelella') ?></h3>

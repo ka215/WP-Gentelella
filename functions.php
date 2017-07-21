@@ -6,7 +6,6 @@
  * @subpackage WP_Gentelella
  * @since 1.0
  */
-
 if ( ! defined( 'WPGENT_HANDLE' ) )    define( 'WPGENT_HANDLE', 'wp-gentelella' );
 if ( ! defined( 'WPGENT_DOMAIN' ) )    define( 'WPGENT_DOMAIN', 'wpgentelella' );
 if ( ! defined( 'WPGENT_VERSION' ) )   define( 'WPGENT_VERSION', '1.0' );
@@ -40,8 +39,25 @@ add_filter( 'template_directory_uri', function( $template_dir_uri, $template, $t
 if ( ! defined( 'WPGENT_PATH' ) ) define( 'WPGENT_PATH', get_template_directory() . '/' );
 if ( ! defined( 'WPGENT_DIR' ) )  define( 'WPGENT_DIR', get_template_directory_uri() . '/' );
 
+/**
+ * Utilities:
+ * There are below functions that wrapped some common methods on classes of this plugin for using in your theme.
+ */
+function __ctl( $class_snippet = 'model' ) {
+    if ( strpos( strtolower( $class_snippet ), 'model' ) !== false ) {
+        $_instance = class_exists( 'Plotter\Models\dataModel' ) ? new Plotter\Models\dataModel : null;
+    } else
+    if ( strpos( strtolower( $class_snippet ), 'lib' ) !== false ) {
+        $_instance = class_exists( 'Plotter\Libs\common' ) ? new Plotter\Libs\common : null;
+    } else {
+        $_instance = class_exists( 'Plotter\Controllers\Plotter' ) ? new Plotter\Controllers\Plotter : null;
+    }
+    return ! empty( $_instance ) ? $_instance : new stdClass();
+}
 
-
+/**
+ * Initialize theme
+ */
 add_action( 'after_setup_theme', function() {
   
   load_theme_textdomain( WPGENT_DOMAIN );
@@ -106,54 +122,13 @@ add_action( 'after_setup_theme', function() {
     
   }
   
-  if ( ! is_admin() ) {
-    /* Cleanup in head - to do plugin
-    remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
-    remove_action( 'wp_print_styles', 'print_emoji_styles', 10 );
-    add_filter( 'emoji_svg_url', '__return_false' );
-    remove_action( 'wp_head', 'wp_generator' );
-    remove_action( 'wp_head', 'rsd_link' );
-    remove_action( 'wp_head', 'wlwmanifest_link' );
-    remove_action( 'wp_head', 'wp_shortlink_wp_head' );
-    remove_action( 'wp_head', 'feed_links_extra', 3 );
-    remove_action( 'wp_head', 'rest_output_link_wp_head' );
-    remove_action( 'wp_head', 'wp_oembed_add_discovery_links' );
-    remove_action( 'wp_head', 'wp_oembed_add_host_js' );
-    remove_action( 'template_redirect', 'rest_output_link_header', 11 );
-    remove_action( 'wp_head', 'noindex', 1 );
-    remove_action( 'wp_head', 'wp_resource_hints', 2 );
-    */
-  }
-  
 });
 
 /**
- * Disabled REST API other than specific namespaces
- * /
-add_filter( 'rest_pre_dispatch', function( $result, $wp_rest_server, $request ) {
-
-  if ( ! is_front_page() ) {
-    $namespaces = $request->get_route();
-
-    $white_list = array(
-      'oembed/', // /oembed/1.0
-      'jetpack/',// /jetpack/v4
-      'contact-form-7/', // /contact-form-7/v1
-    );
-    foreach ( $white_list as $allowed_path ) {
-      if( strpos( $namespaces, $allowed_path ) === 1 ) {
-        return $result;
-      }
-    }
-  }
-
-  return new WP_Error( 'rest_disabled', __( 'Authorization Required.', WPGENT_DOMAIN ), array( 'status' => rest_authorization_required_code() ) );
-}, 10, 3 );
-*/
-
-
-
+ * Include resources for theme
+ */
 add_action( 'wp_enqueue_scripts', function() {
+  $_pagename = __ctl( 'lib' )::get_pageinfo();
   // Stylesheets
   wp_register_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', false, '3.3.7' );
   wp_enqueue_style( 'bootstrap' );
@@ -162,30 +137,31 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0' );
   wp_enqueue_style( 'font-awesome' );
   
-  wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'build/css/icons.min.css' ) ) );
+  wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/icons.min.css' ) ) );
   wp_enqueue_style( WPGENT_HANDLE . '-icon' );
   
-  wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.css' ) ) );
+  wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.css' ) ) );
   wp_enqueue_style( 'nprogress' );
   
-  if ( in_array( get_pageinfo(), array( 'login', 'register' ) ) ) {
+  if ( in_array( $_pagename, array( 'login', 'register' ) ) ) {
     // Login page & Register page only
-    wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
+    wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
     wp_enqueue_style( 'animate' );
     
   } else
   if ( is_front_page() ) {
     // Front page only
   } else {
-    wp_register_style( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.css' ) ) );
+    wp_register_style( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.css' ) ) );
     wp_enqueue_style( 'pnotify' );
     
-    wp_register_style( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.css' ) ) );
+    wp_register_style( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.css' ) ) );
     wp_enqueue_style( 'switchery' );
     
   }
   
-  wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, wpgent_hash( filemtime( WPGENT_PATH . 'build/css/custom.min.css' ) ) );
+  // Common Custom Styles
+  wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/custom.min.css' ) ) );
   wp_enqueue_style( WPGENT_HANDLE );
   
   $font_params = array(
@@ -193,8 +169,15 @@ add_action( 'wp_enqueue_scripts', function() {
     0, // is serif: 1 = true | 0 = false
     400, // base weight
   );
-  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), wpgent_hash( filemtime( WPGENT_PATH . 'build/css/fonts.php' ) ) );
+  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/fonts.php' ) ) );
   wp_enqueue_style( WPGENT_HANDLE . '-font' );
+  
+  // Paged Custom Styles
+  $_paged_custom_stylesheet = 'build/css/custom-'. $_pagename .'.min.js';
+  if ( file_exists( WPGENT_PATH . $_paged_custom_stylesheet ) ) {
+    wp_register_style( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_stylesheet, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_stylesheet ) ) );
+    wp_enqueue_style( WPGENT_HANDLE .'-'. $_pagename );
+  }
   
   
   // JavaScripts
@@ -205,49 +188,63 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ), '3.3.7', true );
   wp_enqueue_script( 'bootstrap' );
   
-  wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/fastclick/lib/fastclick.js' ) ), true );
+  wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/fastclick/lib/fastclick.js' ) ), true );
   wp_enqueue_script( 'fastclick' );
   
-  wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
+  wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
   wp_enqueue_script( 'nprogress' );
   
-  if ( in_array( get_pageinfo(), array( 'login', 'register' ) ) ) {
+  if ( in_array( $_pagename, array( 'login', 'register' ) ) ) {
     // Login page & Register page only
   } else
   if ( is_front_page() ) {
     // Front page only
   } else {
-    wp_register_script( 'validator', WPGENT_DIR . 'vendors/validator/validator.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/validator/validator.js' ) ), true );
+    wp_register_script( 'validator', WPGENT_DIR . 'vendors/validator/validator.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/validator/validator.js' ) ), true );
     wp_enqueue_script( 'validator' );
     
-    wp_register_script( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.js' ) ), true );
+    wp_register_script( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.js' ) ), true );
     wp_enqueue_script( 'pnotify' );
     
-    wp_register_script( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.js' ) ), true );
+    wp_register_script( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.js' ) ), true );
     wp_enqueue_script( 'switchery' );
     
   }
   
-  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . 'build/js/custom.js', array(), wpgent_hash( filemtime( WPGENT_PATH . 'build/js/custom.js' ) ), true );
+  // Common Custom Scripts
+  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . 'build/js/custom.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/js/custom.js' ) ), true );
   wp_enqueue_script( WPGENT_HANDLE );
+  
+  // Paged Custom Scripts
+  $_paged_custom_scriptfile = 'build/js/custom-'. $_pagename .'.js';
+  if ( file_exists( WPGENT_PATH . $_paged_custom_scriptfile ) ) {
+    wp_register_script( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_scriptfile, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_scriptfile ) ), true );
+    wp_enqueue_script( WPGENT_HANDLE .'-'. $_pagename );
+  }
   
 }, 2 );
 
-
+/**
+ * Finalize including resources
+ */
 add_action( 'wp_enqueue_scripts', function() {
   if ( is_front_page() ) {
     // Stylesheets
-    wp_deregister_style( 'theme-my-login' );
-    wp_deregister_style( 'nprogress' );
-    wp_deregister_style( 'wp-gentelella' );
-    //wp_deregister_style( 'wp-gentelella-font' );
+    $style_handles = array(
+      'theme-my-login', 'nprogress', 'animate', 'pnotify', 'switchery', WPGENT_HANDLE,
+      // WPGENT_HANDLE . '-icon'
+    );
+    foreach ( $style_handles as $_handle ) {
+      wp_deregister_style( $_handle );
+    }
     // JavaScripts
-    wp_deregister_script( 'fastclick' );
-    wp_deregister_script( 'nprogress' );
-    wp_deregister_script( 'validator' );
-    wp_deregister_script( 'wp-gentelella' );
-    wp_deregister_script( 'tml-themed-profiles' );
-    wp_deregister_script( 'wp-embed' );
+    $script_handles = array(
+      'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery', WPGENT_HANDLE,
+      'tml-themed-profiles', 'wp-embed', 
+    );
+    foreach ( $script_handles as $_handle ) {
+      wp_deregister_script( $_handle );
+    }
   } else {
     // Masking resource path
     global $wp_scripts, $wp_styles;
@@ -266,8 +263,10 @@ add_action( 'wp_enqueue_scripts', function() {
   }
 }, PHP_INT_MAX );
 
+/**
+ * Inserting meta for SEO
+ */
 add_action( 'wp_head', function() {
-  // Inserting meta for SEO
   // General Meta
   $meta_lines = array(
     'description' => '{meta description}',
@@ -283,18 +282,24 @@ add_action( 'wp_head', function() {
   
 }, 1 );
 
+/**
+ * Inserting before enqueued styles
+ */
 add_action( 'wp_print_styles', function() {
-  // Inserting before enqueued styles
   // echo '<!-- insert wp_print_styles -->';
 });
 
+/**
+ * Inserting before enqueued scripts
+ */
 add_action( 'wp_print_scripts', function() {
-  // Inserting before enqueued scripts
   // echo '<!-- Fonts -->';
 }, PHP_INT_MAX );
 
+/**
+ * Appended into head
+ */
 add_action( 'wp_head', function() {
-  // Appended into head
   echo '<!-- Site Icons -->';
   echo '<link rel="shortcut icon" href="">';
   echo '<link rel="icon" type="image/png" href="">';
@@ -311,23 +316,6 @@ add_action( 'wp_head', function() {
 }, PHP_INT_MAX );
 
 /**
- * Clean up body classes
- * /
-function cleanup_classes( $classes ) {
-  foreach( $classes as $_ind => $_class ) {
-    if ( strpos( $_class, 'page' ) !== false ) {
-      unset( $classes[$_ind] );
-    }
-  }
-  
-  return $classes;
-}
-add_filter( 'body_class', 'cleanup_classes' );
-add_filter( 'post_class', 'cleanup_classes' );
-add_filter( 'login_body_class', 'cleanup_classes' );
-*/
-
-/**
  * 
  */
 add_action( 'login_form', function() {
@@ -335,18 +323,27 @@ add_action( 'login_form', function() {
   //$error = TRUE;
 } );
 
-add_filter( 'enable_login_autofocus', function(){ return false; } ); // Since WP 4.8.0
+/**
+ * Disable login's autofocus
+ *
+ * @since WP 4.8.0
+ */
+add_filter( 'enable_login_autofocus', function(){ return false; } );
 
-
+/**
+ *
+ */
 add_filter( 'pre_option_active_plugins', function( $value ){
   return $value;
 } );
 
-
+/**
+ * 
+ */
 add_action( 'wp_print_footer_scripts', function() {
   $inline_scripts = array();
   if ( is_user_logged_in() ) {
-    if ( is_dashboard() ) {
+    if ( __ctl( 'lib' )::has_forms_in_page() ) {
       $notify_empty_title = __( 'Please be sure to fill here', 'wpgentelella' );
       $inline_scripts[] = <<<EOT
 validator.message['empty'] = "$notify_empty_title";
@@ -377,6 +374,7 @@ EOT;
 } );
 
 
+
 /**
  * debug_code
  */
@@ -387,17 +385,17 @@ add_action( 'wp_footer', function() {
     $console_logs = [];
     $console_logs[] = "console.log('Current Page Template: {$template_name}');";
     if ( ! is_front_page() ) {
-      $page_name = get_pageinfo( 'page_name' );
-      $post_guid = get_pageinfo( 'guid' );
-      $page_type = get_pageinfo();
+      $page_name = __ctl( 'lib' )::get_pageinfo( 'page_name' );
+      $post_guid = __ctl( 'lib' )::get_pageinfo( 'guid' );
+      $page_type = __ctl( 'lib' )::get_pageinfo();
       $console_logs[] = "console.log('Current Page Name: {$page_name} (GUID: {$post_guid}) | Page Type: {$page_type}');";
     }
     if ( is_user_logged_in() ) {
       $current_user = wp_get_current_user();
       $console_logs[] = "console.log('Current User: {$current_user->display_name} ({$current_user->ID} : {$current_user->user_nicename})');";
-      $console_logs[] = "console.log({ isFirstVisit: ". ( is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( is_profile() ? 'true' : 'false' ) ."});";
+      $console_logs[] = "console.log({ isFirstVisit: ". ( __ctl( 'lib' )::is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( __ctl( 'lib' )::is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( __ctl( 'lib' )::is_profile() ? 'true' : 'false' ) .", hasForms: ". ( __ctl( 'lib' )::has_forms_in_page() ? 'true' : 'false' ) ."});";
     }
-    $_hash = wpgent_hash( date("Y-m-d H:i:s") );
+    $_hash = __ctl( 'lib' )::custom_hash( date("Y-m-d H:i:s") );
     $console_logs[] = "console.log('Current hash: {$_hash}');";
     if ( session_status() == PHP_SESSION_ACTIVE ) {
       $console_logs[] = "console.log( JSON.parse('". json_encode( $_SESSION ) ."') );";
@@ -406,85 +404,3 @@ add_action( 'wp_footer', function() {
     echo '<script>' . implode( PHP_EOL, $console_logs ) . '</script>' . PHP_EOL;
   }
 }, PHP_INT_MAX );
-
-
-
-/**
- * Utilities
- */
-function plt_ctl( $class_type = 'models' ) {
-  // Wrap in the plugin's methods
-  if ( 'models' === $class_type ) {
-    $plt_class = new Plotter\Models\dataModel;
-  } else
-  if ( 'libs' === $class_type ) {
-    $plt_class = new Plotter\Libs\common;
-  } else {
-    $plt_class = new Plotter\Controllers\Plotter;
-  }
-  return $plt_class;
-}
-
-function wpgent_hash( $str, $short=true ) {
-  $os_bit = exec( 'uname -i' );
-  if ( trim( $os_bit ) === 'x86_64' ) {
-    $algo = boolval( $short ) ? 'sha384' : 'sha512';
-  } else {
-    $algo = boolval( $short ) ? 'sha1' : 'sha256';
-  }
-  return base64_encode( hash( $algo, $str, true ) );
-}
-
-function get_pageinfo( $info_type='' ) {
-    global $wp_query;
-    switch ( strtolower( $info_type ) ) {
-        case 'page_name':
-        case 'pagename':
-            if ( ! empty( $wp_query->query ) && array_key_exists( 'pagename', $wp_query->query ) ) {
-                $result = $wp_query->query['pagename'];
-            } else
-            if ( ! empty( $wp_query->query_vars ) && array_key_exists( 'pagename', $wp_query->query_vars ) ) {
-                $result = $wp_query->query_vars['pagename'];
-            } else
-            if ( ! empty( $wp_query->queried_object ) ) {
-                $result = $wp_query->queried_object->post_name;
-            } else {
-                $result = null;
-            }
-            break;
-        case 'id':
-            if ( ! empty( $wp_query->queried_object ) ) {
-                $result = $wp_query->queried_object->ID;
-            } else {
-                $result = null;
-            }
-            break;
-        case 'guid':
-        default:
-            if ( ! empty( $wp_query->queried_object ) ) {
-                $result = rawurldecode( trim( str_replace( site_url(), '', $wp_query->queried_object->guid ), '/' ) );
-                if ( 'guid' !== strtolower( $info_type ) && strpos( $result, '?' ) !== false ) {
-                    $result = $wp_query->queried_object->post_name;
-                }
-            } else {
-                $result = null;
-            }
-            break;
-    }
-    return $result;
-}
-
-function is_first_visit() {
-    // Determining whether it is the initial access to the dashboard.
-    return ( ! isset( $_COOKIE['visitedDashboard'] ) || $_COOKIE['visitedDashboard'] !== 'true' ? true : false );
-}
-
-function is_dashboard() {
-    return ( is_user_logged_in() && 'dashboard' === get_pageinfo( 'pagename' ) );
-}
-
-function is_profile() {
-    return ( is_user_logged_in() && 'profile' === get_pageinfo( 'pagename' ) );
-}
-
-

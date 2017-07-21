@@ -7,7 +7,7 @@
  * @since 1.0
  * @version 1.0
  */
-$page_type = get_pageinfo();
+$page_type = __ctl( 'lib' )::get_pageinfo();
 $is_fullwidth = in_array( $page_type, array( 'login', 'lostpassword', 'register' ) );
 
 get_header();

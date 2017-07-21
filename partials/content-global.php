@@ -8,8 +8,8 @@
  * @version 1.0
  */
 $current_user_id     = get_current_user_id();
-$user_sources        = plt_ctl()->get_sources( $current_user_id, 'row' );
-$current_source_id   = plt_ctl('libs')->current_source();
+$user_sources        = __ctl( 'model' )->get_sources( $current_user_id, 'row' );
+$current_source_id   = __ctl( 'libs' )::current_source();
 foreach ( $user_sources as $_obj ) {
     if ( (int) $_obj->id == (int) $current_source_id ) {
         $current_source_name = $_obj->name;
@@ -23,10 +23,10 @@ foreach ( $user_sources as $_obj ) {
           <div <?php post_class(); ?>>
             <div class="page-title">
               <div class="title_left">
-                <h3><?php if ( is_first_visit() ) {
-                    _e( 'Welcome Plotter!', 'wpgentelella' );
+                <h3><?php if ( empty( $user_sources ) ) {
+                    _e( "Let's add a new story", 'wpgentelella' );
                 } else {
-                    echo empty( $user_sources ) ? _e( "Let's add a new story", 'wpgentelella' ) : $current_source_name;
+                    _e( 'Global Settings', 'wpgentelella' );
                 } ?></h3>
               </div>
             </div>
@@ -37,7 +37,7 @@ foreach ( $user_sources as $_obj ) {
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><?php if ( is_first_visit() || empty( $user_sources ) ) {
+                    <h2><?php if ( empty( $user_sources ) ) {
                         _e( "First of all, let's enter the title of your story.", 'wpgentelella' );
                     } else {
                         _e( "Let's get started!", 'wpgentelella' );
@@ -46,7 +46,7 @@ foreach ( $user_sources as $_obj ) {
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-<?php if ( is_first_visit() || empty( $user_sources ) ) : ?>
+<?php if ( empty( $user_sources ) ) : ?>
                     <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
                       <input type="hidden" name="from_page" value="<?php echo get_pageinfo( 'page_name' ); ?>">
                       <?php wp_nonce_field( 'initial-setting_' . get_current_user_id() ); ?>
@@ -66,19 +66,19 @@ foreach ( $user_sources as $_obj ) {
                     </form>
 <?php else : ?>
 
-                    <form id="globalSettings" data-parsley-validate class="form-horizontal form-label-left" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?= get_pageinfo( 'page_name' ) ?>">
+                    <form id="globalSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
+                      <input type="hidden" name="from_page" value="<?= __ctl( 'lib' )::get_pageinfo( 'page_name' ) ?>">
                       <input type="hidden" name="source_id" value="<?= $current_source_id ?>">
                       <input type="hidden" name="post_action" id="global-post-action" value="">
                       <?php wp_nonce_field( 'global-setting_' . get_current_user_id() ); ?>
 <?php if ( count( $user_sources ) > 0 ) : ?>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="change_source"><?php _e( 'Switch stories or Add new', 'wpgentelella' ); ?></label>
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="change_source"><?php _e( 'Switch or Add Story', 'wpgentelella' ); ?></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <select class="form-control" id="change_source" name="change_source">
                             <option value=""><?php _e( 'Add New Story', 'wpgentelella' ); ?></option>
                           <?php foreach ( $user_sources as $_src ) : ?>
-                            <option value="<?= $_src->id ?>" <?php selected( $_src->id, $current_source_id ); ?>><?= $_src->name ?></option>
+                            <option value="<?= $_src->id ?>" <?php selected( $_src->id, $current_source_id ); ?>><?= $_src->name ?><?php if ( $_src->id == $current_source_id ) echo ' - '. __( 'Currently', 'wpgentelella' ) .' -'; ?></option>
                           <?php endforeach; ?>
                           </select>
                         </div>
@@ -88,62 +88,66 @@ foreach ( $user_sources as $_obj ) {
                       <div class="ln_solid"></div>
                       <!-- p class="font-gray-dark">helper text</p -->
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', 'wpgentelella' ); ?> <span class="required">*</span></label>
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="source_name"><?php _e( 'Title Of Story', 'wpgentelella' ); ?> <span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <input type="text" id="source_name" name="source_name" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'Your Story Title', 'wpgentelella' ); ?>" value="<?= $current_source_name ?>" required="required">
                         </div>
                       </div>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="who"><?php _e( 'Who?', 'wpgentelella' ); ?></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="who" name="who" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'Whose story is this?', 'wpgentelella' ); ?>">
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="who"><?php _e( 'Who?', 'wpgentelella' ); ?></label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <input type="text" id="who" name="who" class="form-control col-md-7 col-xs-12 optional" data-validate-length-range="0,100" placeholder="<?php _e( 'Whose story is this?', 'wpgentelella' ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="what"><?php _e( 'What?', 'wpgentelella' ); ?></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="what" name="what" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'What will that one do with this story?', 'wpgentelella' ); ?>">
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="what"><?php _e( 'What?', 'wpgentelella' ); ?></label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <input type="text" id="what" name="what" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'What will that one do with this story?', 'wpgentelella' ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="where"><?php _e( 'Where?', 'wpgentelella' ); ?></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="where" name="where" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'Where is the world of the story?', 'wpgentelella' ); ?>">
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="where"><?php _e( 'Where?', 'wpgentelella' ); ?></label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <input type="text" id="where" name="where" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'Where is the world of the story?', 'wpgentelella' ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="when"><?php _e( 'When?', 'wpgentelella' ); ?></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="when" name="when" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'When is that story?', 'wpgentelella' ); ?>">
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="when"><?php _e( 'When?', 'wpgentelella' ); ?></label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <input type="text" id="when" name="when" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'When is that story?', 'wpgentelella' ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="why"><?php _e( 'Why?', 'wpgentelella' ); ?></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="why" name="why" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'Why will do that one do that?', 'wpgentelella' ); ?>">
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="why"><?php _e( 'Why?', 'wpgentelella' ); ?></label>
+                        <div class="col-md-8 col-sm-6 col-xs-12">
+                          <input type="text" id="why" name="why" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'Why will do that one do that?', 'wpgentelella' ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="team-writing"><?php _e( 'Enable team writing', 'wpgentelella' ); ?></label>
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="team_writing"><?php _e( 'Enable team writing', 'wpgentelella' ); ?></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <div class="">
                             <label>
-                              <input type="checkbox" id="team-writing" name="team_writing" class="js-switch" />
+                              <input type="checkbox" id="team_writing" name="team_writing" class="js-switch" />
                             </label>
                           </div>
                         </div>
                       </div>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="permission"><?php _e( 'Permission', 'wpgentelella' ); ?></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="form-control" id="permission" name="permission"<?php if ( count( $user_sources ) < 2 ) : ?> readonly="readonly"<?php endif; ?>>
-                            <option value="owner"><?php _e( 'Owner', 'wpgentelella' ); ?></option>
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="permission"><?php _e( 'Permission', 'wpgentelella' ); ?></label>
+                        <div class="col-md-3 col-sm-6 col-xs-12">
+                          <select class="form-control" id="permission" name="permission" readonly="readonly" disabled="disabled">
+                            <option value="owner" <?php selected( 'owner', 'owner' ); ?>><?php _e( 'Owner', 'wpgentelella' ); ?></option>
+                            <option value="editor" <?php selected( 'owner', 'editor' ); ?>><?php _e( 'Editor', 'wpgentelella' ); ?></option>
+                            <option value="director" <?php selected( 'owner', 'director' ); ?>><?php _e( 'Director', 'wpgentelella' ); ?></option>
+                            <option value="writer" <?php selected( 'owner', 'writer' ); ?>><?php _e( 'Writer', 'wpgentelella' ); ?></option>
+                            <option value="reader" <?php selected( 'owner', 'reader' ); ?>><?php _e( 'Reader', 'wpgentelella' ); ?></option>
                           </select>
                         </div>
                       </div>
                       <div class="ln_solid"></div>
                       <div class="form-group">
-                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-3">
+                        <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
                           <button class="btn btn-default" type="button" id="global-btn-cancel"><?php _e( 'Cancel', 'wpgentelella' ); ?></button>
 <?php if ( count( $user_sources ) > 0 ) : ?>
                           <button class="btn btn-primary" type="button" id="global-btn-remove"><?php _e( 'Remove', 'wpgentelella' ); ?></button>

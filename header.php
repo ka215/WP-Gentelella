@@ -19,7 +19,7 @@
   </head>
 
 <?php
-$page_type = get_pageinfo();
+$page_type = __ctl( 'lib' )::get_pageinfo();
 $prepend_contents = [];
 switch ( $page_type ) {
   case 'login':
