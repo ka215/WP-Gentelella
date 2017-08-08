@@ -15,36 +15,51 @@ $text_on_blue: #FFFFFF;
 $text_on_orange: #FFFFFF;
 $text_on_purple: #FFFFFF;
 $text_on_bluesky: #FFFFFF;
+/* Globals */
 $global_active: $green;
+$text_color: #5A738E; /* Base color of in-page text (#ECF0F1) */
+$body_color: $text_color; /* Default color of in-page text (same $text_color) (#73879C) */
+$alink_color: #5A738E; /* Base color of clickable text when hovered */
+$alink_color_hover: #337ab7; /* No Used: Default color of clickable text when hovered */
+/* Top-Navi. */
 $navi_menu_bg: #FFFFFF; /* #EDEDED */
 $navi_menu_bg_hover: #EDEDED; /* #D9DEE4 */
 $navi_menu_border: #D9DEE4;
-$site_title_icon_border: #5A738E; /* #EAEAEA */
+/* Side-Menu */
+$site_title_icon_border: #5A738E; /* Outer circle of icon logo (#EAEAEA) */
 $profile_bg: #F0F0F0;
 $profile_border: #909090; /* rgba(52, 73, 94, 0.44) */
-$text_color: #5A738E; /* #ECF0F1 */
-$body_color: $text_color; /* #73879C */
-$alink_color: #5A738E;
-$alink_color_hover: #337ab7; /* no used? */
-$menu_section_h3: #5A738E;
-$menu_section_h3_shadow: #E7E7E7; /* #000 */
-$menu_text_color: #5A738E; /* #E7E7E7 */
-$menu_text_color_hover: #337ab7; /* #F2F5F7 */
-$sidebar_bg: #FFFFFF; /* #2A3F54 */
-$sidebar_bg_active: #F4F4F8;
+$menu_section_h3: #5A738E; /* Text color of section title in side-menu */
+$menu_section_h3_shadow: #E7E7E7; /* Text shadow color of section title in side-menu (#000) */
+$menu_text_color: #5A738E; /* Base color of top level text on side-menu (#E7E7E7) */
+$menu_text_color_hover: #337ab7; /* Base color of top level text on side-menu when hovered (#F2F5F7) */
+$menu_icon_color: $blue; /* Color of icon of item in side-menu; default is same text color */
+$menu_chevron_color: #C4CFDA; /* Color of chevron icon of item in side-menu */
+$sidebar_bg: #FFFFFF; /* Background-color of side-menu (#2A3F54) */
+$sidebar_bg_active: #F4F4F8; /* Background-color of item actived in side-menu */
+$sidebar_border: #E0E0E0; /* Border color of side-menu (#D4D4D8) */ 
 $sidebar_footer_bg: #FFFFFF; /* #172D44 */
 $sidebar_footer_bg_hover: #FFFFFF; /* #425567 */
-$sidebar_submenu_liststyle: #E0E0E0; /* #425668 */
-$sidebar_submenu_text: #5A738E; /* rgba(255, 255, 255, 0.75) */
+$sidebar_submenu_liststyle: #E0E0E0; /* Color of list-style on submenu (#425668) */
+$sidebar_submenu_text: #5A738E; /* Text color of submenu (rgba(255, 255, 255, 0.75)) */
+$sidebar_submenu_text_active: #337ab7; /* Text color of submenu when actived */
 $sidebar_submenu_bg: #FFFFFF; /* #3E5367 */
-$sidebar_submenu_bg_active: #F4F4F8; /*  */
+$sidebar_submenu_bg_active: #F4F4F8; /* rgba(51, 51, 51, 0.06) */
+$sidebar_current_page_bg: inherit; /* rgba(255, 255, 255, 0.05) */
 $toolbox_text: #C5C7CB;
 $toolbox_hover_bg: #F5F7FA;
 $tooltip_bg: #34495E;
 $footer_bg: #FFFFFF;
-
+/* Main Contents */
+$main_content_bg: #F7F7F7;
+/* Others */
+/* Layout Grids */
 .left_col {
   background: $sidebar_bg;
+}
+.nav-md .container.body .col-md-3.left_col, 
+.nav-md .container.body .col-md-3.left_col.menu_fixed {
+  box-shadow: 1px 58px 2px $navi_menu_border; /* vertical downward as the height of the top navi */
 }
 .nav-sm .container.body .col-md-3.left_col {
   min-height: 100%;
@@ -52,6 +67,7 @@ $footer_bg: #FFFFFF;
   padding: 0;
   z-index: 9999;
   position: absolute;
+  box-shadow: 1px 58px 2px $navi_menu_border; /* vertical downward as the height of the top navi */
 }
 .nav-sm .container.body .col-md-3.left_col.menu_fixed {
   position: fixed;
@@ -198,13 +214,16 @@ $footer_bg: #FFFFFF;
   margin-bottom: 10px;
   float: left;
 }
+.main_menu i.fa {
+  color: $menu_icon_color;
+}
 .main_menu span.fa {
   float: right;
   text-align: center;
   margin-top: 5px;
   font-size: 10px;
   min-width: inherit;
-  color: #C4CFDA;
+  color: $menu_chevron_color;
 }
 .active a span.fa {
   text-align: right !important;
@@ -246,7 +265,7 @@ $footer_bg: #FFFFFF;
   position: fixed;
 }
 body .container.body .right_col {
-  background: #F7F7F7;
+  background: $main_content_bg;
 }
 .nav-md .container.body .right_col {
   padding: 10px 20px 0;
@@ -543,13 +562,37 @@ a:hover, a:focus {
 .sidebar-header:first-of-type {
   margin-top: 0
 }
+.nav.side-menu {
+  overflow-x: visible;
+  background-color: $sidebar_submenu_bg;
+}
+.nav-md .nav.side-menu {
+  overflow-x: hidden;
+}
 .nav.side-menu> li {
   position: relative;
   display: block;
   cursor: pointer;
+  background-color: $sidebar_bg;
 }
 .nav.side-menu> li > a {
-  margin-bottom: 6px;
+  margin-bottom: 1px;
+}
+.nav-md .nav.side-menu> li {
+  box-shadow: 45px 1px 0 $sidebar_border;
+}
+.nav-md .nav.side-menu> li:first-child {
+  border-top: solid 1px $sidebar_border;
+}
+.nav-md .nav.side-menu> li:last-child {
+  box-shadow: none;
+  border-bottom: solid 1px $sidebar_border;
+}
+.nav.side-menu> li > a > span.fa-chevron:before {
+  content: "\f053";
+}
+.nav.side-menu> li.active > a > span.fa-chevron:before {
+  content: "\f078";
 }
 .nav.side-menu> li > a:hover {
   color: $menu_text_color_hover !important;
@@ -563,18 +606,18 @@ a:hover, a:focus {
 }
 .nav.child_menu li:hover,
 .nav.child_menu li.active {
-  background-color: rgba(51, 51, 51, 0.06);
+  background-color: $sidebar_submenu_bg_active;
 }
 .nav.child_menu li {
   padding-left: 36px;
 }
 .nav-md ul.nav.child_menu li:before {
   background: $sidebar_submenu_liststyle;
-  bottom: auto;
+  bottom: auto; /* calc(50% - 4px); */
   content: "";
   height: 8px;
   left: 23px;
-  margin-top: 15px;
+  margin-top: 12.5px; /*15px;*/
   position: absolute;
   right: auto;
   width: 8px;
@@ -584,10 +627,10 @@ a:hover, a:focus {
   border-radius: 50%;
 }
 .nav-md ul.nav.child_menu li:after {
-  border-left: 1px solid $sidebar_submenu_liststyle;
+  border-left: 2px solid $sidebar_submenu_liststyle;
   bottom: 0;
   content: "";
-  left: 27px;
+  left: 26px;
   position: absolute;
   top: 0;
 }
@@ -606,7 +649,7 @@ a:hover, a:focus {
 .nav.child_menu li li a.active {
   color: $menu_text_color_hover;
 }
-.nav>li>a {
+.nav> li> a {
   position: relative;
   display: block;
   padding: 13px 15px 12px;
@@ -615,27 +658,17 @@ a:hover, a:focus {
   border-right: 5px solid $global_active;
 }
 .nav li.current-page {
-  background: rgba(255, 255, 255, 0.05);
+  background: $sidebar_current_page_bg;
 }
 .nav li li li.current-page {
   background: none;
 }
 .nav li li.current-page a {
-  color: #fff;
+  color: $sidebar_submenu_text_active;
 }
 .nav.side-menu> li.active > a {
   text-shadow: rgba(0, 0, 0, 0.25) 0 -1px 0;
   background: $sidebar_bg_active;
-/*
-  background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5b6479), color-stop(100%, #4c5566)), #686e78;
-  background: -webkit-linear-gradient(#334556, #2C4257), $sidebar_bg;
-  background: -moz-linear-gradient(#334556, #2C4257), $sidebar_bg;
-  background: -o-linear-gradient(#334556, #2C4257), $sidebar_bg;
-  background: linear-gradient(#334556, #2C4257), $sidebar_bg;
-  -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-  -moz-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-  box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-*/
   box-shadow: $navi_menu_border 0 1px 0;
 }
 .navbar-brand, .navbar-nav>li>a {
