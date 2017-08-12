@@ -1,31 +1,52 @@
 @charset "UTF-8";
-/* Color Set */
+/* Color Scheme */
+/* Globals */
+/* Base color of in-page text (#ECF0F1) */
+/* Default color of in-page text (same $text_color) (#73879C) */
+/* Base color of clickable text when hovered */
+/* No Used: Default color of clickable text when hovered */
+/* Top-Navi. */
 /* #EDEDED */
 /* #D9DEE4 */
-/* #EAEAEA */
+/* Side-Menu */
+/* Outer circle of icon logo (#EAEAEA) */
 /* rgba(52, 73, 94, 0.44) */
-/* #ECF0F1 */
-/* #73879C */
-/* no used? */
-/* #000 */
-/* #E7E7E7 */
-/* #F2F5F7 */
-/* #2A3F54 */
+/* Text color of section title in side-menu */
+/* Text shadow color of section title in side-menu (#000) */
+/* Base color of top level text on side-menu (#E7E7E7) */
+/* Base color of top level text on side-menu when hovered (#F2F5F7) */
+/* Color of icon of item in side-menu; default is same text color */
+/* Color of chevron icon of item in side-menu */
+/* Background-color of side-menu (#2A3F54) */
+/* Background-color of item actived in side-menu */
+/* Border color of side-menu (#D4D4D8) */
 /* #172D44 */
 /* #425567 */
-/* #425668 */
-/* rgba(255, 255, 255, 0.75) */
+/* Color of list-style on submenu (#425668) */
+/* Text color of submenu (rgba(255, 255, 255, 0.75)) */
+/* Text color of submenu when actived */
 /* #3E5367 */
-/*  */
+/* rgba(51, 51, 51, 0.06) */
+/* rgba(255, 255, 255, 0.05) */
+/* Main Contents */
+/* Others */
+/* Layout Grids */
 .left_col {
   background: #FFFFFF; }
+
+.nav-md .container.body .col-md-3.left_col,
+.nav-md .container.body .col-md-3.left_col.menu_fixed {
+  box-shadow: 1px 58px 2px #D9DEE4;
+  /* vertical downward as the height of the top navi */ }
 
 .nav-sm .container.body .col-md-3.left_col {
   min-height: 100%;
   width: 70px;
   padding: 0;
   z-index: 9999;
-  position: absolute; }
+  position: absolute;
+  box-shadow: 1px 58px 2px #D9DEE4;
+  /* vertical downward as the height of the top navi */ }
 
 .nav-sm .container.body .col-md-3.left_col.menu_fixed {
   position: fixed;
@@ -171,6 +192,9 @@
   width: 100%;
   margin-bottom: 10px;
   float: left; }
+
+.main_menu i.fa {
+  color: #3498DB; }
 
 .main_menu span.fa {
   float: right;
@@ -500,13 +524,37 @@ a:hover, a:focus {
 .sidebar-header:first-of-type {
   margin-top: 0; }
 
+.nav.side-menu {
+  overflow-x: visible;
+  background-color: #FFFFFF; }
+
+.nav-md .nav.side-menu {
+  overflow-x: hidden; }
+
 .nav.side-menu > li {
   position: relative;
   display: block;
-  cursor: pointer; }
+  cursor: pointer;
+  background-color: #FFFFFF; }
 
 .nav.side-menu > li > a {
-  margin-bottom: 6px; }
+  margin-bottom: 1px; }
+
+.nav-md .nav.side-menu > li {
+  box-shadow: 45px 1px 0 #E0E0E0; }
+
+.nav-md .nav.side-menu > li:first-child {
+  border-top: solid 1px #E0E0E0; }
+
+.nav-md .nav.side-menu > li:last-child {
+  box-shadow: none;
+  border-bottom: solid 1px #E0E0E0; }
+
+.nav.side-menu > li > a > span.fa-chevron:before {
+  content: "\f053"; }
+
+.nav.side-menu > li.active > a > span.fa-chevron:before {
+  content: "\f078"; }
 
 .nav.side-menu > li > a:hover {
   color: #337ab7 !important; }
@@ -520,7 +568,7 @@ a:hover, a:focus {
 
 .nav.child_menu li:hover,
 .nav.child_menu li.active {
-  background-color: rgba(51, 51, 51, 0.06); }
+  background-color: #F4F4F8; }
 
 .nav.child_menu li {
   padding-left: 36px; }
@@ -528,10 +576,12 @@ a:hover, a:focus {
 .nav-md ul.nav.child_menu li:before {
   background: #E0E0E0;
   bottom: auto;
+  /* calc(50% - 4px); */
   content: "";
   height: 8px;
   left: 23px;
-  margin-top: 15px;
+  margin-top: 12.5px;
+  /*15px;*/
   position: absolute;
   right: auto;
   width: 8px;
@@ -539,10 +589,10 @@ a:hover, a:focus {
   border-radius: 50%; }
 
 .nav-md ul.nav.child_menu li:after {
-  border-left: 1px solid #E0E0E0;
+  border-left: 2px solid #E0E0E0;
   bottom: 0;
   content: "";
-  left: 27px;
+  left: 26px;
   position: absolute;
   top: 0; }
 
@@ -570,27 +620,17 @@ a:hover, a:focus {
   border-right: 5px solid #1ABB9C; }
 
 .nav li.current-page {
-  background: rgba(255, 255, 255, 0.05); }
+  background: inherit; }
 
 .nav li li li.current-page {
   background: none; }
 
 .nav li li.current-page a {
-  color: #fff; }
+  color: #337ab7; }
 
 .nav.side-menu > li.active > a {
   text-shadow: rgba(0, 0, 0, 0.25) 0 -1px 0;
   background: #F4F4F8;
-  /*
-    background: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #5b6479), color-stop(100%, #4c5566)), #686e78;
-    background: -webkit-linear-gradient(#334556, #2C4257), $sidebar_bg;
-    background: -moz-linear-gradient(#334556, #2C4257), $sidebar_bg;
-    background: -o-linear-gradient(#334556, #2C4257), $sidebar_bg;
-    background: linear-gradient(#334556, #2C4257), $sidebar_bg;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-    -moz-box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-    box-shadow: rgba(0, 0, 0, 0.25) 0 1px 0, inset rgba(255, 255, 255, 0.16) 0 1px 0;
-  */
   box-shadow: #D9DEE4 0 1px 0; }
 
 .navbar-brand, .navbar-nav > li > a {
