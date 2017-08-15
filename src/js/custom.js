@@ -36,20 +36,22 @@ $(document).ready(function() {
         var $li = $(this).parent();
 
         if ($li.is('.active')) {
-            $li.removeClass('active active-sm');
-            $('ul:first', $li).slideUp(function() {
+            $('ul:first', $li).slideUp('fast','swing',function() {
+                $li.removeClass('active active-sm');
                 setContentHeight();
             });
         } else {
             // prevent closing menu if we are on child menu
             if (!$li.parent().is('.child_menu')) {
                 $SIDEBAR_MENU.find('li').removeClass('active active-sm');
-                $SIDEBAR_MENU.find('li ul').slideUp();
+                $SIDEBAR_MENU.find('li ul').slideUp('fast','swing');
             }
-            
+
             $li.addClass('active');
 
-            $('ul:first', $li).slideDown(function() {
+            var items = $('ul:first', $li).children().length,
+                duration = items > 6 ? 300 : items * 50;
+            $('ul:first', $li).slideDown(duration,'linear',function() {
                 setContentHeight();
             });
         }
@@ -58,11 +60,15 @@ $(document).ready(function() {
     // toggle small or large menu
     $MENU_TOGGLE.on('click', function() {
         if ($BODY.hasClass('nav-md')) {
-            $SIDEBAR_MENU.find('li.active ul').hide();
-            $SIDEBAR_MENU.find('li.active').addClass('active-sm').removeClass('active');
+            $SIDEBAR_MENU.animate({ width: '70px' },50,'linear',function(){
+                $SIDEBAR_MENU.find('li.active ul').hide();
+                $SIDEBAR_MENU.find('li.active').addClass('active-sm').removeClass('active');
+            });
         } else {
-            $SIDEBAR_MENU.find('li.active-sm ul').show();
-            $SIDEBAR_MENU.find('li.active-sm').addClass('active').removeClass('active-sm');
+            $SIDEBAR_MENU.animate({ width: '230px' },100,'linear',function(){
+                $SIDEBAR_MENU.find('li.active-sm ul').show();
+                $SIDEBAR_MENU.find('li.active-sm').addClass('active').removeClass('active-sm');
+            });
         }
 
         $BODY.toggleClass('nav-md nav-sm');
@@ -120,7 +126,7 @@ $(document).ready(function() {
     });
 
     $('.close-link').click(function () {
-        var $BOX_PANEL = $(this).closest('.x_panel');
+        var $BOX_PANEL = $(this).closest('.x_panel').parent();
 
         $BOX_PANEL.remove();
     });
