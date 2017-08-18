@@ -3,7 +3,7 @@
         <!-- footer content -->
         <footer>
           <div class="pull-right">
-            VisiXX - Powered by <a href="#">NocXX</a>
+            ViziXX - Powered by <a href="#">NocXX</a>
           </div>
           <div class="clearfix"></div>
         </footer>

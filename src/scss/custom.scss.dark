@@ -3,10 +3,11 @@ $base_font: "Helvetica Neue", Roboto, Arial, "Droid Sans", "Hiragino Kaku Gothic
 $base_font_size: 13px;
 $base_font_weight: 400;
 
+/* Compliant with color tone of web-site of "interpolation" */
 /* Color Scheme */
-$blue: #3E3CAB;
+$blue: #3498DB;
 $blue_sky: #50C1CF;
-$purple: #9B59B6;
+$purple: #5C1C67;
 $green: #1ABB9C;
 $aero: #9CC2CB;
 $red: #E74C3C;
@@ -21,63 +22,63 @@ $text_on_orange: #FFFFFF;
 $text_on_purple: #FFFFFF;
 $text_on_bluesky: #FFFFFF;
 /* Globals */
-$global_active: $blue;
-$text_color: #0C0C0E; /* Base color of in-page text */
+$global_active: $purple;
+$text_color: #F4F4F4; /* Base color of in-page text */
 $body_color: $text_color; /* Default color of in-page text (same $text_color) */
-$alink_color: #3F4241; /* Base color of clickable text when hovered */
-$alink_color_hover: $alink_color; /* Default color of clickable text when hovered */
-$border_color: #A5A5A5; /* Base color of borders */
-$footer_bg: #F4F4F4; /*  */
+$alink_color: #F4F4F4; /* Base color of clickable text when hovered */
+$alink_color_hover: #FFFFFF; /* Default color of clickable text when hovered */
+$border_color: #868D86; /* Base color of borders */
+$footer_bg: #404040; /*  */
 $footer_border: $border_color; /*  */
 $box_shadow: rgba(0, 0, 0, 0.25); /*  */
 
 /* Top-Navi. */
-$navi_menu_bg: #F4F4F4; /*  */
-$navi_menu_bg_hover: #E0E0E5; /*  */
+$navi_menu_bg: #404040;
+$navi_menu_bg_hover: #868D86;
 $navi_menu_border: $border_color;
-$navi_menu_icon_color: $blue;
-$navi_menu_text_color: $text_color; /* #515356 */
+$navi_menu_icon_color: $text_color;
+$navi_menu_text_color: $text_color;
 $navi_menu_dropdown_bg: $navi_menu_bg;
 $navi_menu_dropdown_bg_hover: $navi_menu_bg_hover;
 $navi_menu_dropdown_text: $text_color;
-$navi_menu_dropdown_text_active: $blue;
-$navi_menu_dropdown_icon: $blue;
-$navi_menu_dropdown_msg_list: $text_color;
-$navi_menu_dropdown_msg_list_bg: $navi_menu_bg;
-$navi_menu_dropdown_msg_list_bg_hover: $navi_menu_bg_hover;
+$navi_menu_dropdown_text_active: $global_active;
+$navi_menu_dropdown_icon: $global_active;
+$navi_menu_dropdown_msg_list: #111B27;
+$navi_menu_dropdown_msg_list_bg: #AEACAC;
+$navi_menu_dropdown_msg_list_bg_hover: #B3B0B0;
 
 /* Side-Menu */
 $site_title_color: inherit;
-$site_title_icon_border: transparent; /*#5A738E; /* Outer circle of icon logo (#EAEAEA) */
-$profile_bg: #F4F4F4;
+$site_title_icon_border: transparent; /* Outer circle of icon logo */
+$profile_bg: #F0F0F0;
 $profile_border: #909090; /* rgba(52, 73, 94, 0.44) */
-$menu_section_h3: #BCBCBC; /* Text color of section title in side-menu */
-$menu_section_h3_shadow: #E0E0E0; /* Text shadow color of section title in side-menu (#000) */
-$menu_text_color: $text_color; /* Base color of top level text on side-menu (#E7E7E7) */
+$menu_section_h3: #D7D0D0; /* Text color of section title in side-menu */
+$menu_section_h3_shadow: rgba(0,0,0,0.2); /* Text shadow color of section title in side-menu (#000) */
+$menu_text_color: $alink_color; /* Base color of top level text on side-menu (#E7E7E7) */
 $menu_text_color_hover: $alink_color_hover; /* Base color of top level text on side-menu when hovered (#F2F5F7) */
-$menu_icon_color: $blue; /* Color of icon of item in side-menu; default is same text color */
-$menu_chevron_color: #C0CBDA; /* Color of chevron icon of item in side-menu */
+$menu_icon_color: $alink_color; /* Color of icon of item in side-menu; default is same text color */
+$menu_chevron_color: #C4CFDA; /* Color of chevron icon of item in side-menu */
 $sidebar_bg: $navi_menu_bg; /* Background-color of side-menu (#2A3F54) */
 $sidebar_bg_active: $navi_menu_bg_hover; /* Background-color of item actived in side-menu */
-$sidebar_border: $border_color; /* Border color of side-menu (#D4D4D8) */ 
-$sidebar_active_shadow: $navi_menu_bg_hover;
-$sidebar_footer_bg: $sidebar_bg; /*  */
-$sidebar_footer_bg_hover: $sidebar_bg_active; /*  */
-$sidebar_submenu_liststyle: #D7D7D7; /* Color of list-style on submenu (#425668) */
-$sidebar_submenu_icon_color: $menu_icon_color; /*  */
-$sidebar_submenu_text: $text_color; /* Text color of submenu (rgba(255, 255, 255, 0.75)) */
+$sidebar_border: $navi_menu_bg_hover; /* Border color of side-menu (#D4D4D8) */ 
+$sidebar_active_shadow: $navi_menu_bg_hover; 
+$sidebar_footer_bg: $navi_menu_bg; /* #172D44 */
+$sidebar_footer_bg_hover: $navi_menu_bg; /* #425567 */
+$sidebar_submenu_liststyle: #868D86; /* Color of list-style on submenu */
+$sidebar_submenu_icon_color: #111B27; /*  */
+$sidebar_submenu_text: #111B27; /* Text color of submenu (rgba(255, 255, 255, 0.75)) */
 $sidebar_submenu_text_active: $alink_color_hover; /* Text color of submenu when actived */
-$sidebar_submenu_bg: #ECECEC; /*  */
-$sidebar_submenu_bg_active: #E4E4E4; /*  */
+$sidebar_submenu_bg: #AEACAC; /* #3E5367 */
+$sidebar_submenu_bg_active: #B3B0B0; /* rgba(51, 51, 51, 0.06) */
 $sidebar_current_page_bg: inherit; /* rgba(255, 255, 255, 0.05) */
 
 /* Main Contents */
-$main_content_text: $text_color;
-$main_content_bg: #E0E0E0;
-$panel_bg: #F4F4F4;
-$panel_border: rgba(51,51,51,0.15); /* #E6E9ED */
-$panel_border_active: rgba(51,51,51,0.4);
-$panel_title_color: $text_color;
+$main_content_text: #404040;
+$main_content_bg: #D2D0D2;
+$panel_bg: #FCFAFC;
+$panel_border: #B8B6B8;
+$panel_border_active: #A2A0A2;
+$panel_title_color: $main_content_text;
 $panel_title_icon_color: #BDBDBD;
 
 /* Tool Box */
@@ -530,9 +531,9 @@ body .container.body .right_col {
 body {
   color: $body_color;
   background: $sidebar_bg;
-  font-family: $base_font;
-  font-size: $base_font_size;
-  font-weight: $base_font_weight;
+  font-family: inherit; /* "Helvetica Neue", Roboto, Arial, "Droid Sans", sans-serif; */
+  font-size: 13px;
+  font-weight: 400;
   line-height: 1.471;
 }
 .main_container .top_nav {
