@@ -1,7 +1,7 @@
         <div class="col-md-3 left_col menu_fixed">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="index.html" class="site_title"><i class="fa fa-vimeo"></i> <span>VisiXX</span></a>
+              <a href="index.html" class="site_title"><i class="fa fa-vimeo"></i> <span>ViziXX</span></a>
             </div>
 
             <div class="clearfix"></div>
@@ -12,7 +12,7 @@
               <div class="menu_section">
                 <h3>Main Navigation</h3>
                 <ul class="nav side-menu">
-                  <li><a><i class="fa fa-key"></i> VisiXX <span class="fa fa-chevron"></span></a>
+                  <li><a><i class="fa fa-key"></i> ViziXX <span class="fa fa-chevron"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="#">Apply</a></li>
                       <li><a href="#">Cancellation</a></li>
@@ -21,9 +21,9 @@
                   <li><a><i class="fa fa-server"></i> Register Process</a></li>
                   <li><a><i class="fa fa-wifi"></i> Sensor <span class="fa fa-chevron"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="javascript:;" onClick="location.href='visix_a.php';">Storing Data</a></li>
-                      <li><a href="javascript:;" onClick="location.href='visix_b.php';">Split Data</a></li>
-                      <li><a href="javascript:;" onClick="location.href='visix_c.php';">Storage Time</a></li>
+                      <li><a href="javascript:;" onClick="location.href='vizixx_a.php';">Storing Data</a></li>
+                      <li><a href="javascript:;" onClick="location.href='vizixx_b.php';">Split Data</a></li>
+                      <li><a href="javascript:;" onClick="location.href='vizixx_c.php';">Storage Time</a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-plus"></i> Add Widget <span class="fa fa-chevron"></span></a>

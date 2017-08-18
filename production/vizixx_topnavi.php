@@ -13,9 +13,9 @@
                     <!-- span class="fa fa-angle-down"></span -->
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    <li><a href="visix_a.php">Type A</a></li>
-                    <li><a href="visix_b.php">Type B</a></li>
-                    <li><a href="visix_c.php">Type C</a></li>
+                    <li><a href="vizixx_a.php">Type A</a></li>
+                    <li><a href="vizixx_b.php">Type B</a></li>
+                    <li><a href="vizixx_c.php">Type C</a></li>
                     <li><a href="javascript:;"><i class="fa fa-question-circle-o pull-right"></i> Help</a></li>
                     <li><a href="login.html"><i class="fa fa-sign-out pull-right"></i> Log Out</a></li>
                   </ul>
