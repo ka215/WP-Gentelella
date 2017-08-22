@@ -1,0 +1,210 @@
+.site_title i {
+  border: 1px solid $site_title_icon_border;
+  padding: 5px 6px;
+  border-radius: 50%;
+}
+.nav-sm .nav.side-menu li a {
+  text-align: center !important;
+  font-weight: 400;
+  font-size: 10px;
+  padding: 10px 5px;
+}
+.nav-sm .nav.child_menu li.active,
+.nav-sm .nav.side-menu li.active-sm {
+  border-right: 5px solid $global_active;
+}
+.nav-sm ul.nav.child_menu ul,
+.nav-sm .nav.side-menu li.active-sm ul ul {
+  position: static;
+  width: 200px;
+  background: none;
+}
+.nav-sm > .nav.side-menu > li.active-sm > a {
+  color: $global_active !important;
+}
+.nav-sm .nav.side-menu li a i.toggle-up {
+  display: none !important;
+}
+.nav-sm .nav.side-menu li a i {
+  font-size: 25px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 5px;
+}
+.nav-sm ul.nav.child_menu {
+  left: calc( 100% + 5px );
+  position: absolute;
+  top: 0;
+  width: 210px;
+  z-index: $zi_sidebar_child_menu;
+  background: $sidebar_submenu_bg;
+  border: solid 1px $sidebar_border;
+  border-left-width: 0px;
+  box-shadow: 1px 1px 2px $box_shadow;
+  display: none;
+}
+/*
+.nav-sm ul.nav.child_menu:before {
+  border-style: solid;
+  border-width: 10px 0 10px 10px;
+  border-color: transparent transparent transparent $global_active;
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: -1px;
+  margin-top: -9px;
+  display: block;
+  width: 0px;
+  height: 0px;
+  z-index: $zi_sidebar + 1;  
+}
+.nav-sm ul.nav.child_menu:after {
+  border-style: solid;
+  border-width: 11px 0 11px 11px;
+  border-color: transparent transparent transparent $sidebar_border;
+  content: "";
+  position: absolute;
+  top: 17px;
+  left: 0px;
+  margin-top: -10px;
+  display: block;
+  width: 0px;
+  height: 0px;
+  z-index: $zi_sidebar;
+}
+*/
+.nav-sm ul.nav.child_menu li {
+  padding: 0 10px;
+  border-bottom: dotted 1px $sidebar_border;
+}
+.nav-sm ul.nav.child_menu li:last-child {
+  border-bottom: none;
+}
+.nav-sm ul.nav.child_menu li a {
+  text-align: left !important;
+}
+.nav-sm ul.nav.child_menu li a i {
+  display: inline-block;
+  font-size: 18px;
+  width: auto;
+  margin-right: 9px;
+  margin-bottom: auto;
+  vertical-align: middle;
+}
+.nav-sm .profile {
+  display: none;
+}
+.menu_section {
+  margin-bottom: 35px;
+}
+.menu_section h3 {
+  padding-left: 23px;
+  color: $menu_section_h3;
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  font-weight: bold;
+  font-size: 11px;
+  margin-bottom: 0;
+  margin-top: 0;
+  text-shadow: 1px 1px $menu_section_h3_shadow;
+}
+.menu_section >ul {
+  margin-top: 10px;
+}
+.profile_pic {
+  width: 35%;
+  float: left;
+}
+.img-circle.profile_img {
+  width: 70%;
+  background: $profile_bg;
+  margin-left: 15%;
+  z-index: $zi_profile_image;
+  position: inherit;
+  margin-top: 20px;
+  border: 1px solid rgba(52, 73, 94, 0.44);
+  padding: 4px;
+}
+.profile_info {
+  padding: 25px 10px 10px;
+  width: 65%;
+  float: left;
+}
+.profile_info span {
+  font-size: 13px;
+  line-height: 30px;
+  color: #BAB8B8;
+}
+.profile_info h2 {
+  font-size: 14px;
+  color: #5A738E;
+  margin: 0;
+  font-weight: 300;
+}
+.profile.img_2 {
+  text-align: center;
+}
+.profile.img_2 .profile_pic {
+  width: 100%;
+}
+.profile.img_2 .profile_pic .img-circle.profile_img {
+  width: 50%;
+  margin: 10px 0 0;
+}
+.profile.img_2 .profile_info {
+  padding: 15px 10px 0;
+  width: 100%;
+  margin-bottom: 10px;
+  float: left;
+}
+.main_menu i.fa {
+  color: $menu_icon_color;
+}
+.main_menu span.fa {
+  float: right;
+  text-align: center;
+  margin-top: 5px;
+  font-size: 10px;
+  min-width: inherit;
+  color: $menu_chevron_color;
+}
+.active a span.fa {
+  text-align: right !important;
+  margin-right: 4px;
+}
+.nav-sm .menu_section {
+  margin: 0;
+}
+.nav-sm span.fa,
+.nav-sm .menu_section h3 {
+  display: none;
+}
+.nav-sm li li span.fa {
+  display: inline-block;
+}
+.nav_menu {
+  float: left;
+  background: $navi_menu_bg;
+  border-bottom: 1px solid $navi_menu_border;
+  margin-bottom: 10px;
+  width: 100%;
+  position: relative;
+  z-index: $zi_top_nav;
+}
+@media (max-width: 480px) { /* min-width: 480px */
+  .nav_menu {
+    position: static;
+  }
+}
+.nav-md .container.body .col-md-3.left_col {
+  min-height: 100%;
+  width: 230px;
+  padding: 0;
+  position: absolute;
+  display: flex;
+  z-index: $zi_left_col;
+}
+.nav-md .container.body .col-md-3.left_col.menu_fixed {
+  height: 100%;
+  position: fixed;
+}

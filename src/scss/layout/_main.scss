@@ -1,0 +1,13 @@
+body .container.body .right_col {
+  position: relative;
+  margin-top: 0; /* When ".top_nav" exist. */
+  background-color: $main_content_bg;
+  color: $main_content_text;
+}
+.nav-md .container.body .right_col {
+  padding: 10px 20px 0;
+  margin-left: 230px;
+}
+.nav-md.full-span .container.body .right_col {
+  margin-left: 0;
+}

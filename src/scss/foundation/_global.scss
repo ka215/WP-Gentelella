@@ -1,0 +1,104 @@
+/* Color Scheme */
+$blue: #3498DB;
+$blue_sky: #50C1CF;
+$purple: #9B59B6;
+$green: #1ABB9C;
+$aero: #9CC2CB;
+$red: #E74C3C;
+$orange: #F39C12;
+$dark: #34495E;
+$gray: #BDC3C7;
+$text_on_white: #73879C;
+$text_on_green: #FFFFFF;
+$text_on_red: #FFFFFF;
+$text_on_blue: #FFFFFF;
+$text_on_orange: #FFFFFF;
+$text_on_purple: #FFFFFF;
+$text_on_bluesky: #FFFFFF;
+
+/* Globals */
+$global_active: $green;
+$text_color: #323131; /* Base color of in-page text (#ECF0F1) */
+$body_color: $text_color; /* Default color of in-page text (same $text_color) (#73879C) */
+$alink_color: #5A738E; /* Base color of clickable text when hovered */
+$alink_color_hover: #337AB7; /* Default color of clickable text when hovered */
+$border_color: #D9DEE4; /* Base color of borders */
+$footer_bg: #FFFFFF; /*  */
+$footer_border: $border_color; /*  */
+$box_shadow: rgba(0, 0, 0, 0.25); /*  */
+
+/* Top-Navi. */
+$navi_menu_bg: #FFFFFF; /* #EDEDED */
+$navi_menu_bg_hover: #EDEDED; /* #D9DEE4 */
+$navi_menu_border: $border_color;
+$navi_menu_icon_color: $blue;
+$navi_menu_text_color: $text_color; /* #515356 */
+$navi_menu_dropdown_bg: $navi_menu_bg;
+$navi_menu_dropdown_bg_hover: $navi_menu_bg_hover;
+$navi_menu_dropdown_text: $text_color;
+$navi_menu_dropdown_text_active: $red;
+$navi_menu_dropdown_icon: $blue;
+$navi_menu_dropdown_msg_list: $text_color;
+$navi_menu_dropdown_msg_list_bg: #F7F7F7;
+$navi_menu_dropdown_msg_list_bg_hover: #F5F5F5;
+
+/* Side-Menu */
+$site_title_color: inherit;
+$site_title_icon_border: transparent; /*#5A738E; /* Outer circle of icon logo (#EAEAEA) */
+$profile_bg: #F0F0F0;
+$profile_border: #909090; /* rgba(52, 73, 94, 0.44) */
+$menu_section_h3: #5A738E; /* Text color of section title in side-menu */
+$menu_section_h3_shadow: #E7E7E7; /* Text shadow color of section title in side-menu (#000) */
+$menu_text_color: #5A738E; /* Base color of top level text on side-menu (#E7E7E7) */
+$menu_text_color_hover: $alink_color_hover; /* Base color of top level text on side-menu when hovered (#F2F5F7) */
+$menu_icon_color: $blue; /* Color of icon of item in side-menu; default is same text color */
+$menu_chevron_color: #C4CFDA; /* Color of chevron icon of item in side-menu */
+$sidebar_bg: #FFFFFF; /* Background-color of side-menu (#2A3F54) */
+$sidebar_bg_active: #F4F4F8; /* Background-color of item actived in side-menu */
+$sidebar_border: $border_color; /* Border color of side-menu (#D4D4D8) */ 
+$sidebar_active_shadow: $navi_menu_bg_hover;
+$sidebar_footer_bg: #FFFFFF; /* #172D44 */
+$sidebar_footer_bg_hover: #FFFFFF; /* #425567 */
+$sidebar_submenu_liststyle: #E0E0E0; /* Color of list-style on submenu (#425668) */
+$sidebar_submenu_icon_color: $menu_icon_color; /*  */
+$sidebar_submenu_text: #5A738E; /* Text color of submenu (rgba(255, 255, 255, 0.75)) */
+$sidebar_submenu_text_active: $alink_color_hover; /* Text color of submenu when actived */
+$sidebar_submenu_bg: #FFFFFF; /* #3E5367 */
+$sidebar_submenu_bg_active: #F4F4F8; /* rgba(51, 51, 51, 0.06) */
+$sidebar_current_page_bg: inherit; /* rgba(255, 255, 255, 0.05) */
+
+/* Main Contents */
+$main_content_text: #323131;
+$main_content_bg: #D2D2D2;
+$panel_bg: #FFFFFF;
+$panel_border: rgba(51,51,51,0.15); /* #E6E9ED */
+$panel_border_active: rgba(51,51,51,0.4);
+$panel_title_color: $text_color;
+$panel_title_icon_color: #BDBDBD;
+
+/* Tool Box */
+$toolbox_text: #C5C7CB;
+$toolbox_hover_bg: #F5F7FA;
+$tooltip_bg: #34495E;
+
+/* Component: To-Do */
+$todo_bg: #F3F3F3;
+
+/* Component: Dashboard-Widget as like no-tile type stats etc. */
+$db_widget_bg: #F6F6F6;
+$db_widget_border_top: #79C3DF;
+$db_widget_border_title: #C1CDCD;
+$db_widget_icon_color: #33A1C9;
+$db_widget_icon_border: #ABD9EA;
+$db_widget_icon_bg: #FFFFFF;
+
+/* Component: Dashbord-Widget as like tile stats  */
+$tile_stats_border: #E4E4E4;
+$tile_stats_bg: #FFFFFF;
+$tile_stats_icon_color: #BAB8B8;
+$tile_stats_icon_hover: rgba(58, 58, 58, 0.41);
+
+/* Component: Quick-List */
+$quick_list_color: #757679;
+
+/* Others */

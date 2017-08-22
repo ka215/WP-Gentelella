@@ -1,0 +1,18 @@
+.navbar.nav_title {
+  box-shadow: none;
+}
+.nav-sm .navbar.nav_title {
+  width: 70px;
+}
+.nav-sm .navbar.nav_title a span {
+  display: none;
+}
+.nav-sm .navbar.nav_title a i {
+  font-size: 22px;
+  /* margin: 13px 0 0 3px; */
+}
+.nav-sm .main_container .top_nav {
+  display: block;
+  margin-left: 70px;
+  z-index: $zi_top_nav;
+}

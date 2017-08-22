@@ -10,10 +10,12 @@
 $current_user_id     = get_current_user_id();
 $user_sources        = __ctl( 'model' )->get_sources( $current_user_id, 'row' );
 $current_source_id   = __ctl( 'libs' )::current_source();
-foreach ( $user_sources as $_obj ) {
-    if ( (int) $_obj->id == (int) $current_source_id ) {
-        $current_source_name = $_obj->name;
-        break;
+if ( isset( $user_sources ) ) {
+    foreach ( $user_sources as $_obj ) {
+        if ( (int) $_obj->id == (int) $current_source_id ) {
+            $current_source_name = $_obj->name;
+            break;
+        }
     }
 }
 ?>
@@ -48,7 +50,7 @@ foreach ( $user_sources as $_obj ) {
                   <div class="x_content">
 <?php if ( empty( $user_sources ) ) : ?>
                     <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?php echo get_pageinfo( 'page_name' ); ?>">
+                      <input type="hidden" name="from_page" value="<?php echo __ctl( 'libs' )::get_pageinfo( 'page_name' ); ?>">
                       <?php wp_nonce_field( 'initial-setting_' . get_current_user_id() ); ?>
                       <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', 'wpgentelella' ); ?></p>
                       <div class="item form-group">

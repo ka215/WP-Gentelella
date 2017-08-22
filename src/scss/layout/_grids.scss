@@ -1,0 +1,32 @@
+/* Layout Grids */
+.left_col {
+  background: $sidebar_bg;
+}
+.nav-md .container.body .col-md-3.left_col, 
+.nav-md .container.body .col-md-3.left_col.menu_fixed {
+  box-shadow: 1px 0px 2px $navi_menu_border; /* vertical downward as the height of the top navi */
+}
+.nav-sm .container.body .col-md-3.left_col {
+  min-height: 100%;
+  width: 70px;
+  padding: 0;
+  z-index: $zi_sidebar;
+  position: absolute;
+  box-shadow: 1px 0px 2px $navi_menu_border; /* vertical downward as the height of the top navi */
+}
+.nav-sm .container.body .col-md-3.left_col.menu_fixed {
+  position: fixed;
+  height: 100%;
+}
+.nav-sm .container.body .col-md-3.left_col .mCSB_container,
+.nav-sm .container.body .col-md-3.left_col .mCustomScrollBox {
+  overflow: visible;
+}
+.nav-sm .hidden-small {
+  visibility: hidden;
+}
+.nav-sm .container.body .right_col {
+  padding: 10px 20px;
+  margin-left: 70px;
+  z-index: $zi_right_col;
+}
