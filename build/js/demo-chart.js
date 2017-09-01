@@ -4072,12 +4072,13 @@ function init_CanvasJS() {
           interval: .2,
           interlacedColor: "#F5F5F5",
           gridColor: "#D7D7D7",      
-          tickColor: "#D7D7D7"								
+          tickColor: "#D7D7D7"	
         },
         theme: "theme2",
-          toolTip:{
-            shared: true
-          },
+        backgroundColor: "transparent",
+        toolTip:{
+          shared: true
+        },
         legend:{
           verticalAlign: "bottom",
           horizontalAlign: "center",
@@ -4182,6 +4183,7 @@ function init_CanvasJS() {
       legend: {
         verticalAlign: "bottom"
       },
+      backgroundColor: "transparent",
       data: [
       {        
         type: "bar",  
@@ -4237,6 +4239,7 @@ function init_CanvasJS() {
           horizontalAlign: 'left'
         },
         animationEnabled: true,
+        backgroundColor: "transparent",
         data: [
         {
           type: "doughnut",
@@ -4266,6 +4269,7 @@ function init_CanvasJS() {
           verticalAlign: "bottom",
           horizontalAlign: "center"
         },
+        backgroundColor: "transparent",
         data: [
           {
             type: "pie",

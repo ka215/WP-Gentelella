@@ -365,6 +365,15 @@ $(document).ready(function() {
     });
   });
   
+  $('.x_panel').on({
+    'mouseenter': function(){
+      $(this).find('.panel_toolbox').removeAttr('hidden');
+    },
+    'mouseleave': function(){
+      $(this).find('.panel_toolbox').attr('hidden', 'hidden');
+    }
+  });
+  
   
 });
 /**

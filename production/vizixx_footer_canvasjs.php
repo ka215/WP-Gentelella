@@ -17,40 +17,40 @@
         <div class="modal-content">
           <div class="modal-header">
             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span class="fa fa-close" aria-hidden="true"></span></button>
-            <h4 class="modal-title">Register Widget</h4>
+            <h4 class="modal-title"><?= __('Register Widget') ?></h4>
           </div>
           <div class="modal-body">
-            <p>Initialize the new widget to be added.</p>
+            <p><?= __('Initialize the new widget to be added.') ?></p>
             <form class="form-horizontal form-label-left">
               <div class="form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Widget Title</label>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12"><?= __('Widget Title') ?></label>
                 <div class="col-md-9 col-sm-9 col-xs-12">
-                  <input type="text" class="form-control" placeholder="Widget Title">
+                  <input type="text" class="form-control" placeholder="<?= __('Widget Title') ?>">
                 </div>
               </div>
               <div class="form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Widget Type</label>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12"><?= __('Widget Type') ?></label>
                 <div class="col-md-9 col-sm-9 col-xs-12">
                   <select class="form-control">
-                    <option value="" >Choose Type</option>
-                    <option value="1">Table</option>
-                    <option value="2">Line Graph</option>
-                    <option value="3">Bar Graph</option>
-                    <option value="4">Pie Chart</option>
+                    <option value="" ><?= __('Choose Type') ?></option>
+                    <option value="1"><?= __('Table') ?></option>
+                    <option value="2"><?= __('Line Graph') ?></option>
+                    <option value="3"><?= __('Bar Graph') ?></option>
+                    <option value="4"><?= __('Pie Chart') ?></option>
                   </select>
                 </div>
               </div>
               <div class="form-group">
-                <label class="control-label col-md-3 col-sm-3 col-xs-12">Target Data</label>
+                <label class="control-label col-md-3 col-sm-3 col-xs-12"><?= __('Target Data') ?></label>
                 <div class="col-md-9 col-sm-9 col-xs-12">
-                  <input type="text" class="form-control" placeholder="Please fill out this field">
+                  <input type="text" class="form-control" placeholder="<?= __('Please fill out this field') ?>">
                 </div>
               </div>
-              <p>more...</p>
+              <p><?= __('more...') ?></p>
             </form>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal"><?= __('Cancel') ?></button>
           </div>
         </div>
       </div>
@@ -118,4 +118,4 @@
 
     <!-- Custom Theme Scripts -->
     <script src="<?= $custom_theme_script ?>"></script>
-    <script src="../build/js/demo-chart.js"></script>
+    <script src="<?= $demo_chart_script   ?>"></script>
