@@ -388,7 +388,25 @@ $(document).ready(function() {
   }
   
   $('#registerWidget').on('show.bs.modal', function(e) {
+    // Initialized items on modal
+    $(this).find('select option:selected').prop('selected', false);
+    $('#target-sensors .alert:not([role="template"])').remove();
+    $('#no-selected-sensor').removeAttr('hidden');
+    $('#view-type').prop('disabled', true );
+    $('p.helper-text[id^="desc-"]').attr('hidden','hidden');
+    $('.toggled-option').hide();
+    $('#in-realtime').iCheck('disable');
+    
+    // Initialized plugins on modal
     $(".colorpicker-component").colorpicker();
+    $("#text-to-match").select2({
+      placeholder: "Enter text to match",
+      width: '100%',
+      tags: !0,
+      tokenSeparators: [',', ' ', ';', "\n"],
+      allowClear: !0,
+    })
+    
     var presetWidget = $.trim( $(e.relatedTarget).text() );
     $(this).find('#view-type> option').each(function(){
       if ( presetWidget === $.trim( $(this).text() ) ) {
@@ -434,20 +452,37 @@ $(document).ready(function() {
   });
   
   $('button[id^="add-sensor-"]').on('click', function(e){
+    e.preventDefault();
     var sensors = [], addSensor = "", addSensors = [];
-    $('#target-sensors> .alert').each(function(){
+    $('#target-sensors> .alert:not([role="template"])').each(function(){
       sensors.push( $(this).find('.sensor-name').text() );
     });
     if ( e.target.id === 'add-sensor-list' ) {
       addSensor = $('#sensor-list').val();
       if ( addSensor !== "" ) {
-        addSensors.push( addSensor );
+        if ( addSensor !== "all" ) {
+          addSensors.push( addSensor );
+        } else {
+          $('#sensor-list> option').each(function(){
+            if ( $.inArray( $(this).val(), [ "", "all" ] ) == -1 ) {
+              addSensors.push( $(this).val() );
+            }
+          });
+        }
       }
     } else
     if ( e.target.id === 'add-sensor-search' ) {
       addSensor = $('#result-list').val();
       if ( addSensor !== "" ) {
-        addSensors.push( addSensor );
+        if ( addSensor !== "all" ) {
+          addSensors.push( addSensor );
+        } else {
+          $('#result-list> option').each(function(){
+            if ( $.inArray( $(this).val(), [ "", "all" ] ) == -1 ) {
+              addSensors.push( $(this).val() );
+            }
+          });
+        }
       }
     }
     sensors = sensors.filter( function(x, i, self){
@@ -457,11 +492,16 @@ $(document).ready(function() {
       if ( $.inArray(val, sensors) == -1 ) {
         var template = $('#target-sensors> .alert[role="template"]').clone();
         template.find('.sensor-name').text(val).end().removeAttr('hidden').removeAttr('role');
+        template.find('.colorpicker-component').colorpicker();
         $('#no-selected-sensor').attr('hidden', 'hidden');
         $('#target-sensors').append(template);
       }
     });
     enableViewType();
+    if ( $('#view-type').val() !== "" ) {
+      var type = $('#view-type').val();
+      enableAdvancedSettings( type );
+    }
   });
   
   $(document).on('click', '#target-sensors> .alert button.close', function(){
@@ -494,6 +534,10 @@ $(document).ready(function() {
   
   $('#view-type').on('change', function(e){
     var type = e.target.value;
+    enableAdvancedSettings( type );
+  });
+  
+  function enableAdvancedSettings( type ){
     $('p.helper-text[id^="desc-"]').attr('hidden','hidden');
     $('.toggled-option').hide();
     switch(type){
@@ -560,38 +604,95 @@ $(document).ready(function() {
         
         break;
     }
-    
-    $('#select-data-type> label.btn').on('click', function(e){
-      var dataType = $(this).find('input').val();
-      switch( dataType ) {
-        case 'numric':
-          $('#summary-condition-text').hide();
-          $('#summary-condition-switch').hide();
-          $('#summary-condition-number').show();
-          
-          break;
-        case 'text':
-          $('#summary-condition-number').hide();
-          $('#summary-condition-switch').hide();
-          $('#summary-condition-text').show();
-          
-          break;
-        case 'switch':
-          $('#summary-condition-number').hide();
-          $('#summary-condition-text').hide();
-          $('#summary-condition-switch').show();
-          
-          break;
-        default:
-          $('#summary-condition-number').hide();
-          $('#summary-condition-text').hide();
-          $('#summary-condition-switch').hide();
-          
-      }
+  }
+  
+  $('#select-data-type> label.btn').on('click', function(e){
+    var dataType = $(this).find('input').val();
+    switch( dataType ) {
+      case 'numric':
+        $('#summary-condition-text').hide();
+        $('#summary-condition-switch').hide();
+        $('#summary-condition-number').show();
+        
+        break;
+      case 'text':
+        $('#summary-condition-number').hide();
+        $('#summary-condition-switch').hide();
+        $('#summary-condition-text').show();
+        
+        break;
+      case 'switch':
+        $('#summary-condition-number').hide();
+        $('#summary-condition-text').hide();
+        $('#summary-condition-switch').show();
+        
+        break;
+      default:
+        $('#summary-condition-number').hide();
+        $('#summary-condition-text').hide();
+        $('#summary-condition-switch').hide();
+        
+    }
       
-    });
-    
   });
+  
+  
+  $('#reporting-time').ready(function(){
+    var start = moment().subtract(29, 'days');
+    var end = moment();
+    
+    function cb(start, end) {
+      $('#reporting-time span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+    }
+
+    $('#reporting-time').daterangepicker({
+      startDate: start,
+      endDate: end,
+      timePicker: !0,
+      timePickerIncrement: 1,
+      alwaysShowCalendars: !0,
+      opens: 'center',
+      drops: 'up',
+      ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
+      locale: {
+        format: "MM/DD/YYYY h:mm A"
+      }
+    }, cb);
+
+    cb(start, end);
+
+    $('#reporting-time').on('apply.daterangepicker', function(e, picker) {
+      if ( picker.chosenLabel !== "Custom Range" ) {
+        $('#in-realtime-period').text(picker.chosenLabel);
+        $('#in-realtime').iCheck('enable').iCheck('check');
+        $('#reporting-time').attr('readonly', true);
+      } else {
+        $('#in-realtime-period').text('');
+        $('#in-realtime').iCheck('uncheck').iCheck('disable');
+        $('#reporting-time').attr('readonly', false);
+      }
+
+    });
+
+    $(document).on('ifClicked', '#in-realtime', function(e){
+      if ( $('#in-realtime-period').text() === "" ) {
+        $(this).iCheck('disable');
+        return false;
+      }
+    });
+    $(document).on('ifUnchecked', '#in-realtime', function(e){
+      $('#reporting-time').attr('readonly', false);
+    });
+
+  });
+  
   
   
 });

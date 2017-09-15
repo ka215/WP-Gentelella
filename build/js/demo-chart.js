@@ -1126,8 +1126,16 @@ function init_daterangepicker_reservation() {
     console.log(a.toISOString(), b.toISOString(), c)
   }), $("#reservation-time").daterangepicker({
     timePicker: !0,
-    timePickerIncrement: 30,
+    timePickerIncrement: 15,
     drops: 'up',
+    ranges: {
+      Today: [moment(), moment()],
+      Yesterday: [moment().subtract(1, "days"), moment().subtract(1, "days")],
+      "Last 7 Days": [moment().subtract(6, "days"), moment()],
+      "Last 30 Days": [moment().subtract(29, "days"), moment()],
+      "This Month": [moment().startOf("month"), moment().endOf("month")],
+      "Last Month": [moment().subtract(1, "month").startOf("month"), moment().subtract(1, "month").endOf("month")]
+    },
     locale: {
       format: "MM/DD/YYYY h:mm A"
     }
@@ -4181,11 +4189,12 @@ function init_CanvasJS() {
 
     var barChart = new CanvasJS.Chart("barChartContainer",
     {
+/*
       title:{
         text: ""
       },
       axisY2: {
-        title:"Production (bbl/day)"
+        title:""
       },
       animationEnabled: true,
       axisY: {
@@ -4243,6 +4252,68 @@ function init_CanvasJS() {
           barChart.render();
         }
       }
+*/
+      animationEnabled: true,
+      title:{
+        text: "",
+        fontSize: 30
+      },
+      toolTip: {
+	  shared: true
+      },
+      axisY: {
+        title: "Sensor's raw data"
+      },
+      backgroundColor: "transparent",
+      data: [ 
+      {
+        type: "column",	
+        name: "Sensor1 raw data",
+        legendText: "Sensor1",
+        showInLegend: true, 
+        dataPoints:[
+          {label: "15/9 07:30", y: 262},
+          {label: "15/9 08:00", y: 211},
+          {label: "15/9 08:30", y: 175},
+          {label: "15/9 09:00", y: 137},
+          {label: "15/9 09:30", y: 115},
+          {label: "15/9 10:00", y: 104},
+          {label: "15/9 10:30", y: 97.8},
+          {label: "15/9 11:00", y: 60},
+          {label: "15/9 11:30", y: 23.3},
+          {label: "15/9 12:00", y: 20.4}
+        ]
+      },
+      {
+        type: "column",	
+        name: "Sensor2 raw data",
+        legendText: "Sensor2",
+        //axisYType: "secondary",
+        showInLegend: true,
+        dataPoints:[
+          {label: "15/9 07:30", y: 111},
+          {label: "15/9 08:00", y: 25},
+          {label: "15/9 08:30", y: 36},
+          {label: "15/9 09:00", y: 42},
+          {label: "15/9 09:30", y: 26},
+          {label: "15/9 10:00", y: 27},
+          {label: "15/9 10:30", y: 31},
+          {label: "15/9 11:00", y: 102},
+          {label: "15/9 11:30", y: 103},
+          {label: "15/9 12:00", y: 43}
+        ]
+      }],
+      legend:{
+        cursor:"pointer",
+        itemclick: function(e){
+          if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+            e.dataSeries.visible = false;
+          } else {
+            e.dataSeries.visible = true;
+          }
+          barChart.render();
+        }
+      },
     });
 
 /*
@@ -4293,12 +4364,12 @@ function init_CanvasJS() {
             toolTipContent: "{name}: <strong>{y}%</strong>",
             indexLabel: "{name} {y}%",
             dataPoints: [
-              {  y: 35, name: "Health", exploded: true},
-              {  y: 20, name: "Finance"},
-              {  y: 18, name: "Career"},
-              {  y: 15, name: "Education"},
-              {  y: 5,  name: "Family"},
-              {  y: 7,  name: "Real Estate"}
+              {  y: 35, name: "Sensor3", exploded: true},
+              {  y: 20, name: "Sensor5"},
+              {  y: 18, name: "Sensor1"},
+              {  y: 15, name: "Sensor4"},
+              {  y: 5,  name: "Sensor2"},
+              {  y: 7,  name: "Sensor6"}
             ]
           }
         ]
