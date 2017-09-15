@@ -1127,6 +1127,7 @@ function init_daterangepicker_reservation() {
   }), $("#reservation-time").daterangepicker({
     timePicker: !0,
     timePickerIncrement: 30,
+    drops: 'up',
     locale: {
       format: "MM/DD/YYYY h:mm A"
     }
@@ -1626,9 +1627,22 @@ function init_DataTables() {
           a()
         }
       }
-    }(), $("#datatable").dataTable(), $("#datatable-keytable").DataTable({
+    }(), $("#datatable").dataTable({
+      autoWiidth: false,
+      paging: false,
+      //paginType: "numbers",
+      searching: false,
+      lengthChange: false,
+      ordering: false,
+      info: false,
+      scrollY: 300,
+      columnDefs: [
+        { targets: 0, width: "120px" }
+      ]
+    }), $("#datatable-keytable").DataTable({
       keys: !0
-    }), $("#datatable-responsive").DataTable(), $("#datatable-scroller").DataTable({
+    }), $("#datatable-responsive").DataTable({
+    }), $("#datatable-scroller").DataTable({
       ajax: "js/datatables/json/scroller-demo.json",
       deferRender: !0,
       scrollY: 380,
@@ -4231,6 +4245,7 @@ function init_CanvasJS() {
       }
     });
 
+/*
     var doughnutChart = new CanvasJS.Chart("doughnutChartContainer",
       {
       title:{
@@ -4256,6 +4271,7 @@ function init_CanvasJS() {
         }]
       }
     );
+*/
 
     var pieChart = new CanvasJS.Chart("pieChartContainer",
       {
@@ -4291,7 +4307,7 @@ function init_CanvasJS() {
 
     lineChart.render();
     barChart.render();
-    doughnutChart.render();
+    //doughnutChart.render();
     pieChart.render();
   }
 }! function(a, b) {

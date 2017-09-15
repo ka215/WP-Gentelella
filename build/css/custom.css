@@ -1,94 +1,3 @@
-.daterangepicker .ranges li {
-  color: #73879C; }
-  .daterangepicker .ranges li.active, .daterangepicker .ranges li:hover {
-    background: #536A7F;
-    border: 1px solid #536A7F;
-    color: #fff; }
-.daterangepicker .input-mini {
-  background-color: #eee;
-  border: 1px solid #ccc;
-  box-shadow: none !important; }
-  .daterangepicker .input-mini.active {
-    border: 1px solid #ccc; }
-.daterangepicker select.monthselect, .daterangepicker select.yearselect, .daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {
-  font-size: 12px;
-  padding: 1px;
-  height: auto;
-  margin: 0;
-  cursor: default;
-  height: 30px;
-  border: 1px solid #ADB2B5;
-  line-height: 30px;
-  border-radius: 0px !important; }
-.daterangepicker select.monthselect {
-  margin-right: 2%; }
-.daterangepicker td.in-range {
-  background: #E4E7EA;
-  color: #73879C; }
-.daterangepicker td.active, .daterangepicker td.active:hover {
-  background-color: #536A7F;
-  color: #fff; }
-.daterangepicker th.available:hover {
-  background: #eee;
-  color: #34495E; }
-.daterangepicker:before, .daterangepicker:after {
-  content: none; }
-.daterangepicker .calendar.single {
-  margin: 0 0 4px 0; }
-  .daterangepicker .calendar.single .calendar-table {
-    width: 224px;
-    padding: 0 0 4px 0 !important; }
-    .daterangepicker .calendar.single .calendar-table thead tr:first-child th {
-      padding: 8px 5px; }
-    .daterangepicker .calendar.single .calendar-table thead th {
-      border-radius: 0; }
-.daterangepicker.picker_1 {
-  color: #fff;
-  background: #34495E; }
-  .daterangepicker.picker_1 .calendar-table {
-    background: #34495E; }
-    .daterangepicker.picker_1 .calendar-table thead tr {
-      background: #213345; }
-    .daterangepicker.picker_1 .calendar-table thead tr:first-child {
-      background: #1ABB9C; }
-    .daterangepicker.picker_1 .calendar-table td.off {
-      background: #34495E;
-      color: #999; }
-    .daterangepicker.picker_1 .calendar-table td.available:hover {
-      color: #34495E; }
-.daterangepicker.picker_2 .calendar-table thead tr {
-  color: #1ABB9C; }
-.daterangepicker.picker_2 .calendar-table thead tr:first-child {
-  color: #73879C; }
-.daterangepicker.picker_3 .calendar-table thead tr:first-child {
-  color: #fff;
-  background: #1ABB9C; }
-.daterangepicker.picker_4 .calendar-table thead tr:first-child {
-  color: #fff;
-  background: #34495E; }
-.daterangepicker.picker_4 .calendar-table td, .daterangepicker.picker_4 .calendar-table td.off {
-  background: #ECF0F1;
-  border: 1px solid #fff;
-  border-radius: 0; }
-.daterangepicker.picker_4 .calendar-table td.active {
-  background: #34495E; }
-
-.calendar-exibit .show-calendar {
-  float: none;
-  display: block;
-  position: relative;
-  background-color: #fff;
-  border: 1px solid #ccc;
-  margin-bottom: 20px;
-  border: 1px solid rgba(0, 0, 0, 0.15);
-  overflow: hidden; }
-  .calendar-exibit .show-calendar .calendar {
-    margin: 0 0 4px 0; }
-  .calendar-exibit .show-calendar.picker_1 {
-    background: #34495E; }
-.calendar-exibit .calendar-table {
-  padding: 0 0 4px 0; }
-
 @charset "UTF-8";
 /* Font */
 /* Color Scheme */
@@ -141,6 +50,10 @@
 /* 4000 */
 /* 1050 */
 /* Layout Grids */
+html {
+  overflow-x: hidden;
+  overflow-y: auto; }
+
 .left_col {
   background: #F2F2F2; }
 
@@ -175,7 +88,7 @@
   visibility: hidden; }
 
 .nav-sm .container.body .right_col {
-  padding: 10px 20px;
+  padding: 20px 20px 10px;
   margin-left: 70px;
   z-index: 2; }
 
@@ -551,7 +464,7 @@ body .container.body .right_col {
 body {
   color: #0C0C0E;
   background: #F2F2F2;
-  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", "Hiragino Kaku Gothic ProN", "繝偵Λ繧ｮ繝手ｧ偵ざ ProN W3", Meiryo, "繝｡繧､繝ｪ繧ｪ", sans-serif;
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3", Meiryo, "メイリオ", sans-serif;
   font-size: 13px;
   font-weight: 400;
   line-height: 1.471; }
@@ -612,6 +525,18 @@ table.no-margin .progress {
 .main_content {
   padding: 10px 20px; }
 
+.full_col {
+  margin: 0 auto;
+  padding: 30px;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  z-index: 2; }
+
+.nav-sm .container.body .full_col {
+  margin-left: 70px;
+  width: calc(100% - 100px); }
+
 .col-md-55 {
   width: 50%;
   margin-bottom: 10px; }
@@ -646,31 +571,40 @@ table.no-margin .progress {
   margin-right: -10px;
   margin-left: -10px; }
 
+/* for Flexbox */
 .row-flex, .row-flex > div[class*="col-"] {
   display: -ms-flexbox;
   display: flex;
-  -ms-flex: 1 1 auto;
-      flex: 1 1 auto;
+  -ms-flex: 0 0 auto;
+      flex: 0 0 auto;
   margin-left: -16px;
-  margin-right: auto;
-  width: calc(100% + 30px); }
+  margin-right: auto; }
 
 .row-flex-wrap {
-  -ms-flex-flow: row wrap;
-      flex-flow: row wrap;
+  -ms-flex-direction: row;
+      flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
   -ms-flex-line-pack: start;
       align-content: flex-start;
   -ms-flex: 0;
       flex: 0; }
+
+.row-flex {
+  width: calc(100% + 30px); }
 
 .row-flex > div[class*="col-"],
 .container-flex > div[class*="col-"] {
   margin: -.2px;
   /* hack adjust for wrapping */ }
 
-.container-flex > div[class*="col-"] div,
-.row-flex > div[class*="col-"] div {
+.container-flex > div[class*="col-"] div.flex-col,
+.row-flex > div[class*="col-"] div.flex-col {
   width: 100%; }
+
+.flex-row {
+  -ms-flex-direction: column;
+      flex-direction: column; }
 
 .flex-col {
   display: -ms-flexbox;
@@ -686,6 +620,12 @@ table.no-margin .progress {
   display: flex;
   -ms-flex: 2;
       flex: 2; }
+
+.flex-center {
+  -ms-flex-pack: center;
+      justify-content: center;
+  -ms-flex-align: center;
+      align-items: center; }
 
 @media (min-width: 480px) {
   .row-flex {
@@ -780,6 +720,7 @@ a:hover, a:focus {
   display: block;
   cursor: pointer;
   background-color: #F2F2F2;
+  border-right: 3px solid transparent;
   transition: background-color 0.2s linear;
   -webkit-transition: background-color 0.2s linear; }
 
@@ -1048,6 +989,12 @@ footer {
   bottom: 0px;
   width: 100%; }
 
+.full_col + footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  width: calc(100% - 70px); }
+
 @media (min-width: 768px) {
   .footer_fixed footer {
     margin-left: 0; } }
@@ -1193,7 +1140,11 @@ h2 {
   /* border-bottom: 2px solid $panel_border; */
   padding: 1px 5px 6px;
   /* margin-bottom: 10px; */
-  color: #0C0C0E; }
+  color: #0C0C0E;
+  z-index: 4; }
+
+.flex-col .x_title {
+  width: 100%; }
 
 .x_title .filter {
   width: 40%;
@@ -1219,7 +1170,8 @@ h2 {
   width: 100%;
   float: left;
   clear: both;
-  margin-top: 5px; }
+  margin-top: 5px;
+  z-index: 2; }
 
 .x_content h4 {
   font-size: 16px;
@@ -2011,18 +1963,22 @@ h4.graph_title {
 .tile-stats {
   position: relative;
   display: block;
-  margin-bottom: 12px;
-  border: 1px solid #E4E4E4;
+  /* margin-bottom: 12px; */
+  margin: 4px 0;
+  width: 100%;
+  border: 2px dashed #D8D8D8;
   -webkit-border-radius: 5px;
   overflow: hidden;
-  padding-bottom: 5px;
+  /* padding-bottom: 5px; */
+  padding: 7px;
   -webkit-background-clip: padding-box;
   -moz-border-radius: 5px;
   -moz-background-clip: padding;
   border-radius: 5px;
   background-clip: padding-box;
-  background: #FFFFFF;
-  transition: all 300ms ease-in-out; }
+  background: #F2F2F2;
+  transition: all 300ms ease-in-out;
+  z-index: 5; }
 
 .tile-stats:hover .icon i {
   animation-name: tansformAnimation;
@@ -2045,11 +2001,24 @@ h4.graph_title {
 .tile-stats .icon {
   width: 20px;
   height: 20px;
-  color: #BAB8B8;
+  color: #909090;
   position: absolute;
   right: 53px;
   top: 22px;
   z-index: 1; }
+
+.tile-stats .switch {
+  margin: 0 auto;
+  padding: 0;
+  font-size: 50px;
+  color: #909090;
+  text-align: center; }
+
+.tile-stats .switch.on {
+  color: #447292; }
+
+.tile-stats .switch.off {
+  color: #BDC3C7; }
 
 .tile-stats .icon i {
   margin: 0;
@@ -2058,8 +2027,9 @@ h4.graph_title {
   vertical-align: bottom;
   padding: 0; }
 
-.tile-stats .count {
-  font-size: 38px;
+.tile-stats .count, .tile-stats .raw-text {
+  margin: 10px 0 15px;
+  font-size: 23px;
   font-weight: bold;
   line-height: 1.65857; }
 
@@ -2070,11 +2040,16 @@ h4.graph_title {
   z-index: 5;
   padding: 0; }
 
-.tile-stats h3 {
-  color: #BAB8B8; }
+.tile-stats h3, .tile-stats h4 {
+  color: #909090; }
+
+.tile-stats h4 {
+  font-size: 18px;
+  margin-bottom: 0; }
 
 .tile-stats p {
-  margin-top: 5px;
+  color: #505050;
+  margin-top: 10px;
   font-size: 12px; }
 
 .tile-stats > .dash-box-footer {
@@ -2683,41 +2658,53 @@ span.tag a {
 /* *********  /form tags input  **************************** */
 /** Tabs **/
 ul.bar_tabs {
+  position: relative;
   overflow: visible;
-  background: #F5F7FA;
   height: 25px;
   margin: 21px 0 14px;
   padding-left: 14px;
+  padding-right: 14px;
   position: relative;
   z-index: 1;
   width: 100%;
-  border-bottom: 1px solid #E6E9ED; }
+  border-bottom: 1px solid rgba(166, 166, 166, 0.4); }
 
 ul.bar_tabs > li {
-  border: 1px solid #E6E9ED;
-  color: #333 !important;
+  position: relative;
+  top: 0;
+  border: 1px solid rgba(166, 166, 166, 0.4);
+  color: #0C0C0E !important;
   margin-top: -17px;
   margin-left: 8px;
-  background: #fff;
+  background: #F2F2F2;
   border-bottom: none;
-  border-radius: 4px 4px 0 0; }
+  border-radius: 4px 4px 0 0;
+  width: calc(50% - 10px);
+  z-index: 2;
+  box-shadow: none; }
 
 ul.bar_tabs > li.active {
-  border-right: 6px solid #D3D6DA;
+  top: 1px;
   border-top: 0;
-  margin-top: -15px; }
+  margin-top: -16px; }
 
 ul.bar_tabs > li a {
   padding: 10px 17px;
-  background: #F5F7FA;
+  background: #E6E6E6;
   margin: 0;
-  border-top-right-radius: 0; }
+  /* border-top-right-radius: 0; */
+  border-bottom: 1px solid #E6E6E6; }
 
 ul.bar_tabs > li a:hover {
+  background: #E6E6E6;
   border: 1px solid transparent; }
 
 ul.bar_tabs > li.active a {
-  border-bottom: none; }
+  background-color: #F2F2F2;
+  border-bottom: 1px solid #F2F2F2; }
+
+ul.bar_tabs > li.active a:hover, ul.bar_tabs > li.active a:focus, ul.bar_tabs > li.active a:active {
+  background-color: #F2F2F2; }
 
 ul.bar_tabs.right {
   padding-right: 14px; }
@@ -3368,7 +3355,7 @@ ul.project_files li a i {
  * bootstrap-vertical-tabs - v1.2.1
  * https://dbtek.github.io/bootstrap-vertical-tabs
  * 2014-11-07
- * Copyright (c) 2014 ﾄｰsmail Demirbilek
+ * Copyright (c) 2014 İsmail Demirbilek
  * License: MIT
  */
 .tabs-left, .tabs-right {
@@ -4225,6 +4212,11 @@ ul.verticle_bars li {
   background-color: rgba(231, 76, 60, 0.88);
   border-color: rgba(231, 76, 60, 0.88); }
 
+.alert-default {
+  color: #0C0C0E;
+  background-color: #FCFCFC;
+  border-color: #D0D0D0; }
+
 .ui-pnotify.dark .ui-pnotify-container {
   color: #E9EDEF;
   background-color: rgba(52, 73, 94, 0.88);
@@ -4312,6 +4304,19 @@ ul.notifications {
 
 /** /Copyright **/
 /* Other */
+.guidelines {
+  color: #A6A6A6;
+  margin-bottom: 15px !important; }
+
+.guidelines > .guideline-header {
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 35px; }
+
+.guidelines > .guideline-description {
+  font-size: 14px;
+  color: #A6A6A6; }
+
 .graph-icon {
   width: 100%;
   height: auto;
@@ -4323,6 +4328,28 @@ ul.notifications {
 .modal-content {
   color: #0C0C0E;
   background-color: #F2F2F2; }
+
+.dismissible-list .alert {
+  min-height: 65px;
+  vertical-align: middle;
+  margin-bottom: 5px; }
+  .dismissible-list .alert label {
+    vertical-align: middle;
+    line-height: 30px; }
+  .dismissible-list .alert button {
+    margin-top: 10px; }
+
+.helper-text {
+  padding: 4px 8px;
+  color: #909090; }
+
+.notice-text {
+  line-height: 60px;
+  text-align: center;
+  color: #A8A8A8; }
+
+.toggled-option {
+  display: none; }
 
 /* for CanvasJS */
 .container-flex > div[class*="col-"] div.x_content .canvasjs-chart,
@@ -4343,20 +4370,118 @@ ul.notifications {
   width: auto; }
 
 /* for Material Design */
-.custom-file-control, .form-control, .is-focused .custom-file-control, .is-focused .form-control {
+.bsmd .custom-file-control, .bsmd .form-control, .bsmd .is-focused .custom-file-control, .bsmd .is-focused .form-control {
   background-image: linear-gradient(0deg, #447292 2px, rgba(68, 114, 146, 0) 0), linear-gradient(0deg, rgba(0, 0, 0, 0.26) 1px, transparent 0); }
-
-.btn-primary.active.custom-file-control:focus:before, .btn-primary.active.custom-file-control:hover:before, .btn-primary.active.focus.custom-file-control:before, .btn-primary.custom-file-control:active.focus:before, .btn-primary.custom-file-control:active:focus:before, .btn-primary.custom-file-control:active:hover:before, .btn.btn-primary.active.focus, .btn.btn-primary.active:focus, .btn.btn-primary.active:hover, .btn.btn-primary:active.focus, .btn.btn-primary:active:focus, .btn.btn-primary:active:hover, .open > .btn-primary.dropdown-toggle.custom-file-control:focus:before, .open > .btn-primary.dropdown-toggle.custom-file-control:hover:before, .open > .btn-primary.dropdown-toggle.focus.custom-file-control:before, .open > .btn.btn-primary.dropdown-toggle.focus, .open > .btn.btn-primary.dropdown-toggle:focus, .open > .btn.btn-primary.dropdown-toggle:hover {
+.bsmd .btn-primary.active.custom-file-control:focus:before, .bsmd .btn-primary.active.custom-file-control:hover:before, .bsmd .btn-primary.active.focus.custom-file-control:before, .bsmd .btn-primary.custom-file-control:active.focus:before, .bsmd .btn-primary.custom-file-control:active:focus:before, .bsmd .btn-primary.custom-file-control:active:hover:before, .bsmd .btn.btn-primary.active.focus, .bsmd .btn.btn-primary.active:focus, .bsmd .btn.btn-primary.active:hover, .bsmd .btn.btn-primary:active.focus, .bsmd .btn.btn-primary:active:focus, .bsmd .btn.btn-primary:active:hover, .bsmd .open > .btn-primary.dropdown-toggle.custom-file-control:focus:before, .bsmd .open > .btn-primary.dropdown-toggle.custom-file-control:hover:before, .bsmd .open > .btn-primary.dropdown-toggle.focus.custom-file-control:before, .bsmd .open > .btn.btn-primary.dropdown-toggle.focus, .bsmd .open > .btn.btn-primary.dropdown-toggle:focus, .bsmd .open > .btn.btn-primary.dropdown-toggle:hover {
   color: #447292;
   /* background-color: hsla(0,0%,60%,.4);
   border-color: hsla(0,0%,60%,.4); */ }
-
-.btn-primary.active.custom-file-control:before, .btn-primary.custom-file-control:active:before, .btn-primary.custom-file-control:focus:before, .btn-primary.custom-file-control:hover:before, .btn-primary.focus.custom-file-control:before, .btn.btn-primary.active, .btn.btn-primary.focus, .btn.btn-primary:active, .btn.btn-primary:focus, .btn.btn-primary:hover, .open > .btn-primary.dropdown-toggle.custom-file-control:before, .open > .btn.btn-primary.dropdown-toggle {
+.bsmd .btn-primary.active.custom-file-control:before, .bsmd .btn-primary.custom-file-control:active:before, .bsmd .btn-primary.custom-file-control:focus:before, .bsmd .btn-primary.custom-file-control:hover:before, .bsmd .btn-primary.focus.custom-file-control:before, .bsmd .btn.btn-primary.active, .bsmd .btn.btn-primary.focus, .bsmd .btn.btn-primary:active, .bsmd .btn.btn-primary:focus, .bsmd .btn.btn-primary:hover, .bsmd .open > .btn-primary.dropdown-toggle.custom-file-control:before, .bsmd .open > .btn.btn-primary.dropdown-toggle {
   color: #447292;
   /* background-color: hsla(0,0%,60%,.2);
   border-color: hsla(0,0%,60%,.2); */ }
-
-.btn-primary.custom-file-control:before, .btn.btn-primary {
+.bsmd .btn-primary.custom-file-control:before, .bsmd .btn.btn-primary {
   color: #447292;
   /* background-color: inherit;
   border-color: #ccc; */ }
+
+/* Datatables on Widget */
+.overflow-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow: auto; }
+
+.table-wrapper {
+  position: relative;
+  margin-top: 4px; }
+
+.daterangepicker .ranges li {
+  color: #73879C; }
+  .daterangepicker .ranges li.active, .daterangepicker .ranges li:hover {
+    background: #536A7F;
+    border: 1px solid #536A7F;
+    color: #fff; }
+.daterangepicker .input-mini {
+  background-color: #eee;
+  border: 1px solid #ccc;
+  box-shadow: none !important; }
+  .daterangepicker .input-mini.active {
+    border: 1px solid #ccc; }
+.daterangepicker select.monthselect, .daterangepicker select.yearselect, .daterangepicker select.hourselect, .daterangepicker select.minuteselect, .daterangepicker select.secondselect, .daterangepicker select.ampmselect {
+  font-size: 12px;
+  padding: 1px;
+  height: auto;
+  margin: 0;
+  cursor: default;
+  height: 30px;
+  border: 1px solid #ADB2B5;
+  line-height: 30px;
+  border-radius: 0px !important; }
+.daterangepicker select.monthselect {
+  margin-right: 2%; }
+.daterangepicker td.in-range {
+  background: #E4E7EA;
+  color: #73879C; }
+.daterangepicker td.active, .daterangepicker td.active:hover {
+  background-color: #536A7F;
+  color: #fff; }
+.daterangepicker th.available:hover {
+  background: #eee;
+  color: #34495E; }
+.daterangepicker:before, .daterangepicker:after {
+  content: none; }
+.daterangepicker .calendar.single {
+  margin: 0 0 4px 0; }
+  .daterangepicker .calendar.single .calendar-table {
+    width: 224px;
+    padding: 0 0 4px 0 !important; }
+    .daterangepicker .calendar.single .calendar-table thead tr:first-child th {
+      padding: 8px 5px; }
+    .daterangepicker .calendar.single .calendar-table thead th {
+      border-radius: 0; }
+.daterangepicker.picker_1 {
+  color: #fff;
+  background: #34495E; }
+  .daterangepicker.picker_1 .calendar-table {
+    background: #34495E; }
+    .daterangepicker.picker_1 .calendar-table thead tr {
+      background: #213345; }
+    .daterangepicker.picker_1 .calendar-table thead tr:first-child {
+      background: #1ABB9C; }
+    .daterangepicker.picker_1 .calendar-table td.off {
+      background: #34495E;
+      color: #999; }
+    .daterangepicker.picker_1 .calendar-table td.available:hover {
+      color: #34495E; }
+.daterangepicker.picker_2 .calendar-table thead tr {
+  color: #1ABB9C; }
+.daterangepicker.picker_2 .calendar-table thead tr:first-child {
+  color: #73879C; }
+.daterangepicker.picker_3 .calendar-table thead tr:first-child {
+  color: #fff;
+  background: #1ABB9C; }
+.daterangepicker.picker_4 .calendar-table thead tr:first-child {
+  color: #fff;
+  background: #34495E; }
+.daterangepicker.picker_4 .calendar-table td, .daterangepicker.picker_4 .calendar-table td.off {
+  background: #ECF0F1;
+  border: 1px solid #fff;
+  border-radius: 0; }
+.daterangepicker.picker_4 .calendar-table td.active {
+  background: #34495E; }
+
+.calendar-exibit .show-calendar {
+  float: none;
+  display: block;
+  position: relative;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  overflow: hidden; }
+  .calendar-exibit .show-calendar .calendar {
+    margin: 0 0 4px 0; }
+  .calendar-exibit .show-calendar.picker_1 {
+    background: #34495E; }
+.calendar-exibit .calendar-table {
+  padding: 0 0 4px 0; }
