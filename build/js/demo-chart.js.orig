@@ -1,5 +1,37 @@
-function init_sidebar() {}
-
+function init_sidebar() {
+/*
+  var a = function() {
+    $RIGHT_COL.css("min-height", $(window).height());
+    var a = $BODY.outerHeight(),
+      b = $BODY.hasClass("footer_fixed") ? -10 : $FOOTER.height(),
+      c = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
+      d = a < c ? c : a;
+    d -= $NAV_MENU.height() + b, $RIGHT_COL.css("min-height", d)
+  };
+  $SIDEBAR_MENU.find("a").on("click", function(b) {
+    var c = $(this).parent();
+    c.is(".active") ? (c.removeClass("active active-sm"), $("ul:first", c).slideUp(function() {
+      a()
+    })) : (c.parent().is(".child_menu") ? $BODY.is(".nav-sm") && ($SIDEBAR_MENU.find("li").removeClass("active active-sm"), $SIDEBAR_MENU.find("li ul").slideUp()) : ($SIDEBAR_MENU.find("li").removeClass("active active-sm"), $SIDEBAR_MENU.find("li ul").slideUp()), c.addClass("active"), $("ul:first", c).slideDown(function() {
+      a()
+    }))
+  }), $MENU_TOGGLE.on("click", function() {
+    $BODY.hasClass("nav-md") ? ($SIDEBAR_MENU.find("li.active ul").hide(), $SIDEBAR_MENU.find("li.active").addClass("active-sm").removeClass("active")) : ($SIDEBAR_MENU.find("li.active-sm ul").show(), $SIDEBAR_MENU.find("li.active-sm").addClass("active").removeClass("active-sm")), $BODY.toggleClass("nav-md nav-sm"), a()
+  }), $SIDEBAR_MENU.find('a[href="' + CURRENT_URL + '"]').parent("li").addClass("current-page"), $SIDEBAR_MENU.find("a").filter(function() {
+    return this.href == CURRENT_URL
+  }).parent("li").addClass("current-page").parents("ul").slideDown(function() {
+    a()
+  }).parent().addClass("active"), $(window).smartresize(function() {
+    a()
+  }), a(), $.fn.mCustomScrollbar && $(".menu_fixed").mCustomScrollbar({
+    autoHideScrollbar: !0,
+    theme: "minimal",
+    mouseWheel: {
+      preventDefault: !0
+    }
+  })
+*/
+}
 function countChecked() {
   "all" === checkState && $(".bulk_action input[name='table_records']").iCheck("check"), "none" === checkState && $(".bulk_action input[name='table_records']").iCheck("uncheck");
   var a = $(".bulk_action input[name='table_records']:checked").length;
@@ -10,7 +42,193 @@ function gd(a, b, c) {
   return new Date(a, b - 1, c).getTime()
 }
 
-function init_flot_chart() {}
+function init_flot_chart() {
+  if ("undefined" != typeof $.plot) {
+    console.log("init_flot_chart");
+    for (var a = [
+        [gd(2012, 1, 1), 17],
+        [gd(2012, 1, 2), 74],
+        [gd(2012, 1, 3), 6],
+        [gd(2012, 1, 4), 39],
+        [gd(2012, 1, 5), 20],
+        [gd(2012, 1, 6), 85],
+        [gd(2012, 1, 7), 7]
+      ], b = [
+        [gd(2012, 1, 1), 82],
+        [gd(2012, 1, 2), 23],
+        [gd(2012, 1, 3), 66],
+        [gd(2012, 1, 4), 9],
+        [gd(2012, 1, 5), 119],
+        [gd(2012, 1, 6), 6],
+        [gd(2012, 1, 7), 9]
+      ], d = [], e = [
+        [0, 1],
+        [1, 9],
+        [2, 6],
+        [3, 10],
+        [4, 5],
+        [5, 17],
+        [6, 6],
+        [7, 10],
+        [8, 7],
+        [9, 11],
+        [10, 35],
+        [11, 9],
+        [12, 12],
+        [13, 5],
+        [14, 3],
+        [15, 4],
+        [16, 9]
+      ], f = 0; f < 30; f++) d.push([new Date(Date.today().add(f).days()).getTime(), randNum() + f + f + 10]);
+    var g = {
+        series: {
+          lines: {
+            show: !1,
+            fill: !0
+          },
+          splines: {
+            show: !0,
+            tension: .4,
+            lineWidth: 1,
+            fill: .4
+          },
+          points: {
+            radius: 0,
+            show: !0
+          },
+          shadowSize: 2
+        },
+        grid: {
+          verticalLines: !0,
+          hoverable: !0,
+          clickable: !0,
+          tickColor: "#d5d5d5",
+          borderWidth: 1,
+          color: "#fff"
+        },
+        colors: ["rgba(38, 185, 154, 0.38)", "rgba(3, 88, 106, 0.38)"],
+        xaxis: {
+          tickColor: "rgba(51, 51, 51, 0.06)",
+          mode: "time",
+          tickSize: [1, "day"],
+          axisLabel: "Date",
+          axisLabelUseCanvas: !0,
+          axisLabelFontSizePixels: 12,
+          axisLabelFontFamily: "Verdana, Arial",
+          axisLabelPadding: 10
+        },
+        yaxis: {
+          ticks: 8,
+          tickColor: "rgba(51, 51, 51, 0.06)"
+        },
+        tooltip: !1
+      },
+      h = {
+        grid: {
+          show: !0,
+          aboveData: !0,
+          color: "#3f3f3f",
+          labelMargin: 10,
+          axisMargin: 0,
+          borderWidth: 0,
+          borderColor: null,
+          minBorderMargin: 5,
+          clickable: !0,
+          hoverable: !0,
+          autoHighlight: !0,
+          mouseActiveRadius: 100
+        },
+        series: {
+          lines: {
+            show: !0,
+            fill: !0,
+            lineWidth: 2,
+            steps: !1
+          },
+          points: {
+            show: !0,
+            radius: 4.5,
+            symbol: "circle",
+            lineWidth: 3
+          }
+        },
+        legend: {
+          position: "ne",
+          margin: [0, -25],
+          noColumns: 0,
+          labelBoxBorderColor: null,
+          labelFormatter: function(a, b) {
+            return a + "&nbsp;&nbsp;"
+          },
+          width: 40,
+          height: 1
+        },
+        colors: ["#96CA59", "#3F97EB", "#72c380", "#6f7a8a", "#f7cb38", "#5a8022", "#2c7282"],
+        shadowSize: 0,
+        tooltip: !0,
+        tooltipOpts: {
+          content: "%s: %y.0",
+          xDateFormat: "%d/%m",
+          shifts: {
+            x: -30,
+            y: -50
+          },
+          defaultTheme: !1
+        },
+        yaxis: {
+          min: 0
+        },
+        xaxis: {
+          mode: "time",
+          minTickSize: [1, "day"],
+          timeformat: "%d/%m/%y",
+          min: d[0][0],
+          max: d[20][0]
+        }
+      },
+      i = {
+        series: {
+          curvedLines: {
+            apply: !0,
+            active: !0,
+            monotonicFit: !0
+          }
+        },
+        colors: ["#26B99A"],
+        grid: {
+          borderWidth: {
+            top: 0,
+            right: 0,
+            bottom: 1,
+            left: 1
+          },
+          borderColor: {
+            bottom: "#7F8790",
+            left: "#7F8790"
+          }
+        }
+      };
+    $("#chart_plot_01").length && (console.log("Plot1"), $.plot($("#chart_plot_01"), [a, b], g)), $("#chart_plot_02").length && (console.log("Plot2"), $.plot($("#chart_plot_02"), [{
+      label: "Email Sent",
+      data: d,
+      lines: {
+        fillColor: "rgba(150, 202, 89, 0.12)"
+      },
+      points: {
+        fillColor: "#fff"
+      }
+    }], h)), $("#chart_plot_03").length && (console.log("Plot3"), $.plot($("#chart_plot_03"), [{
+      label: "Registrations",
+      data: e,
+      lines: {
+        fillColor: "rgba(150, 202, 89, 0.12)"
+      },
+      points: {
+        fillColor: "#fff"
+      }
+    }], i))
+  }
+}
 
 function init_starrr() {
   "undefined" != typeof starrr && (console.log("init_starrr"), $(".stars").starrr(), $(".stars-existing").starrr({
@@ -111,15 +329,398 @@ function init_gauge() {
   }
 }
 
-function init_sparklines() {}
+function init_sparklines() {
+  "undefined" != typeof jQuery.fn.sparkline && (console.log("init_sparklines"), $(".sparkline_one").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 4, 5, 6, 3, 5, 4, 5, 4, 5, 4, 3, 4, 5, 6, 7, 5, 4, 3, 5, 6], {
+    type: "bar",
+    height: "125",
+    barWidth: 13,
+    colorMap: {
+      7: "#a1a1a1"
+    },
+    barSpacing: 2,
+    barColor: "#26B99A"
+  }), $(".sparkline_two").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 7, 5, 4, 3, 5, 6], {
+    type: "bar",
+    height: "40",
+    barWidth: 9,
+    colorMap: {
+      7: "#a1a1a1"
+    },
+    barSpacing: 2,
+    barColor: "#26B99A"
+  }), $(".sparkline_three").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 7, 5, 4, 3, 5, 6], {
+    type: "line",
+    width: "200",
+    height: "40",
+    lineColor: "#26B99A",
+    fillColor: "rgba(223, 223, 223, 0.57)",
+    lineWidth: 2,
+    spotColor: "#26B99A",
+    minSpotColor: "#26B99A"
+  }), $(".sparkline11").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 6, 2, 4, 3, 4, 5, 4, 5, 4, 3], {
+    type: "bar",
+    height: "40",
+    barWidth: 8,
+    colorMap: {
+      7: "#a1a1a1"
+    },
+    barSpacing: 2,
+    barColor: "#26B99A"
+  }), $(".sparkline22").sparkline([2, 4, 3, 4, 7, 5, 4, 3, 5, 6, 2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 6], {
+    type: "line",
+    height: "40",
+    width: "200",
+    lineColor: "#26B99A",
+    fillColor: "#ffffff",
+    lineWidth: 3,
+    spotColor: "#34495E",
+    minSpotColor: "#34495E"
+  }), $(".sparkline_bar").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 4, 5, 6, 3, 5], {
+    type: "bar",
+    colorMap: {
+      7: "#a1a1a1"
+    },
+    barColor: "#26B99A"
+  }), $(".sparkline_area").sparkline([5, 6, 7, 9, 9, 5, 3, 2, 2, 4, 6, 7], {
+    type: "line",
+    lineColor: "#26B99A",
+    fillColor: "#26B99A",
+    spotColor: "#4578a0",
+    minSpotColor: "#728fb2",
+    maxSpotColor: "#6d93c4",
+    highlightSpotColor: "#ef5179",
+    highlightLineColor: "#8ba8bf",
+    spotRadius: 2.5,
+    width: 85
+  }), $(".sparkline_line").sparkline([2, 4, 3, 4, 5, 4, 5, 4, 3, 4, 5, 6, 4, 5, 6, 3, 5], {
+    type: "line",
+    lineColor: "#26B99A",
+    fillColor: "#ffffff",
+    width: 85,
+    spotColor: "#34495E",
+    minSpotColor: "#34495E"
+  }), $(".sparkline_pie").sparkline([1, 1, 2, 1], {
+    type: "pie",
+    sliceColors: ["#26B99A", "#ccc", "#75BCDD", "#D66DE2"]
+  }), $(".sparkline_discreet").sparkline([4, 6, 7, 7, 4, 3, 2, 1, 4, 4, 2, 4, 3, 7, 8, 9, 7, 6, 4, 3], {
+    type: "discrete",
+    barWidth: 3,
+    lineColor: "#26B99A",
+    width: "85"
+  }))
+}
 
-function init_autocomplete() {}
+function init_autocomplete() {
+  if ("undefined" != typeof autocomplete) {
+    console.log("init_autocomplete");
+    var a = {
+        AD: "Andorra",
+        A2: "Andorra Test",
+        AE: "United Arab Emirates",
+        AF: "Afghanistan",
+        AG: "Antigua and Barbuda",
+        AI: "Anguilla",
+        AL: "Albania",
+        AM: "Armenia",
+        AN: "Netherlands Antilles",
+        AO: "Angola",
+        AQ: "Antarctica",
+        AR: "Argentina",
+        AS: "American Samoa",
+        AT: "Austria",
+        AU: "Australia",
+        AW: "Aruba",
+        AX: "Åland Islands",
+        AZ: "Azerbaijan",
+        BA: "Bosnia and Herzegovina",
+        BB: "Barbados",
+        BD: "Bangladesh",
+        BE: "Belgium",
+        BF: "Burkina Faso",
+        BG: "Bulgaria",
+        BH: "Bahrain",
+        BI: "Burundi",
+        BJ: "Benin",
+        BL: "Saint Barthélemy",
+        BM: "Bermuda",
+        BN: "Brunei",
+        BO: "Bolivia",
+        BQ: "British Antarctic Territory",
+        BR: "Brazil",
+        BS: "Bahamas",
+        BT: "Bhutan",
+        BV: "Bouvet Island",
+        BW: "Botswana",
+        BY: "Belarus",
+        BZ: "Belize",
+        CA: "Canada",
+        CC: "Cocos [Keeling] Islands",
+        CD: "Congo - Kinshasa",
+        CF: "Central African Republic",
+        CG: "Congo - Brazzaville",
+        CH: "Switzerland",
+        CI: "Côte d’Ivoire",
+        CK: "Cook Islands",
+        CL: "Chile",
+        CM: "Cameroon",
+        CN: "China",
+        CO: "Colombia",
+        CR: "Costa Rica",
+        CS: "Serbia and Montenegro",
+        CT: "Canton and Enderbury Islands",
+        CU: "Cuba",
+        CV: "Cape Verde",
+        CX: "Christmas Island",
+        CY: "Cyprus",
+        CZ: "Czech Republic",
+        DD: "East Germany",
+        DE: "Germany",
+        DJ: "Djibouti",
+        DK: "Denmark",
+        DM: "Dominica",
+        DO: "Dominican Republic",
+        DZ: "Algeria",
+        EC: "Ecuador",
+        EE: "Estonia",
+        EG: "Egypt",
+        EH: "Western Sahara",
+        ER: "Eritrea",
+        ES: "Spain",
+        ET: "Ethiopia",
+        FI: "Finland",
+        FJ: "Fiji",
+        FK: "Falkland Islands",
+        FM: "Micronesia",
+        FO: "Faroe Islands",
+        FQ: "French Southern and Antarctic Territories",
+        FR: "France",
+        FX: "Metropolitan France",
+        GA: "Gabon",
+        GB: "United Kingdom",
+        GD: "Grenada",
+        GE: "Georgia",
+        GF: "French Guiana",
+        GG: "Guernsey",
+        GH: "Ghana",
+        GI: "Gibraltar",
+        GL: "Greenland",
+        GM: "Gambia",
+        GN: "Guinea",
+        GP: "Guadeloupe",
+        GQ: "Equatorial Guinea",
+        GR: "Greece",
+        GS: "South Georgia and the South Sandwich Islands",
+        GT: "Guatemala",
+        GU: "Guam",
+        GW: "Guinea-Bissau",
+        GY: "Guyana",
+        HK: "Hong Kong SAR China",
+        HM: "Heard Island and McDonald Islands",
+        HN: "Honduras",
+        HR: "Croatia",
+        HT: "Haiti",
+        HU: "Hungary",
+        ID: "Indonesia",
+        IE: "Ireland",
+        IL: "Israel",
+        IM: "Isle of Man",
+        IN: "India",
+        IO: "British Indian Ocean Territory",
+        IQ: "Iraq",
+        IR: "Iran",
+        IS: "Iceland",
+        IT: "Italy",
+        JE: "Jersey",
+        JM: "Jamaica",
+        JO: "Jordan",
+        JP: "Japan",
+        JT: "Johnston Island",
+        KE: "Kenya",
+        KG: "Kyrgyzstan",
+        KH: "Cambodia",
+        KI: "Kiribati",
+        KM: "Comoros",
+        KN: "Saint Kitts and Nevis",
+        KP: "North Korea",
+        KR: "South Korea",
+        KW: "Kuwait",
+        KY: "Cayman Islands",
+        KZ: "Kazakhstan",
+        LA: "Laos",
+        LB: "Lebanon",
+        LC: "Saint Lucia",
+        LI: "Liechtenstein",
+        LK: "Sri Lanka",
+        LR: "Liberia",
+        LS: "Lesotho",
+        LT: "Lithuania",
+        LU: "Luxembourg",
+        LV: "Latvia",
+        LY: "Libya",
+        MA: "Morocco",
+        MC: "Monaco",
+        MD: "Moldova",
+        ME: "Montenegro",
+        MF: "Saint Martin",
+        MG: "Madagascar",
+        MH: "Marshall Islands",
+        MI: "Midway Islands",
+        MK: "Macedonia",
+        ML: "Mali",
+        MM: "Myanmar [Burma]",
+        MN: "Mongolia",
+        MO: "Macau SAR China",
+        MP: "Northern Mariana Islands",
+        MQ: "Martinique",
+        MR: "Mauritania",
+        MS: "Montserrat",
+        MT: "Malta",
+        MU: "Mauritius",
+        MV: "Maldives",
+        MW: "Malawi",
+        MX: "Mexico",
+        MY: "Malaysia",
+        MZ: "Mozambique",
+        NA: "Namibia",
+        NC: "New Caledonia",
+        NE: "Niger",
+        NF: "Norfolk Island",
+        NG: "Nigeria",
+        NI: "Nicaragua",
+        NL: "Netherlands",
+        NO: "Norway",
+        NP: "Nepal",
+        NQ: "Dronning Maud Land",
+        NR: "Nauru",
+        NT: "Neutral Zone",
+        NU: "Niue",
+        NZ: "New Zealand",
+        OM: "Oman",
+        PA: "Panama",
+        PC: "Pacific Islands Trust Territory",
+        PE: "Peru",
+        PF: "French Polynesia",
+        PG: "Papua New Guinea",
+        PH: "Philippines",
+        PK: "Pakistan",
+        PL: "Poland",
+        PM: "Saint Pierre and Miquelon",
+        PN: "Pitcairn Islands",
+        PR: "Puerto Rico",
+        PS: "Palestinian Territories",
+        PT: "Portugal",
+        PU: "U.S. Miscellaneous Pacific Islands",
+        PW: "Palau",
+        PY: "Paraguay",
+        PZ: "Panama Canal Zone",
+        QA: "Qatar",
+        RE: "Réunion",
+        RO: "Romania",
+        RS: "Serbia",
+        RU: "Russia",
+        RW: "Rwanda",
+        SA: "Saudi Arabia",
+        SB: "Solomon Islands",
+        SC: "Seychelles",
+        SD: "Sudan",
+        SE: "Sweden",
+        SG: "Singapore",
+        SH: "Saint Helena",
+        SI: "Slovenia",
+        SJ: "Svalbard and Jan Mayen",
+        SK: "Slovakia",
+        SL: "Sierra Leone",
+        SM: "San Marino",
+        SN: "Senegal",
+        SO: "Somalia",
+        SR: "Suriname",
+        ST: "São Tomé and Príncipe",
+        SU: "Union of Soviet Socialist Republics",
+        SV: "El Salvador",
+        SY: "Syria",
+        SZ: "Swaziland",
+        TC: "Turks and Caicos Islands",
+        TD: "Chad",
+        TF: "French Southern Territories",
+        TG: "Togo",
+        TH: "Thailand",
+        TJ: "Tajikistan",
+        TK: "Tokelau",
+        TL: "Timor-Leste",
+        TM: "Turkmenistan",
+        TN: "Tunisia",
+        TO: "Tonga",
+        TR: "Turkey",
+        TT: "Trinidad and Tobago",
+        TV: "Tuvalu",
+        TW: "Taiwan",
+        TZ: "Tanzania",
+        UA: "Ukraine",
+        UG: "Uganda",
+        UM: "U.S. Minor Outlying Islands",
+        US: "United States",
+        UY: "Uruguay",
+        UZ: "Uzbekistan",
+        VA: "Vatican City",
+        VC: "Saint Vincent and the Grenadines",
+        VD: "North Vietnam",
+        VE: "Venezuela",
+        VG: "British Virgin Islands",
+        VI: "U.S. Virgin Islands",
+        VN: "Vietnam",
+        VU: "Vanuatu",
+        WF: "Wallis and Futuna",
+        WK: "Wake Island",
+        WS: "Samoa",
+        YD: "People's Democratic Republic of Yemen",
+        YE: "Yemen",
+        YT: "Mayotte",
+        ZA: "South Africa",
+        ZM: "Zambia",
+        ZW: "Zimbabwe",
+        ZZ: "Unknown or Invalid Region"
+      },
+      b = $.map(a, function(a, b) {
+        return {
+          value: a,
+          data: b
+        }
+      });
+    $("#autocomplete-custom-append").autocomplete({
+      lookup: b
+    })
+  }
+}
 
 function init_autosize() {
   "undefined" != typeof $.fn.autosize && autosize($(".resizable_textarea"))
 }
 
-function init_parsley() {}
+function init_parsley() {
+/*
+  if ("undefined" != typeof parsley) {
+    console.log("init_parsley"), $("parsley:field:validate", function() {
+      a()
+    }), $("#demo-form .btn").on("click", function() {
+      $("#demo-form").parsley().validate(), a()
+    });
+    var a = function() {
+      !0 === $("#demo-form").parsley().isValid() ? ($(".bs-callout-info").removeClass("hidden"), $(".bs-callout-warning").addClass("hidden")) : ($(".bs-callout-info").addClass("hidden"), $(".bs-callout-warning").removeClass("hidden"))
+    };
+    $("parsley:field:validate", function() {
+      a()
+    }), $("#demo-form2 .btn").on("click", function() {
+      $("#demo-form2").parsley().validate(), a()
+    });
+    var a = function() {
+      !0 === $("#demo-form2").parsley().isValid() ? ($(".bs-callout-info").removeClass("hidden"), $(".bs-callout-warning").addClass("hidden")) : ($(".bs-callout-info").addClass("hidden"), $(".bs-callout-warning").removeClass("hidden"))
+    };
+    try {
+      hljs.initHighlightingOnLoad()
+    } catch (a) {}
+  }
+*/
+}
 
 function onAddTag(a) {
   alert("Added a tag: " + a)
@@ -164,7 +765,102 @@ function init_wysiwyg() {
   }), window.prettyPrint, prettyPrint())
 }
 
-function init_cropper() {}
+function init_cropper() {
+  if ("undefined" != typeof $.fn.cropper) {
+    console.log("init_cropper");
+    var a = $("#image"),
+      b = $("#download"),
+      c = $("#dataX"),
+      d = $("#dataY"),
+      e = $("#dataHeight"),
+      f = $("#dataWidth"),
+      g = $("#dataRotate"),
+      h = $("#dataScaleX"),
+      i = $("#dataScaleY"),
+      j = {
+        aspectRatio: 16 / 9,
+        preview: ".img-preview",
+        crop: function(a) {
+          c.val(Math.round(a.x)), d.val(Math.round(a.y)), e.val(Math.round(a.height)), f.val(Math.round(a.width)), g.val(a.rotate), h.val(a.scaleX), i.val(a.scaleY)
+        }
+      };
+    $('[data-toggle="tooltip"]').tooltip(), a.on({
+      "build.cropper": function(a) {
+        console.log(a.type)
+      },
+      "built.cropper": function(a) {
+        console.log(a.type)
+      },
+      "cropstart.cropper": function(a) {
+        console.log(a.type, a.action)
+      },
+      "cropmove.cropper": function(a) {
+        console.log(a.type, a.action)
+      },
+      "cropend.cropper": function(a) {
+        console.log(a.type, a.action)
+      },
+      "crop.cropper": function(a) {
+        console.log(a.type, a.x, a.y, a.width, a.height, a.rotate, a.scaleX, a.scaleY)
+      },
+      "zoom.cropper": function(a) {
+        console.log(a.type, a.ratio)
+      }
+    }).cropper(j), $.isFunction(document.createElement("canvas").getContext) || $('button[data-method="getCroppedCanvas"]').prop("disabled", !0), "undefined" == typeof document.createElement("cropper").style.transition && ($('button[data-method="rotate"]').prop("disabled", !0), $('button[data-method="scale"]').prop("disabled", !0)), "undefined" == typeof b[0].download && b.addClass("disabled"), $(".docs-toggles").on("change", "input", function() {
+      var e, f, b = $(this),
+        c = b.attr("name"),
+        d = b.prop("type");
+      a.data("cropper") && ("checkbox" === d ? (j[c] = b.prop("checked"), e = a.cropper("getCropBoxData"), f = a.cropper("getCanvasData"), j.built = function() {
+        a.cropper("setCropBoxData", e), a.cropper("setCanvasData", f)
+      }) : "radio" === d && (j[c] = b.val()), a.cropper("destroy").cropper(j))
+    }), $(".docs-buttons").on("click", "[data-method]", function() {
+      var e, f, c = $(this),
+        d = c.data();
+      if (!c.prop("disabled") && !c.hasClass("disabled") && a.data("cropper") && d.method) {
+        if (d = $.extend({}, d), "undefined" != typeof d.target && (e = $(d.target), "undefined" == typeof d.option)) try {
+          d.option = JSON.parse(e.val())
+        } catch (a) {
+          console.log(a.message)
+        }
+        switch (f = a.cropper(d.method, d.option, d.secondOption), d.method) {
+          case "scaleX":
+          case "scaleY":
+            $(this).data("option", -d.option);
+            break;
+          case "getCroppedCanvas":
+            f && ($("#getCroppedCanvasModal").modal().find(".modal-body").html(f), b.hasClass("disabled") || b.attr("href", f.toDataURL()))
+        }
+        if ($.isPlainObject(f) && e) try {
+          e.val(JSON.stringify(f))
+        } catch (a) {
+          console.log(a.message)
+        }
+      }
+    }), $(document.body).on("keydown", function(b) {
+      if (a.data("cropper") && !(this.scrollTop > 300)) switch (b.which) {
+        case 37:
+          b.preventDefault(), a.cropper("move", -1, 0);
+          break;
+        case 38:
+          b.preventDefault(), a.cropper("move", 0, -1);
+          break;
+        case 39:
+          b.preventDefault(), a.cropper("move", 1, 0);
+          break;
+        case 40:
+          b.preventDefault(), a.cropper("move", 0, 1)
+      }
+    });
+    var m, k = $("#inputImage"),
+      l = window.URL || window.webkitURL;
+    l ? k.change(function() {
+      var c, b = this.files;
+      a.data("cropper") && b && b.length && (c = b[0], /^image\/\w+$/.test(c.type) ? (m = l.createObjectURL(c), a.one("built.cropper", function() {
+        l.revokeObjectURL(m)
+      }).cropper("reset").cropper("replace", m), k.val("")) : window.alert("Please choose an image file."))
+    }) : k.prop("disabled", !0).parent().addClass("disabled")
+  }
+}
 
 function init_knob() {
   if ("undefined" != typeof $.fn.knob) {
@@ -962,15 +1658,6 @@ function init_DataTables() {
       scroller: !0
     }), $("#datatable-fixed-header").DataTable({
       fixedHeader: !0
-    }), $("#groupable-sensors").DataTable({
-      autoWidth: !1,
-      scrollY: '50vh',
-      scrollCollapse: !0,
-      paging: !1,
-      ordering: !1,
-      info: !0,
-      fixedHeader: !0,
-      select: !0
     });
     var b = $("#datatable-checkbox");
     b.dataTable({
@@ -1436,12 +2123,14 @@ function init_echarts() {
       var b = echarts.init(document.getElementById("mainb"), a);
       b.setOption({
         title: {
+          text: "Graph title",
+          subtext: "Graph Sub-text"
         },
         tooltip: {
           trigger: "axis"
         },
         legend: {
-          data: ["Sensor 1", "Sensor 2"]
+          data: ["sales", "purchases"]
         },
         toolbox: {
           show: !1
@@ -1449,42 +2138,42 @@ function init_echarts() {
         calculable: !1,
         xAxis: [{
           type: "category",
-          data: ["09/23 00:00", "00:15", "00:30", "00:45", "01:00", "01:15", "01:30", "01:45", "02:00", "02:15", "02:30", "02:45"]
+          data: ["1?", "2?", "3?", "4?", "5?", "6?", "7?", "8?", "9?", "10?", "11?", "12?"]
         }],
         yAxis: [{
           type: "value"
         }],
         series: [{
-          name: "Sensor 1",
+          name: "sales",
           type: "bar",
           data: [2, 4.9, 7, 23.2, 25.6, 76.7, 135.6, 162.2, 32.6, 20, 6.4, 3.3],
           markPoint: {
             data: [{
               type: "max",
-              name: "something"
+              name: "???"
             }, {
               type: "min",
-              name: "something"
+              name: "???"
             }]
           },
           markLine: {
             data: [{
               type: "average",
-              name: "value"
+              name: "???"
             }]
           }
         }, {
-          name: "Sensor 2",
+          name: "purchases",
           type: "bar",
           data: [2.6, 5.9, 9, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6, 2.3],
           markPoint: {
             data: [{
-              name: "max",
+              name: "sales",
               value: 182.2,
               xAxis: 7,
               yAxis: 183
             }, {
-              name: "min",
+              name: "purchases",
               value: 2.3,
               xAxis: 11,
               yAxis: 3
@@ -1493,7 +2182,7 @@ function init_echarts() {
           markLine: {
             data: [{
               type: "average",
-              name: "value"
+              name: "???"
             }]
           }
         }]
@@ -1735,8 +2424,8 @@ function init_echarts() {
       var f = echarts.init(document.getElementById("echart_line"), a);
       f.setOption({
         title: {
-          text: "",
-          subtext: ""
+          text: "Line Graph",
+          subtext: "Subtitle"
         },
         tooltip: {
           trigger: "axis"
@@ -1744,10 +2433,10 @@ function init_echarts() {
         legend: {
           x: 220,
           y: 40,
-          data: ["Sensor 1", "Sensor 2", "Sensor 3"]
+          data: ["Intent", "Pre-order", "Deal"]
         },
         toolbox: {
-/*          show: !0,
+          show: !0,
           feature: {
             magicType: {
               show: !0,
@@ -1768,18 +2457,18 @@ function init_echarts() {
               title: "Save Image"
             }
           }
-*/        },
+        },
         calculable: !0,
         xAxis: [{
           type: "category",
           boundaryGap: !1,
-          data: ["09/23 00:00", "00:30", "01:00", "01:30", "02:00", "02:30", "03:00"]
+          data: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
         }],
         yAxis: [{
           type: "value"
         }],
         series: [{
-          name: "value A",
+          name: "Deal",
           type: "line",
           smooth: !0,
           itemStyle: {
@@ -1791,7 +2480,7 @@ function init_echarts() {
           },
           data: [10, 12, 21, 54, 260, 830, 710]
         }, {
-          name: "value B",
+          name: "Pre-order",
           type: "line",
           smooth: !0,
           itemStyle: {
@@ -1803,7 +2492,7 @@ function init_echarts() {
           },
           data: [30, 182, 434, 791, 390, 30, 10]
         }, {
-          name: "value C",
+          name: "Intent",
           type: "line",
           smooth: !0,
           itemStyle: {
@@ -2613,15 +3302,15 @@ function init_echarts() {
       j.setOption({
         tooltip: {
           trigger: "item",
-          formatter: "{b} : {c} ({d}%)"
+          formatter: "{a} <br/>{b} : {c} ({d}%)"
         },
         legend: {
           x: "center",
           y: "bottom",
-          data: ["Sensor 1", "Sensor 2", "Sensor 3", "Sensor 4", "Sensor 5"]
+          data: ["Direct Access", "E-mail Marketing", "Union Ad", "Video Ads", "Search Engine"]
         },
         toolbox: {
-          show: 0,
+          show: !0,
           feature: {
             magicType: {
               show: !0,
@@ -2647,25 +3336,25 @@ function init_echarts() {
         },
         calculable: !0,
         series: [{
-          name: "访Sensor 1",
+          name: "访问来源",
           type: "pie",
           radius: "55%",
           center: ["50%", "48%"],
           data: [{
             value: 335,
-            name: "Sensor 1"
+            name: "Direct Access"
           }, {
             value: 310,
-            name: "Sensor 2"
+            name: "E-mail Marketing"
           }, {
             value: 234,
-            name: "Sensor 3"
+            name: "Union Ad"
           }, {
             value: 135,
-            name: "Sensor 4"
+            name: "Video Ads"
           }, {
             value: 1548,
-            name: "Sensor 5"
+            name: "Search Engine"
           }]
         }]
       });

@@ -1,4 +1,5 @@
 dist
+docs
 nbproject
 npm-debug.log
 node_modules

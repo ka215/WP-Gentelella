@@ -4894,6 +4894,11 @@ ul.notifications {
   display: none;
 }
 /* for ECharts */
+.container-flex> div[class*="col-"] div.x_content .echarts-chart, 
+.row-flex> div[class*="col-"] div.x_content .echarts-chart {
+    width: 100%;
+    min-height: 300px;
+}
 .container-flex>div[class*="col-"] div[_echarts_instance_] div:last-of-type, 
 .row-flex>div[class*="col-"] div[_echarts_instance_] div:last-of-type {
   width: auto;

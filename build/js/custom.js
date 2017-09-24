@@ -290,7 +290,7 @@ if (typeof NProgress != 'undefined') {
 }
 
 /**
- * Extended script
+ * Extended script (No Used)
  */
 $(document).ready(function() {
   
@@ -357,6 +357,12 @@ $(document).ready(function() {
     }
   });
   
+});
+/**
+ * Extended script (Required)
+ */
+$(document).ready(function() {
+
   $('.nav.child_menu> li> a').on('click', function(){
     var $CURRENT_CHILD_MENU = $(this).parent();
     $CURRENT_CHILD_MENU.toggleClass('active');
@@ -405,7 +411,7 @@ $(document).ready(function() {
       tags: !0,
       tokenSeparators: [',', ' ', ';', "\n"],
       allowClear: !0,
-    })
+    });
     
     var presetWidget = $.trim( $(e.relatedTarget).text() );
     $(this).find('#view-type> option').each(function(){
@@ -425,15 +431,7 @@ $(document).ready(function() {
     }
   });
   
-  
-  
-  
-});
-/**
- * For DEMO scripts
- */
-$(document).ready(function() {
-  
+  // For choose sensors on modal of "#registerWidget".
   function sensor_exists() {
     var sensors = [];
     $('#target-sensors> .alert:not([role="template"])').each(function(){
@@ -442,7 +440,7 @@ $(document).ready(function() {
     return sensors.length > 0;
   }
   
-  $('#sensor-groups').on('change', function(e){
+  $('#sensor-groups').on('click change', function(e){
     var selected_group = e.target.value === "";
     $('#sensor-list').prop('disabled', selected_group);
   });
@@ -459,7 +457,7 @@ $(document).ready(function() {
     });
     if ( e.target.id === 'add-sensor-list' ) {
       addSensor = $('#sensor-list').val();
-      if ( addSensor !== "" ) {
+      //if ( addSensor !== "" ) {
         if ( addSensor !== "all" ) {
           addSensors.push( addSensor );
         } else {
@@ -469,11 +467,11 @@ $(document).ready(function() {
             }
           });
         }
-      }
+      //}
     } else
     if ( e.target.id === 'add-sensor-search' ) {
       addSensor = $('#result-list').val();
-      if ( addSensor !== "" ) {
+      //if ( addSensor !== "" ) {
         if ( addSensor !== "all" ) {
           addSensors.push( addSensor );
         } else {
@@ -483,7 +481,7 @@ $(document).ready(function() {
             }
           });
         }
-      }
+      //}
     }
     sensors = sensors.filter( function(x, i, self){
       return self.indexOf(x) === i;
@@ -693,6 +691,162 @@ $(document).ready(function() {
 
   });
   
+  /*
+  $(".split_range_view").ionRangeSlider({
+    type: "double",
+    min: 0,
+    max: 256,
+    disable : !0,
+    hide_min_max: !0
+  });
+  */
+  
+  $('#start-position .btn').on('click', function(e){
+    var choosen = $(this).find('input').val();
+    $('[id^="new-current-position-from-"]').prop('hidden', true);
+    $('#new-current-position-from-'+choosen).prop('hidden', false);
+    $('#add-split-position').prop('disabled', false);
+  });
+  
+  $('#add-split-position').on('click', function(e){
+    var splitPosition = Number( $('#new-split-position').val() ), addItem = $('#split-range-list> .alert[role="template"]').clone(), 
+        nowItems = $('#split-range-list> .alert:not([role="template"])').length, eop = 1, val, 
+        firstPrefix = $.trim( $('#new-current-position-from-'+$('#start-position .btn input:checked').val()).text() );
+    if ( nowItems > 0 ) {
+      $('#split-range-list> .alert:not([role="template"])').each(function(){
+        eop = Number( $(this).find('.split-prefix').data('startPosition') );
+        val = Number( $(this).find('input[name^="split_range"]').val() );
+        eop += val;
+      });
+    }
+    addItem.find('.split-prefix').attr('data-start-position', eop);
+    if ( eop == 1 ) {
+      addItem.find('.split-prefix').text( firstPrefix );
+    } else {
+      addItem.find('.split-prefix').text( "From " + eop + " byte To " );
+    }
+    addItem.find('input[name^="split_range"]').val(splitPosition);
+    addItem.prop('disabled', false).prop('hidden', false);
+    addItem.attr('role', 'alert');
+    $('#split-range-list').append(addItem);
+  });
   
   
+  // For choose sensors on static page (Split Data etc.)
+  $('#sensor-groups-sp').on('click change', function(e){
+    var selected_group = e.target.value === "";
+    $('#sensor-list-sp').prop('disabled', selected_group);
+  });
+  
+  $('#search-sensor-keyword-sp').on('click', function(){
+    $('#result-list-sp').prop('disabled', false);
+  });
+  
+  $('button[id^="add-sp-sensor-"]').on('click', function(e){
+    e.preventDefault();
+    var sensors = [], addSensor = "", addSensors = [];
+    $('#target-sensors-sp> .alert:not([role="template"])').each(function(){
+      sensors.push( $(this).find('.sensor-name').text() );
+    });
+    if ( e.target.id === 'add-sp-sensor-list' ) {
+      addSensor = $('#sensor-list-sp').val();
+      //if ( addSensor !== "" ) {
+        if ( addSensor !== "all" ) {
+          addSensors.push( addSensor );
+        } else {
+          $('#sensor-list-sp> option').each(function(){
+            if ( $.inArray( $(this).val(), [ "", "all" ] ) == -1 ) {
+              addSensors.push( $(this).val() );
+            }
+          });
+        }
+      //}
+    } else
+    if ( e.target.id === 'add-sp-sensor-search' ) {
+      addSensor = $('#result-list-sp').val();
+      //if ( addSensor !== "" ) {
+        if ( addSensor !== "all" ) {
+          addSensors.push( addSensor );
+        } else {
+          $('#result-list-sp> option').each(function(){
+            if ( $.inArray( $(this).val(), [ "", "all" ] ) == -1 ) {
+              addSensors.push( $(this).val() );
+            }
+          });
+        }
+      //}
+    }
+    sensors = sensors.filter( function(x, i, self){
+      return self.indexOf(x) === i;
+    });
+    addSensors.forEach(function(val, i, self){
+      if ( $.inArray(val, sensors) == -1 ) {
+        var template = $('#target-sensors-sp> .alert[role="template"]').clone();
+        template.find('.sensor-name').text(val).end().removeAttr('hidden').removeAttr('role');
+        template.find('.colorpicker-component').colorpicker();
+        $('#no-selected-sensor-sp').attr('hidden', 'hidden');
+        $('#target-sensors-sp').append(template);
+      }
+    });
+  });
+  
+  $(document).on('click', '#target-sensors-sp> .alert button.close', function(){
+    if ( $('#target-sensors-sp> .alert:not([role="template"])').length == 1) {
+      $('#no-selected-sensor-sp').removeAttr('hidden');
+    }
+  });
+
+
+  $("#grouping-group-name").select2({
+    width: '50%',
+    allowClear: 0,
+    tags: !0
+  }).on('select2:select', function(e) {
+    var data = e.params.data,
+        selectedGroup = data.id,
+        hasSensors = parseInt($.trim(data.text.match(/\s\(\d*\)$/gi)).slice(1,-1));
+    selectSensors( selectedGroup, hasSensors );
+  });
+
+  function selectSensors( selectedGroup, choosenItems ) {
+    var gs   = $('#groupable-sensors'),
+        rows = gs.find('tbody tr').length,
+        i    = 0,
+        selectedRow = [];
+    // initialize
+    gs.find('input[type="checkbox"]').iCheck('uncheck');
+    gs.find('tbody td.last').text('');
+    gs.find('tbody tr').removeClass('selected');
+    
+    // define checking rows
+    while ( i < rows ) {
+      var row_id = i;
+      if ( choosenItems > 0 ) {
+        if ( Math.round( ( Math.random() * choosenItems + 1 ) ) > 1 ) {
+          selectedRow.push( row_id );
+          choosenItems--;
+        }
+      }
+      i++;
+    }
+    
+    // check rows
+    gs.find('tbody tr').each(function(idx){
+      if ( $.inArray( idx, selectedRow ) != -1 ) {
+        $(this).addClass('selected').find('input.check-one-row').iCheck('check');
+        $(this).find('td.last').text( selectedGroup );
+      }
+    });
+
+  }
+
+  $(document).on('ifChecked', 'input#check-all', function(e){
+    $('#groupable-sensors').find('input.check-one-row').iCheck('check');
+  });
+
+  $(document).on('ifUnchecked', 'input#check-all', function(e){
+    $('#groupable-sensors').find('input.check-one-row').iCheck('uncheck');
+  });
+
+
 });
