@@ -39,7 +39,7 @@
 <?php
     the_content();
     wp_link_pages( [
-        'before' => '<div class="page-links">' . __( 'Pages:', 'wpgentelella' ),
+        'before' => '<div class="page-links">' . __( 'Pages:', WPGENT_DOMAIN ),
         'after'  => '</div>',
     ] );
 ?>

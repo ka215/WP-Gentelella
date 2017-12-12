@@ -26,15 +26,15 @@ $current_user = wp_get_current_user();
                     <span class=" fa fa-angle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    <li><a href="/profile/"> <?php _e('Profile', 'wpgentelella'); ?></a></li>
+                    <li><a href="/profile/"> <?php _e('Profile', WPGENT_DOMAIN); ?></a></li>
                     <li>
                       <a href="javascript:;">
                         <span class="badge bg-red pull-right">50%</span>
-                        <span><?php _e('Settings', 'wpgentelella'); ?></span>
+                        <span><?php _e('Settings', WPGENT_DOMAIN); ?></span>
                       </a>
                     </li>
-                    <li><a href="javascript:;"><?php _e('Help', 'wpgentelella'); ?></a></li>
-                    <li><a href="<?= wp_logout_url(); ?>"><i class="fa fa-sign-out pull-right"></i> <?php _e('Sign Out', 'wpgentelella'); ?></a></li>
+                    <li><a href="javascript:;"><?php _e('Help', WPGENT_DOMAIN); ?></a></li>
+                    <li><a href="<?= wp_logout_url(); ?>"><i class="fa fa-sign-out pull-right"></i> <?php _e('Sign Out', WPGENT_DOMAIN); ?></a></li>
                   </ul>
                 </li>
 

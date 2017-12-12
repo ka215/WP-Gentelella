@@ -17,9 +17,9 @@ $user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
             <div class="page-title">
               <div class="title_left">
                 <h3><?php if ( __ctl( 'lib' )::is_first_visit() ) {
-                    _e( 'Welcome Plotter!', 'wpgentelella' );
+                    _e( 'Welcome Plotter!', WPGENT_DOMAIN );
                 } else {
-                    echo empty( $user_sources ) ? _e( "Let's add a new story", 'wpgentelella' ) : $user_sources[0];
+                    echo empty( $user_sources ) ? _e( "Let's add a new story", WPGENT_DOMAIN ) : $user_sources[0];
                 } ?></h3>
               </div>
             </div>
@@ -31,9 +31,9 @@ $user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
                 <div class="x_panel">
                   <div class="x_title">
                     <h2><?php if ( empty( $user_sources ) ) {
-                        _e( "First of all, let's enter the title of your story.", 'wpgentelella' );
+                        _e( "First of all, let's enter the title of your story.", WPGENT_DOMAIN );
                     } else {
-                        _e( "Let's get started!", 'wpgentelella' );
+                        _e( "Let's get started!", WPGENT_DOMAIN );
                     } ?></h2>
                     <?php get_template_part( 'partials/toolbox' ); ?>
                     <div class="clearfix"></div>
@@ -43,24 +43,24 @@ $user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
                     <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
                       <input type="hidden" name="from_page" value="<?php echo get_pageinfo( 'page_name' ); ?>">
                       <?php wp_nonce_field( 'initial-setting_' . get_current_user_id() ); ?>
-                      <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', 'wpgentelella' ); ?></p>
+                      <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', WPGENT_DOMAIN ); ?></p>
                       <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', 'wpgentelella' ); ?> <span class="required">*</span></label>
+                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="source_name" name="source_name" class="form-control" placeholder="<?php _e( 'Your Story Title', 'wpgentelella' ); ?>" required="required">
+                          <input type="text" id="source_name" name="source_name" class="form-control" placeholder="<?php _e( 'Your Story Title', WPGENT_DOMAIN ); ?>" required="required">
                         </div>
                       </div>
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
-                          <button type="submit" class="btn btn-success"><?php _e( 'Register', 'wpgentelella' ); ?></button>
+                          <button type="submit" class="btn btn-success"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
                         </div>
                       </div>
                     </form>
 <?php else : the_content(); ?>
 <?php /*
   wp_link_pages( array(
-    'before' => '<div class="page-links">' . __( 'Pages:', 'wpgentelella' ),
+    'before' => '<div class="page-links">' . __( 'Pages:', WPGENT_DOMAIN ),
     'after'  => '</div>',
   ) );
 */ endif; ?>

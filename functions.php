@@ -6,9 +6,9 @@
  * @subpackage WP_Gentelella
  * @since 1.0
  */
-if ( ! defined( 'WPGENT_HANDLE' ) )    define( 'WPGENT_HANDLE', 'wp-gentelella' );
-if ( ! defined( 'WPGENT_DOMAIN' ) )    define( 'WPGENT_DOMAIN', 'wpgentelella' );
-if ( ! defined( 'WPGENT_VERSION' ) )   define( 'WPGENT_VERSION', '1.0' );
+if ( ! defined( 'WPGENT_HANDLE' ) )    define( 'WPGENT_HANDLE', 'plotter' ); // 'wp-gentelella'
+if ( ! defined( 'WPGENT_DOMAIN' ) )    define( 'WPGENT_DOMAIN', 'plotter' ); // WPGENT_DOMAIN
+if ( ! defined( 'WPGENT_VERSION' ) )   define( 'WPGENT_VERSION', '1.4.0' );
 if ( ! defined( 'WPGENT_THEME_DIR' ) ) define( 'WPGENT_THEME_DIR', 'views' );
 if ( ! defined( 'USE_RELATIVE_URI' ) ) define( 'USE_RELATIVE_URI', false );
 
@@ -212,7 +212,8 @@ add_action( 'wp_enqueue_scripts', function() {
   }
   
   // Common Custom Scripts
-  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . 'build/js/custom.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/js/custom.js' ) ), true );
+  $_common_custom_scriptfile = 'src/js/custom.js'; // 'build/js/custom' . '.min' . '.js';
+  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
   wp_enqueue_script( WPGENT_HANDLE );
   
   // Paged Custom Scripts
@@ -293,7 +294,42 @@ add_action( 'wp_print_styles', function() {
  * Inserting before enqueued scripts
  */
 add_action( 'wp_print_scripts', function() {
+  $inline_scripts = array();
   // echo '<!-- Fonts -->';
+  if ( WP_DEBUG ) {
+    $inline_scripts[] = <<<EOT
+// Logger for development
+var logger = function logger(){};
+logger.LEVEL = {
+    RUN   : 0,
+    ERROR : 1,
+    WARN  : 2,
+    LOG   : 3,
+    INFO  : 4,
+    DEBUG : 5,
+    FULL  : 5
+};
+logger.level = logger.LEVEL.FULL; // Default
+logger.debug = function() {
+    if (this.level < this.LEVEL.DEBUG) {
+        return;
+    }
+    
+    var args = [].slice.call(arguments);
+    
+    console.debug.apply(console, arguments);
+};
+EOT;
+  } else {
+    $inline_scripts[] = <<<EOT
+var logger = function logger(){};
+EOT;
+  }
+  if ( ! empty( $inline_scripts ) ) {
+    echo '<script>' . PHP_EOL;
+    echo implode( PHP_EOL, $inline_scripts );
+    echo '</script>' . PHP_EOL;
+  }
 }, PHP_INT_MAX );
 
 /**
@@ -344,7 +380,7 @@ add_action( 'wp_print_footer_scripts', function() {
   $inline_scripts = array();
   if ( is_user_logged_in() ) {
     if ( __ctl( 'lib' )::has_forms_in_page() ) {
-      $notify_empty_title = __( 'Please be sure to fill here', 'wpgentelella' );
+      $notify_empty_title = __( 'Please be sure to fill here', WPGENT_DOMAIN );
       $inline_scripts[] = <<<EOT
 validator.message['empty'] = "$notify_empty_title";
 
@@ -383,22 +419,22 @@ add_action( 'wp_footer', function() {
     global $template, $wp_query;
     $template_name = basename( $template, '.php' );
     $console_logs = [];
-    $console_logs[] = "console.log('Current Page Template: {$template_name}');";
+    $console_logs[] = "logger.debug('Current Page Template: {$template_name}');";
     if ( ! is_front_page() ) {
       $page_name = __ctl( 'lib' )::get_pageinfo( 'page_name' );
       $post_guid = __ctl( 'lib' )::get_pageinfo( 'guid' );
       $page_type = __ctl( 'lib' )::get_pageinfo();
-      $console_logs[] = "console.log('Current Page Name: {$page_name} (GUID: {$post_guid}) | Page Type: {$page_type}');";
+      $console_logs[] = "logger.debug('Current Page Name: {$page_name} (GUID: {$post_guid}) | Page Type: {$page_type}');";
     }
     if ( is_user_logged_in() ) {
       $current_user = wp_get_current_user();
-      $console_logs[] = "console.log('Current User: {$current_user->display_name} ({$current_user->ID} : {$current_user->user_nicename})');";
-      $console_logs[] = "console.log({ isFirstVisit: ". ( __ctl( 'lib' )::is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( __ctl( 'lib' )::is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( __ctl( 'lib' )::is_profile() ? 'true' : 'false' ) .", hasForms: ". ( __ctl( 'lib' )::has_forms_in_page() ? 'true' : 'false' ) ."});";
+      $console_logs[] = "logger.debug('Current User: {$current_user->display_name} ({$current_user->ID} : {$current_user->user_nicename})');";
+      $console_logs[] = "logger.debug({ isFirstVisit: ". ( __ctl( 'lib' )::is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( __ctl( 'lib' )::is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( __ctl( 'lib' )::is_profile() ? 'true' : 'false' ) .", hasForms: ". ( __ctl( 'lib' )::has_forms_in_page() ? 'true' : 'false' ) ."});";
     }
     $_hash = __ctl( 'lib' )::custom_hash( date("Y-m-d H:i:s") );
-    $console_logs[] = "console.log('Current hash: {$_hash}');";
+    $console_logs[] = "logger.debug('Current hash: {$_hash}');";
     if ( session_status() == PHP_SESSION_ACTIVE ) {
-      $console_logs[] = "console.log( JSON.parse('". json_encode( $_SESSION ) ."') );";
+      $console_logs[] = "logger.debug( JSON.parse('". json_encode( $_SESSION ) ."') );";
     }
     
     echo '<script>' . implode( PHP_EOL, $console_logs ) . '</script>' . PHP_EOL;
