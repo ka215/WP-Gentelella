@@ -296,10 +296,10 @@ add_action( 'wp_print_styles', function() {
 add_action( 'wp_print_scripts', function() {
   $inline_scripts = array();
   // echo '<!-- Fonts -->';
+  $inline_scripts[] = "var logger = {};";
   if ( WP_DEBUG ) {
     $inline_scripts[] = <<<EOT
-// Logger for development
-var logger = function logger(){};
+// Logger for development only
 logger.LEVEL = {
     RUN   : 0,
     ERROR : 1,
@@ -311,24 +311,21 @@ logger.LEVEL = {
 };
 logger.level = logger.LEVEL.FULL; // Default
 logger.debug = function() {
-    if (this.level < this.LEVEL.DEBUG) {
-        return;
-    }
-    
-    var args = [].slice.call(arguments);
-    
-    console.debug.apply(console, arguments);
+if ( logger.level >= logger.LEVEL.DEBUG ) {
+  // logger.debug = console.debug.bind( console );
+  var args = [].slice.call(arguments);
+  console.debug.apply( console, arguments );
+} else {
+  logger.debug = function() {};
+}
 };
-EOT;
-  } else {
-    $inline_scripts[] = <<<EOT
-var logger = function logger(){};
 EOT;
   }
   if ( ! empty( $inline_scripts ) ) {
-    echo '<script>' . PHP_EOL;
-    echo implode( PHP_EOL, $inline_scripts );
-    echo '</script>' . PHP_EOL;
+    echo '<script>', PHP_EOL;
+    echo implode( PHP_EOL, $inline_scripts ), PHP_EOL;
+    echo 'logger.debug("Test");', PHP_EOL;
+    echo '</script>', PHP_EOL;
   }
 }, PHP_INT_MAX );
 
