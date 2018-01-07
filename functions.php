@@ -13,21 +13,21 @@ if ( ! defined( 'WPGENT_THEME_DIR' ) ) define( 'WPGENT_THEME_DIR', 'views' );
 if ( ! defined( 'USE_RELATIVE_URI' ) ) define( 'USE_RELATIVE_URI', false );
 
 add_filter( 'template_directory', function( $template_dir, $template, $theme_root ) {
-  if ( 'plotter' === $template ) {
+  if ( WPGENT_DOMAIN === $template ) {
     $template_dir = WP_CONTENT_DIR . '/' . WPGENT_THEME_DIR;
   }
 //var_dump( $template_dir );
   return $template_dir;
 }, 10, 3 );
 add_filter( 'theme_root_uri', function( $theme_root_uri, $siteurl, $stylesheet_or_template ) {
-  if ( 'plotter' === $stylesheet_or_template ) {
+  if ( WPGENT_DOMAIN === $stylesheet_or_template ) {
     $theme_root_uri = WP_CONTENT_URL . '/' . WPGENT_THEME_DIR;
   }
 //var_dump( $theme_root_uri );
   return $theme_root_uri;
 }, 10, 3 );
 add_filter( 'template_directory_uri', function( $template_dir_uri, $template, $theme_root_uri ) {
-  if ( 'plotter' === $template ) {
+  if ( WPGENT_DOMAIN === $template ) {
     $template_dir_uri = $theme_root_uri;
     if ( USE_RELATIVE_URI ) {
       $template_dir_uri = str_replace( $_SERVER['HTTP_HOST'], '', strrchr( $template_dir_uri, $_SERVER['HTTP_HOST'] ) );
@@ -36,8 +36,9 @@ add_filter( 'template_directory_uri', function( $template_dir_uri, $template, $t
   return $template_dir_uri;
 }, 10, 3 );
 
-if ( ! defined( 'WPGENT_PATH' ) ) define( 'WPGENT_PATH', get_template_directory() . '/' );
-if ( ! defined( 'WPGENT_DIR' ) )  define( 'WPGENT_DIR', get_template_directory_uri() . '/' );
+if ( ! defined( 'WPGENT_PATH' ) )       define( 'WPGENT_PATH', get_template_directory() . '/' );
+if ( ! defined( 'WPGENT_DIR' ) )        define( 'WPGENT_DIR', get_template_directory_uri() . '/' );
+if ( ! defined( 'USE_CDN_RESOURCES' ) ) define( 'USE_CDN_RESOURCES', false );
 
 /**
  * Utilities:
@@ -130,11 +131,19 @@ add_action( 'after_setup_theme', function() {
 add_action( 'wp_enqueue_scripts', function() {
   $_pagename = __ctl( 'lib' )::get_pageinfo();
   // Stylesheets
-  wp_register_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', false, '3.3.7' );
+  if ( USE_CDN_RESOURCES ) {
+    wp_register_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', false, '3.3.7' );
+  } else {
+    wp_register_style( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/css/bootstrap.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/bootstrap/dist/css/bootstrap.min.css' ) ) );
+  }
   wp_enqueue_style( 'bootstrap' );
   
   wp_deregister_style( 'font-awesome' );
-  wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0' );
+  if ( USE_CDN_RESOURCES ) {
+    wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0' );
+  } else {
+    wp_register_style( 'font-awesome', WPGENT_DIR . 'vendors/font-awesome/css/font-awesome.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/font-awesome/css/font-awesome.min.css' ) ) );
+  }
   wp_enqueue_style( 'font-awesome' );
   
   wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/icons.min.css' ) ) );
@@ -182,10 +191,18 @@ add_action( 'wp_enqueue_scripts', function() {
   
   // JavaScripts
   wp_deregister_script( 'jquery' );
-  wp_register_script( 'jquery', '//code.jquery.com/jquery-3.2.1.min.js', array(), '3.2.1' );
+  if ( USE_CDN_RESOURCES ) {
+    wp_register_script( 'jquery', '//code.jquery.com/jquery-3.2.1.min.js', array(), '3.2.1' );
+  } else {
+    wp_register_script( 'jquery', WPGENT_DIR . 'vendors/jquery/dist/jquery.min.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/jquery/dist/jquery.min.js' ) ) );
+  }
   wp_enqueue_script( 'jquery' );
   
-  wp_register_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ), '3.3.7', true );
+  if ( USE_CDN_RESOURCES ) {
+    wp_register_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ), '3.3.7', true );
+  } else {
+    wp_register_script( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/js/bootstrap.min.js', array( 'jquery' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/bootstrap/dist/js/bootstrap.min.js' ) ), true );
+  }
   wp_enqueue_script( 'bootstrap' );
   
   wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/fastclick/lib/fastclick.js' ) ), true );
@@ -276,11 +293,20 @@ add_action( 'wp_head', function() {
   );
   foreach ( $meta_lines as $_name => $_content ) {
     if ( ! empty( $_content ) ) {
-      echo '<meta name="'. $_name .'" content="'. $_content .'">' . PHP_EOL;
+      echo '<meta name="'. esc_attr( $_name ) .'" content="'. esc_attr__( $_content, WPGENT_DOMAIN ) .'">' . PHP_EOL;
     }
   }
   // Open graph meta
-  
+  $ogmeta_lines = array(
+    'key' => '',
+    
+    
+  );
+  foreach ( $ogmeta_lines as $_name => $_content ) {
+    if ( ! empty( $_content ) ) {
+      echo '<meta name="'. esc_attr( $_name ) .'" content="'. esc_attr__( $_content, WPGENT_DOMAIN ) .'">' . PHP_EOL;
+    }
+  }
 }, 1 );
 
 /**
@@ -306,25 +332,23 @@ logger.LEVEL = {
     WARN  : 2,
     LOG   : 3,
     INFO  : 4,
-    DEBUG : 5,
-    FULL  : 5
+    DEBUG : 3,
+    FULL  : 4
 };
-logger.level = logger.LEVEL.FULL; // Default
-logger.debug = function() {
-if ( logger.level >= logger.LEVEL.DEBUG ) {
-  // logger.debug = console.debug.bind( console );
-  var args = [].slice.call(arguments);
-  console.debug.apply( console, arguments );
-} else {
-  logger.debug = function() {};
-}
+logger.level = logger.LEVEL.DEBUG; // Default
+if ( logger.level == 1 ) logger.debug = console.error.bind( console ) 
+else if ( logger.level == 2 ) logger.debug = console.warn.bind( console ) 
+else if ( logger.level == 3 ) logger.debug = console.log.bind( console ) 
+else if ( logger.level == 4 ) logger.debug = console.info.bind( console ) 
+else logger.debug = function() {
 };
 EOT;
+  } else {
+    $inline_scripts[] = "logger.debug = function() {};";
   }
   if ( ! empty( $inline_scripts ) ) {
     echo '<script>', PHP_EOL;
     echo implode( PHP_EOL, $inline_scripts ), PHP_EOL;
-    echo 'logger.debug("Test");', PHP_EOL;
     echo '</script>', PHP_EOL;
   }
 }, PHP_INT_MAX );
@@ -333,18 +357,22 @@ EOT;
  * Appended into head
  */
 add_action( 'wp_head', function() {
-  echo '<!-- Site Icons -->';
-  echo '<link rel="shortcut icon" href="">';
-  echo '<link rel="icon" type="image/png" href="">';
-  echo '<link rel="apple-touch-icon" href="">';
-  echo '<link rel="apple-touch-icon" sizes="72x72" href="">';
-  echo '<link rel="apple-touch-icon" sizes="114x114" href="">';
+  $append_lines = array();
+  $append_lines[] = '<!-- Site Icons -->';
+  $append_lines[] = '<link rel="shortcut icon" href="">';
+  $append_lines[] = '<link rel="icon" type="image/png" href="">';
+  $append_lines[] = '<link rel="apple-touch-icon" href="">';
+  $append_lines[] = '<link rel="apple-touch-icon" sizes="72x72" href="">';
+  $append_lines[] = '<link rel="apple-touch-icon" sizes="114x114" href="">';
   global $is_IE;
   if ( $is_IE ) {
-    echo '<!--[if lt IE 9]>';
-    echo '<script src="//oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>';
-    echo '<script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>';
-    echo '<![endif]-->';
+    $append_lines[] = '<!--[if lt IE 9]>';
+    $append_lines[] = '<script src="//oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>';
+    $append_lines[] = '<script src="//oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>';
+    $append_lines[] = '<![endif]-->';
+  }
+  if ( ! empty( $append_lines ) ) {
+    echo implode( PHP_EOL, $append_lines ), PHP_EOL;
   }
 }, PHP_INT_MAX );
 
@@ -415,25 +443,27 @@ add_action( 'wp_footer', function() {
   if ( WP_DEBUG ) {
     global $template, $wp_query;
     $template_name = basename( $template, '.php' );
-    $console_logs = [];
-    $console_logs[] = "logger.debug('Current Page Template: {$template_name}');";
+    $log_style = [ "'color: red; font-weight: bold'", "'color: blue; font-weight: bold'" ];
+    $debug_logs = [];
+    //$debug_logs[] = "logger.level = logger.LEVEL.FULL;";
+    $debug_logs[] = "logger.debug('Current Page Template: %c{$template_name}', {$log_style[0]} );";
     if ( ! is_front_page() ) {
       $page_name = __ctl( 'lib' )::get_pageinfo( 'page_name' );
       $post_guid = __ctl( 'lib' )::get_pageinfo( 'guid' );
       $page_type = __ctl( 'lib' )::get_pageinfo();
-      $console_logs[] = "logger.debug('Current Page Name: {$page_name} (GUID: {$post_guid}) | Page Type: {$page_type}');";
+      $debug_logs[] = "logger.debug('Current Page Name: %c{$page_name}%c (GUID: %c{$post_guid}%c) | Page Type: %c{$page_type}', {$log_style[0]}, '', {$log_style[0]}, '', {$log_style[0]});";
     }
     if ( is_user_logged_in() ) {
       $current_user = wp_get_current_user();
-      $console_logs[] = "logger.debug('Current User: {$current_user->display_name} ({$current_user->ID} : {$current_user->user_nicename})');";
-      $console_logs[] = "logger.debug({ isFirstVisit: ". ( __ctl( 'lib' )::is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( __ctl( 'lib' )::is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( __ctl( 'lib' )::is_profile() ? 'true' : 'false' ) .", hasForms: ". ( __ctl( 'lib' )::has_forms_in_page() ? 'true' : 'false' ) ."});";
+      $debug_logs[] = "logger.debug('Current User: %c{$current_user->display_name}%c (%c{$current_user->ID}%c : %c{$current_user->user_nicename}%c)', {$log_style[0]}, '', {$log_style[0]}, '', {$log_style[0]}, '');";
+      $debug_logs[] = "logger.debug({ isFirstVisit: ". ( __ctl( 'lib' )::is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( __ctl( 'lib' )::is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( __ctl( 'lib' )::is_profile() ? 'true' : 'false' ) .", hasForms: ". ( __ctl( 'lib' )::has_forms_in_page() ? 'true' : 'false' ) ."});";
     }
     $_hash = __ctl( 'lib' )::custom_hash( date("Y-m-d H:i:s") );
-    $console_logs[] = "logger.debug('Current hash: {$_hash}');";
+    $debug_logs[] = "logger.debug('Current hash: %c{$_hash}', {$log_style[1]});";
     if ( session_status() == PHP_SESSION_ACTIVE ) {
-      $console_logs[] = "logger.debug( JSON.parse('". json_encode( $_SESSION ) ."') );";
+      $debug_logs[] = "logger.debug( JSON.parse('". json_encode( $_SESSION ) ."') );";
     }
     
-    echo '<script>' . implode( PHP_EOL, $console_logs ) . '</script>' . PHP_EOL;
+    echo '<script>' . implode( PHP_EOL, $debug_logs ) . '</script>' . PHP_EOL;
   }
 }, PHP_INT_MAX );

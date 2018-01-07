@@ -153,8 +153,8 @@ if ( isset( $user_sources ) ) {
                           <button class="btn btn-default" type="button" id="global-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
 <?php if ( count( $user_sources ) > 0 ) : ?>
                           <button class="btn btn-primary" type="button" id="global-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success" type="button" id="global-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success hide" type="button" id="global-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-success onValid" type="button" id="global-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-success onValid hide" type="button" id="global-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
 <?php endif; ?>
                         </div>
                       </div>

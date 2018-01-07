@@ -24,7 +24,7 @@
     "branch": "master",
     "commit": "fc748970e8228ab271ba9ca799f57d8f8c6a5013"
   },
-  "_source": "git@github.com:christianesperar/bootstrap-daterangepicker.git",
+  "_source": "https://github.com/christianesperar/bootstrap-daterangepicker.git",
   "_target": "master",
-  "_originalSource": "git@github.com:christianesperar/bootstrap-daterangepicker.git"
+  "_originalSource": "https://github.com/christianesperar/bootstrap-daterangepicker.git"
 }
