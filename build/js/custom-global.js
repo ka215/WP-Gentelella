@@ -1,5 +1,5 @@
 /**
- * For Global Settings
+ * For Whole Story (Global Settings)
  */
 $(document).ready(function() {
   
@@ -8,12 +8,15 @@ $(document).ready(function() {
       currentSrcId    = Number( $('#change_source option:selected').val() );
   //storedSrcCache( currentSrcId );
   
+  // Event handlers
   $('#change_source').on('change', function(){
     logger.debug( currentSrcId, $(this).val() );
     if ( $(this).val() === '' ) {
       // Add new story
-      storedSrcCache( currentSrcId );
-      gf.find('[type="text"]').val('');
+      storedSrcCache( currentSrcId ); // 現ソースIDをローカルに保存
+      gf.find('input[name="source_id"]').val('');
+      gf.find('#source_name').val('');
+      gf.find('input[id^="wh"]').val('');
       gf.find('#global-btn-add').removeClass('hide');
       gf.find('#global-btn-update').addClass('hide');
       gf.find('#global-btn-remove').addClass('hide');
@@ -22,16 +25,36 @@ $(document).ready(function() {
       var newSrcId = Number( $(this).val() );
       if ( currentSrcId != newSrcId ) {
         currentSrcId = newSrcId;
-        // ajax
-        storedSrcCache( currentSrcId );
+        // ajaxで新ソースIDのデータを取得する
+        
+        gf.find('#source_name').val('Retrive Title');
+        gf.find('input[id^="wh"]').val('Retrive Data');
+        
+        // Cookie値の lastSource を新ソースIDに更新する
+        
+        storedSrcCache( currentSrcId ); // 新ソースIDをローカルに保存
       } else {
-        restoreSrcCache( currentSrcId );
+        restoreSrcCache( currentSrcId ); // 現ソースIDをロード
       }
+      gf.find('input[name="source_id"]').val(currentSrcId);
       gf.find('#global-btn-remove').removeClass('hide');
       gf.find('#global-btn-update').removeClass('hide');
       gf.find('#global-btn-add').addClass('hide');
     }
   });
+  
+  $(document).on('click', 'button.btn[id^="global-btn"]', function(e){
+    e.preventDefault();
+    var action = $(this).attr('id').replace('global-btn-', '');
+    if ( 'cancel' == action ) {
+      
+      return false;
+    } else {
+      $('#global-post-action').val( action );
+      gf.submit();
+    }
+  });
+  
   
   function storedSrcCache( sid ) {
     if ( sid == Number( gf.find('[name="source_id"]').val() ) ) {
@@ -64,5 +87,7 @@ $(document).ready(function() {
       gf.find('#permission').val( src_data.permission );
     }
   }
+  
+  
   
 });

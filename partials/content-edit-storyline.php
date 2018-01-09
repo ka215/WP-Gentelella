@@ -7,17 +7,12 @@
  * @since 1.0
  * @version 1.0
  */
-$current_user_id     = get_current_user_id();
-$user_sources        = __ctl( 'model' )->get_sources( $current_user_id, 'row' );
-$current_source_id   = __ctl( 'libs' )::current_source();
-if ( isset( $user_sources ) ) {
-    foreach ( $user_sources as $_obj ) {
-        if ( (int) $_obj->id == (int) $current_source_id ) {
-            $current_source_name = $_obj->name;
-            break;
-        }
-    }
-}
+$_plotter = get_query_var( 'plotter', [] );
+$page_name           = $_plotter['page_name'];
+$current_user_id     = $_plotter['current_user_id'];
+$user_sources        = $_plotter['user_sources'];
+$current_source_id   = $_plotter['current_source_id'];
+$current_source_name = $_plotter['current_source_name'];
 ?>
 
         <!-- page content -->
@@ -25,11 +20,7 @@ if ( isset( $user_sources ) ) {
           <div <?php post_class(); ?>>
             <div class="page-title">
               <div class="title_left">
-                <h3><?php if ( empty( $user_sources ) ) {
-                    _e( "Let's add a new plot", WPGENT_DOMAIN );
-                } else {
-                    _e( 'Whole Story', WPGENT_DOMAIN );
-                } ?></h3>
+                <h3><?php _e( 'Storyline', WPGENT_DOMAIN ) ?></h3>
               </div>
             </div>
 
@@ -39,40 +30,16 @@ if ( isset( $user_sources ) ) {
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><?php if ( empty( $user_sources ) ) {
-                        _e( "First of all, let's enter the title of your story.", WPGENT_DOMAIN );
-                    } else {
-                        _e( "Let's get started!", WPGENT_DOMAIN );
-                    } ?></h2>
+                    <h2><?php echo $current_source_name ?></h2>
                     <?php get_template_part( 'partials/toolbox' ); ?>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-<?php if ( empty( $user_sources ) ) : ?>
-                    <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?php echo __ctl( 'libs' )::get_pageinfo( 'page_name' ); ?>">
-                      <?php wp_nonce_field( 'initial-setting_' . get_current_user_id() ); ?>
-                      <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', WPGENT_DOMAIN ); ?></p>
-                      <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required">*</span></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="source_name" name="source_name" class="form-control" placeholder="<?php _e( 'Your Story Title', WPGENT_DOMAIN ); ?>" required="required">
-                        </div>
-                      </div>
-                      <div class="ln_solid"></div>
-                      <div class="form-group">
-                        <div class="col-md-6 col-md-offset-3">
-                          <button type="submit" class="btn btn-success"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
-                        </div>
-                      </div>
-                    </form>
-<?php else : ?>
-
-                    <form id="globalSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?= __ctl( 'lib' )::get_pageinfo( 'page_name' ) ?>">
+                    <form id="plotSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
+                      <input type="hidden" name="from_page" value="<?= $page_name ?>">
                       <input type="hidden" name="source_id" value="<?= $current_source_id ?>">
                       <input type="hidden" name="post_action" id="global-post-action" value="">
-                      <?php wp_nonce_field( 'global-setting_' . get_current_user_id() ); ?>
+                      <?php wp_nonce_field( 'global-setting_' . $current_user_id ); ?>
 <?php if ( count( $user_sources ) > 0 ) : ?>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="change_source"><?php _e( 'Switch or Add Story', WPGENT_DOMAIN ); ?></label>
@@ -166,7 +133,7 @@ if ( isset( $user_sources ) ) {
     'before' => '<div class="page-links">' . __( 'Pages:', WPGENT_DOMAIN ),
     'after'  => '</div>',
   ) );
-*/ endif; ?>
+*/ ?>
                   </div>
                 </div>
               </div>

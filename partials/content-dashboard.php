@@ -7,8 +7,13 @@
  * @since 1.0
  * @version 1.0
  */
-
-$user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
+$_plotter = get_query_var( 'plotter', [] );
+$page_name           = $_plotter['page_name'];
+$current_user_id     = $_plotter['current_user_id'];
+$user_sources        = $_plotter['user_sources'];
+$current_source_id   = $_plotter['current_source_id'];
+$current_source_name = $_plotter['current_source_name'];
+//$user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
 ?>
 
         <!-- page content -->
@@ -19,7 +24,7 @@ $user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
                 <h3><?php if ( __ctl( 'lib' )::is_first_visit() ) {
                     _e( 'Welcome Plotter!', WPGENT_DOMAIN );
                 } else {
-                    echo empty( $user_sources ) ? _e( "Let's add a new story", WPGENT_DOMAIN ) : $user_sources[0];
+                    echo empty( $user_sources ) ? _e( "Let's add a new story", WPGENT_DOMAIN ) : $current_source_name;
                 } ?></h3>
               </div>
             </div>
@@ -41,8 +46,8 @@ $user_sources = __ctl( 'model' )->get_sources( get_current_user_id() );
                   <div class="x_content">
 <?php if ( empty( $user_sources ) ) : ?>
                     <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?php echo get_pageinfo( 'page_name' ); ?>">
-                      <?php wp_nonce_field( 'initial-setting_' . get_current_user_id() ); ?>
+                      <input type="hidden" name="from_page" value="<?= $page_name ?>">
+                      <?php wp_nonce_field( 'initial-setting_' . $current_user_id ); ?>
                       <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', WPGENT_DOMAIN ); ?></p>
                       <div class="item form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required">*</span></label>

@@ -1,6 +1,6 @@
 <?php
 /**
- * Template part for displaying global-settings content in page.php
+ * Template part for displaying create-new content in page.php
  *
  * @package WordPress
  * @subpackage WP-Gentelella
@@ -13,19 +13,6 @@ $current_user_id     = $_plotter['current_user_id'];
 $user_sources        = $_plotter['user_sources'];
 $current_source_id   = $_plotter['current_source_id'];
 $current_source_name = $_plotter['current_source_name'];
-if ( ! empty( $current_source_id ) ) {
-    $current_source_atts = __ctl( 'model' )->get_sources( 
-        [ 'who', 'what', 'where', 'when', 'why', 'extend', 'last_modified_by' ], 
-        [ 'id' => $current_source_id ]
-    );
-    $current_source_data = __ctl( 'lib' )::array_flatten( $current_source_atts );
-    foreach( $user_sources as $_src ) {
-        if ( $_src['id'] == $current_source_id ) {
-            $current_source_data['type'] = $_src['type'];
-            break;
-        }
-    }
-}
 ?>
 
         <!-- page content -->
@@ -33,11 +20,7 @@ if ( ! empty( $current_source_id ) ) {
           <div <?php post_class(); ?>>
             <div class="page-title">
               <div class="title_left">
-                <h3><?php if ( empty( $user_sources ) ) {
-                    _e( "Let's add a new story", WPGENT_DOMAIN );
-                } else {
-                    _e( 'Whole Story', WPGENT_DOMAIN );
-                } ?></h3>
+                <h3><?php _e( 'Create New Storyline', WPGENT_DOMAIN ) ?></h3>
               </div>
             </div>
 
@@ -47,38 +30,14 @@ if ( ! empty( $current_source_id ) ) {
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><?php if ( empty( $user_sources ) ) {
-                        _e( "First of all, let's enter the title of your story.", WPGENT_DOMAIN );
-                    } else {
-                        _e( "Let's get started!", WPGENT_DOMAIN );
-                    } ?></h2>
+                    <h2><?php echo $current_source_name ?></h2>
                     <?php get_template_part( 'partials/toolbox' ); ?>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-<?php if ( empty( $user_sources ) ) : ?>
-                    <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
-                      <?php wp_nonce_field( 'initial-setting_' . $current_user_id ); ?>
-                      <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', WPGENT_DOMAIN ); ?></p>
-                      <div class="item form-group">
-                        <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required">*</span></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="source_name" name="source_name" class="form-control" placeholder="<?php _e( 'Your Story Title', WPGENT_DOMAIN ); ?>" required="required">
-                        </div>
-                      </div>
-                      <div class="ln_solid"></div>
-                      <div class="form-group">
-                        <div class="col-md-6 col-md-offset-3">
-                          <button type="submit" class="btn btn-success"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
-                        </div>
-                      </div>
-                    </form>
-<?php else : ?>
-
-                    <form id="globalSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
-                      <input type="hidden" name="source_id" value="<?= esc_attr( $current_source_id ) ?>">
+                    <form id="plotSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
+                      <input type="hidden" name="from_page" value="<?= $page_name ?>">
+                      <input type="hidden" name="source_id" value="<?= $current_source_id ?>">
                       <input type="hidden" name="post_action" id="global-post-action" value="">
                       <?php wp_nonce_field( 'global-setting_' . $current_user_id ); ?>
 <?php if ( count( $user_sources ) > 0 ) : ?>
@@ -88,7 +47,7 @@ if ( ! empty( $current_source_id ) ) {
                           <select class="form-control" id="change_source" name="change_source">
                             <option value=""><?php _e( 'Add New Story', WPGENT_DOMAIN ); ?></option>
                           <?php foreach ( $user_sources as $_src ) : ?>
-                            <option value="<?= esc_attr( $_src['id'] ) ?>" <?php selected( $_src['id'], $current_source_id ); ?>><?= esc_html( $_src['name'] ) ?><?php if ( $_src['id'] == $current_source_id ) echo ' - '. __( 'Currently', WPGENT_DOMAIN ) .' -'; ?></option>
+                            <option value="<?= $_src->id ?>" <?php selected( $_src->id, $current_source_id ); ?>><?= $_src->name ?><?php if ( $_src->id == $current_source_id ) echo ' - '. __( 'Currently', WPGENT_DOMAIN ) .' -'; ?></option>
                           <?php endforeach; ?>
                           </select>
                         </div>
@@ -100,37 +59,37 @@ if ( ! empty( $current_source_id ) ) {
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required">*</span></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
-                          <input type="text" id="source_name" name="source_name" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'Your Story Title', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $current_source_name ) ?>" required="required">
+                          <input type="text" id="source_name" name="source_name" class="form-control col-md-7 col-xs-12" placeholder="<?php _e( 'Your Story Title', WPGENT_DOMAIN ); ?>" value="<?= $current_source_name ?>" required="required">
                         </div>
                       </div>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="who"><?php _e( 'Who?', WPGENT_DOMAIN ); ?></label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" id="who" name="who" class="form-control col-md-7 col-xs-12 optional" data-validate-length-range="0,100" placeholder="<?php _e( 'Whose story is this?', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $current_source_data['who'] ) ?>">
+                          <input type="text" id="who" name="who" class="form-control col-md-7 col-xs-12 optional" data-validate-length-range="0,100" placeholder="<?php _e( 'Whose story is this?', WPGENT_DOMAIN ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="what"><?php _e( 'What?', WPGENT_DOMAIN ); ?></label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" id="what" name="what" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'What will that one do with this story?', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $current_source_data['what'] ) ?>">
+                          <input type="text" id="what" name="what" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'What will that one do with this story?', WPGENT_DOMAIN ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="where"><?php _e( 'Where?', WPGENT_DOMAIN ); ?></label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" id="where" name="where" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'Where is the world of this story?', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $current_source_data['where'] ) ?>">
+                          <input type="text" id="where" name="where" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'Where is the world of this story?', WPGENT_DOMAIN ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="when"><?php _e( 'When?', WPGENT_DOMAIN ); ?></label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" id="when" name="when" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'When is this story?', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $current_source_data['when'] ) ?>">
+                          <input type="text" id="when" name="when" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'When is this story?', WPGENT_DOMAIN ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="why"><?php _e( 'Why?', WPGENT_DOMAIN ); ?></label>
                         <div class="col-md-8 col-sm-6 col-xs-12">
-                          <input type="text" id="why" name="why" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'Why do that one do it?', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $current_source_data['why'] ) ?>">
+                          <input type="text" id="why" name="why" class="form-control col-md-7 col-xs-12" data-validate-length-range="0,100" placeholder="<?php _e( 'Why do that one do it?', WPGENT_DOMAIN ); ?>">
                         </div>
                       </div>
                       <div class="item form-group">
@@ -138,7 +97,7 @@ if ( ! empty( $current_source_id ) ) {
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <div class="">
                             <label>
-                              <input type="checkbox" id="team_writing" name="team_writing" class="js-switch" <?php if ( $current_source_data['type'] == 1 ) : ?>checked="checked"<?php endif; ?> />
+                              <input type="checkbox" id="team_writing" name="team_writing" class="js-switch" />
                             </label>
                           </div>
                         </div>
@@ -146,14 +105,13 @@ if ( ! empty( $current_source_id ) ) {
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="permission"><?php _e( 'Permission', WPGENT_DOMAIN ); ?></label>
                         <div class="col-md-3 col-sm-6 col-xs-12">
-                          <select class="form-control hide" id="permission-select" name="permission" readonly="readonly" disabled="disabled">
-                            <option value="owner" <?php selected( $current_permission, 'owner' ); ?>><?php _e( 'Owner', WPGENT_DOMAIN ); ?></option>
-                            <option value="editor" <?php selected( $current_permission, 'editor' ); ?>><?php _e( 'Editor', WPGENT_DOMAIN ); ?></option>
-                            <option value="director" <?php selected( $current_permission, 'director' ); ?>><?php _e( 'Director', WPGENT_DOMAIN ); ?></option>
-                            <option value="writer" <?php selected( $current_permission, 'writer' ); ?>><?php _e( 'Writer', WPGENT_DOMAIN ); ?></option>
-                            <option value="reader" <?php selected( $current_permission, 'reader' ); ?>><?php _e( 'Reader', WPGENT_DOMAIN ); ?></option>
+                          <select class="form-control" id="permission" name="permission" readonly="readonly" disabled="disabled">
+                            <option value="owner" <?php selected( 'owner', 'owner' ); ?>><?php _e( 'Owner', WPGENT_DOMAIN ); ?></option>
+                            <option value="editor" <?php selected( 'owner', 'editor' ); ?>><?php _e( 'Editor', WPGENT_DOMAIN ); ?></option>
+                            <option value="director" <?php selected( 'owner', 'director' ); ?>><?php _e( 'Director', WPGENT_DOMAIN ); ?></option>
+                            <option value="writer" <?php selected( 'owner', 'writer' ); ?>><?php _e( 'Writer', WPGENT_DOMAIN ); ?></option>
+                            <option value="reader" <?php selected( 'owner', 'reader' ); ?>><?php _e( 'Reader', WPGENT_DOMAIN ); ?></option>
                           </select>
-                          <input type="text" id="permission" name="permission" class="form-control col-md-6 col-xs-12" readonly="readonly" disabled="disabled" value="<?php _e( 'Owner', WPGENT_DOMAIN ); ?>">
                         </div>
                       </div>
                       <div class="ln_solid"></div>
@@ -175,7 +133,7 @@ if ( ! empty( $current_source_id ) ) {
     'before' => '<div class="page-links">' . __( 'Pages:', WPGENT_DOMAIN ),
     'after'  => '</div>',
   ) );
-*/ endif; ?>
+*/ ?>
                   </div>
                 </div>
               </div>

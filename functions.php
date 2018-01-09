@@ -181,8 +181,8 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/fonts.php' ) ) );
   wp_enqueue_style( WPGENT_HANDLE . '-font' );
   
-  // Paged Custom Styles
-  $_paged_custom_stylesheet = 'build/css/custom-'. $_pagename .'.min.js';
+  // Single Page Custom Styles
+  $_paged_custom_stylesheet = sprintf( 'build/css/custom-%s%s.css', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
   if ( file_exists( WPGENT_PATH . $_paged_custom_stylesheet ) ) {
     wp_register_style( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_stylesheet, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_stylesheet ) ) );
     wp_enqueue_style( WPGENT_HANDLE .'-'. $_pagename );
@@ -229,12 +229,12 @@ add_action( 'wp_enqueue_scripts', function() {
   }
   
   // Common Custom Scripts
-  $_common_custom_scriptfile = 'src/js/custom.js'; // 'build/js/custom' . '.min' . '.js';
+  $_common_custom_scriptfile = sprintf( '%s/js/custom%s.js', ( WP_DEBUG ? 'src' : 'build' ), ( WP_DEBUG ? '' : '.min' ) );
   wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
   wp_enqueue_script( WPGENT_HANDLE );
   
-  // Paged Custom Scripts
-  $_paged_custom_scriptfile = 'build/js/custom-'. $_pagename .'.js';
+  // Single Page Custom Scripts
+  $_paged_custom_scriptfile = sprintf( 'build/js/custom-%s%s.js', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
   if ( file_exists( WPGENT_PATH . $_paged_custom_scriptfile ) ) {
     wp_register_script( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_scriptfile, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_scriptfile ) ), true );
     wp_enqueue_script( WPGENT_HANDLE .'-'. $_pagename );
@@ -400,6 +400,15 @@ add_filter( 'pre_option_active_plugins', function( $value ){
 
 /**
  * 
+ * /
+add_action( 'template_redirect', function(){
+  $_plotter = get_query_var( 'plotter', [] );
+} );
+*/
+
+
+/**
+ * 
  */
 add_action( 'wp_print_footer_scripts', function() {
   $inline_scripts = array();
@@ -441,7 +450,8 @@ EOT;
  */
 add_action( 'wp_footer', function() {
   if ( WP_DEBUG ) {
-    global $template, $wp_query;
+    global $template; // , $wp_query;
+    $_plotter = get_query_var( 'plotter' );
     $template_name = basename( $template, '.php' );
     $log_style = [ "'color: red; font-weight: bold'", "'color: blue; font-weight: bold'" ];
     $debug_logs = [];
@@ -452,6 +462,12 @@ add_action( 'wp_footer', function() {
       $post_guid = __ctl( 'lib' )::get_pageinfo( 'guid' );
       $page_type = __ctl( 'lib' )::get_pageinfo();
       $debug_logs[] = "logger.debug('Current Page Name: %c{$page_name}%c (GUID: %c{$post_guid}%c) | Page Type: %c{$page_type}', {$log_style[0]}, '', {$log_style[0]}, '', {$log_style[0]});";
+    }
+    if ( file_exists( WPGENT_PATH . 'build/css/custom-'. $_plotter['page_name'] .'.css' ) ) {
+      $debug_logs[] = "logger.debug('Current Page Custom Style: %ccustom-{$_plotter['page_name']}.css', {$log_style[0]} );";
+    }
+    if ( file_exists( WPGENT_PATH . 'build/js/custom-'. $_plotter['page_name'] .'.js' ) ) {
+      $debug_logs[] = "logger.debug('Current Page Custom Script: %ccustom-{$_plotter['page_name']}.js', {$log_style[0]} );";
     }
     if ( is_user_logged_in() ) {
       $current_user = wp_get_current_user();

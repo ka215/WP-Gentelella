@@ -34,12 +34,12 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
               <div id="section-1" class="menu_section">
                 <h3><?php _e('Structures', WPGENT_DOMAIN) ?></h3>
                 <ul class="nav side-menu">
-                  <li><a href="/global/"><i class="fa fa-globe"></i> <?php _e('Global Settings', WPGENT_DOMAIN) ?></a></li>
+                  <li><a href="/global/"><i class="fa fa-globe"></i> <?php _e('Whole Story', WPGENT_DOMAIN) ?></a></li>
 <?php if ( __ctl( 'model' )->have_sources() ) : ?>
-                  <li><a><i class="fa fa-pencil"></i> <?php _e('Whole Story', WPGENT_DOMAIN) ?> <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="fa fa-pencil"></i> <?php _e('Storyline', WPGENT_DOMAIN) ?> <span class="fa fa-chevron-down"></span></a>
                     <ul class="nav child_menu">
-                      <li><a href="/edit-plot/"><?php _e('All Plots', WPGENT_DOMAIN) ?></a></li>
-                      <li><a href="/add-plot/"><?php _e('Add new', WPGENT_DOMAIN) ?></a></li>
+                      <li><a href="/edit-storyline/"><?php _e('Edit Storyline', WPGENT_DOMAIN) ?></a></li>
+                      <li><a href="/create-new/"><?php _e('Create New', WPGENT_DOMAIN) ?></a></li>
                     </ul>
                   </li>
                   <li><a><i class="fa fa-sitemap"></i> <?php _e('Scene / Sequence', WPGENT_DOMAIN) ?> <span class="fa fa-chevron-down"></span></a>
