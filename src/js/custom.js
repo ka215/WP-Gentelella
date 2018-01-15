@@ -186,6 +186,7 @@ $(document).ready(function() {
             var switchery = new Switchery(html, {
                 color: '#26B99A'
             });
+            // console.info( $(html).removeAttr('style') );
         });
     }
 });
@@ -310,3 +311,113 @@ if (!window.localStorage) {
   };
   window.localStorage.length = (document.cookie.match(/\=/g) || window.localStorage).length;
 }
+
+// is_empty()
+var is_empty = function( _var ) {
+  if ( _var == null ) {
+    // typeof null -> object : for hack a bug of ECMAScript
+    // Refer: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/typeof
+    return true;
+  }
+  switch( typeof _var ) {
+    case 'object':
+      if ( Array.isArray( _var ) ) {
+        // When object is array:
+        return ( _var.length === 0 );
+      } else {
+        // When object is not array:
+        if ( Object.keys( _var ).length > 0 || Object.getOwnPropertySymbols(_var).length > 0 ) {
+          return false;
+        } else
+        if ( _var.valueOf().length !== undefined ) {
+          return ( _var.valueOf().length === 0 );
+        } else
+        if ( typeof _var.valueOf() !== 'object' ) {
+          return is_empty( _var.valueOf() );
+        } else {
+          return true;
+        }
+      }
+    case 'string':
+      return ( _var === '' );
+    case 'number':
+      return ( _var == 0 );
+    case 'boolean':
+      return ! _var;
+    case 'undefined':
+    case 'null':
+      return true;
+    case 'symbol': // Since ECMAScript6
+    case 'function':
+    default:
+      return false;
+  }
+};
+// /is_empty()
+
+// Closure : Call REST API via Ajax
+var //xhrResponse = {},
+    //dfd = new $.Deferred,
+    callbackAjax = {},
+    callAjax = function() {
+      if ( arguments.length < 2 ) {
+        return false;
+      }
+      var ajax_url   = arguments[0],
+          method     = arguments[1],
+          post_data  = ! is_empty( arguments[2] ) ? arguments[2] : null,
+          data_type  = ! is_empty( arguments[3] ) ? arguments[3] : 'json',
+          callback_func = ! is_empty( arguments[4] ) ? arguments[4] : null,
+          debug_mode = ! is_empty( arguments[5] ) ? Boolean( arguments[5] ) :false,
+          jqXHR = $.ajax({
+            async: true,
+            url:   ajax_url,
+            type:  method,
+            data:  post_data,
+            dataType: data_type,
+            cache: false,
+            beforeSend: function( xhr, set ) {
+              if ( debug_mode ) {
+                console.log({ xhr: xhr, set: set });
+              }
+              xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+            }
+          });
+
+      jqXHR.done(function( data, stat, xhr ) {
+        if ( debug_mode ) {
+          console.log({ done: stat, data: data, xhr: xhr });
+        }
+        // Object.assign( xhrResponse, { 'responseText': jqXHR.responseText, 'status': jqXHR.status, 'statusText': jqXHR.statusText } );
+        if ( 'script' === data_type ) {
+          return data;
+        }
+        if ( ! is_empty( callback_func ) ) {
+          if ( $.inArray( callback_func, Object.keys( callbackAjax ) ) !== -1 ) {
+            return callback[callback_func]();
+          } else {
+            if ( debug_mode ) {
+              console.error( 'Callback method "' + callback_func + '" does not exist.' );
+            }
+            return false;
+          }
+        }
+      });
+
+      jqXHR.fail(function( xhr, stat, err ) {
+        if ( debug_mode ) {
+          console.log({ fail: stat, error: err, xhr: xhr });
+        }
+      });
+
+      jqXHR.always(function( res1, stat, res2 ) {
+        if ( debug_mode ) {
+          console.log({ always: stat, res1: res1, res2: res2 });
+        }
+        // dfd.resolve();
+      });
+
+      // for method chain on the jQuery
+      return jqXHR;
+    };
+// /Closure

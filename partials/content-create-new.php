@@ -13,6 +13,7 @@ $current_user_id     = $_plotter['current_user_id'];
 $user_sources        = $_plotter['user_sources'];
 $current_source_id   = $_plotter['current_source_id'];
 $current_source_name = $_plotter['current_source_name'];
+$current_structures  = $_plotter['current_structures'];
 ?>
 
         <!-- page content -->
@@ -20,7 +21,7 @@ $current_source_name = $_plotter['current_source_name'];
           <div <?php post_class(); ?>>
             <div class="page-title">
               <div class="title_left">
-                <h3><?php _e( 'Create New Storyline', WPGENT_DOMAIN ) ?></h3>
+                <h2><?php echo esc_html( $current_source_name ) ?></h2>
               </div>
             </div>
 
@@ -30,16 +31,16 @@ $current_source_name = $_plotter['current_source_name'];
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><?php echo $current_source_name ?></h2>
+                    <h3><?php _e( 'Create New Storyline', WPGENT_DOMAIN ) ?></h3>
                     <?php get_template_part( 'partials/toolbox' ); ?>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
-                    <form id="plotSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?= $page_name ?>">
-                      <input type="hidden" name="source_id" value="<?= $current_source_id ?>">
-                      <input type="hidden" name="post_action" id="global-post-action" value="">
-                      <?php wp_nonce_field( 'global-setting_' . $current_user_id ); ?>
+                    <form id="structureSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
+                      <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
+                      <input type="hidden" name="source_id" value="<?= esc_attr( $current_source_id ) ?>">
+                      <input type="hidden" name="post_action" id="<?= esc_attr( $page_name ) ?>-post-action" value="">
+                      <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
 <?php if ( count( $user_sources ) > 0 ) : ?>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="change_source"><?php _e( 'Switch or Add Story', WPGENT_DOMAIN ); ?></label>
@@ -117,11 +118,11 @@ $current_source_name = $_plotter['current_source_name'];
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
-                          <button class="btn btn-default" type="button" id="global-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-default" type="button" id="<?= esc_attr( $page_name ) ?>-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
 <?php if ( count( $user_sources ) > 0 ) : ?>
-                          <button class="btn btn-primary" type="button" id="global-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid" type="button" id="global-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid hide" type="button" id="global-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-success onValid hide" type="button" id="<?= esc_attr( $page_name ) ?>-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
 <?php endif; ?>
                         </div>
                       </div>

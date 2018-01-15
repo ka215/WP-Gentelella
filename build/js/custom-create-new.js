@@ -3,7 +3,7 @@
  */
 $(document).ready(function() {
   
-  var gf              = $("#globalSettings"),
+  var gf              = $("#structureSettings"),
       wls             = window.localStorage,
       currentSrcId    = Number( $('#change_source option:selected').val() );
   //storedSrcCache( currentSrcId );
@@ -56,13 +56,13 @@ $(document).ready(function() {
   });
   
   
-  $(document).on('click', 'button.btn[id^="global-btn"]', function(e){
+  $(document).on('click', 'button.btn[id^="create-new-btn"]', function(e){
     e.preventDefault();
-    var action = $(this).attr('id').replace('global-btn-', '');
+    var action = $(this).attr('id').replace('create-new-btn-', '');
     if ( 'cancel' == action ) {
       return location.href = '/dashboard/';
     } else {
-      $('#global-post-action').val( action );
+      $('#create-new-post-action').val( action );
       gf.submit();
     }
   });

@@ -33,11 +33,11 @@ if ( ! empty( $current_source_id ) ) {
           <div <?php post_class(); ?>>
             <div class="page-title">
               <div class="title_left">
-                <h3><?php if ( empty( $user_sources ) ) {
-                    _e( "Let's add a new story", WPGENT_DOMAIN );
+                <h2><?php if ( empty( $user_sources ) ) {
+                    _e( "Let's weave a new story!", WPGENT_DOMAIN );
                 } else {
-                    _e( 'Whole Story', WPGENT_DOMAIN );
-                } ?></h3>
+                    echo esc_html( $current_source_name );
+                } ?></h2>
               </div>
             </div>
 
@@ -47,19 +47,20 @@ if ( ! empty( $current_source_id ) ) {
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><?php if ( empty( $user_sources ) ) {
+                    <h3><?php if ( empty( $user_sources ) ) {
                         _e( "First of all, let's enter the title of your story.", WPGENT_DOMAIN );
                     } else {
-                        _e( "Let's get started!", WPGENT_DOMAIN );
-                    } ?></h2>
+                        _e( "Whole Story", WPGENT_DOMAIN );
+                    } ?></h3>
                     <?php get_template_part( 'partials/toolbox' ); ?>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
+                    <form id="globalSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
 <?php if ( empty( $user_sources ) ) : ?>
-                    <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
                       <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
-                      <?php wp_nonce_field( 'initial-setting_' . $current_user_id ); ?>
+                      <input type="hidden" name="post_action" id="<?= esc_attr( $page_name ) ?>-post-action" value="regist">
+                      <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
                       <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', WPGENT_DOMAIN ); ?></p>
                       <div class="item form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required">*</span></label>
@@ -70,17 +71,15 @@ if ( ! empty( $current_source_id ) ) {
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
-                          <button type="submit" class="btn btn-success"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
+                          <button type="submit" class="btn btn-success" id="<?= esc_attr( $page_name ) ?>-btn-regist"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
                         </div>
                       </div>
                     </form>
 <?php else : ?>
-
-                    <form id="globalSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
                       <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
                       <input type="hidden" name="source_id" value="<?= esc_attr( $current_source_id ) ?>">
-                      <input type="hidden" name="post_action" id="global-post-action" value="">
-                      <?php wp_nonce_field( 'global-setting_' . $current_user_id ); ?>
+                      <input type="hidden" name="post_action" id="<?= esc_attr( $page_name ) ?>-post-action" value="">
+                      <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
 <?php if ( count( $user_sources ) > 0 ) : ?>
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="change_source"><?php _e( 'Switch or Add Story', WPGENT_DOMAIN ); ?></label>
@@ -159,11 +158,11 @@ if ( ! empty( $current_source_id ) ) {
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
-                          <button class="btn btn-default" type="button" id="global-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-default" type="button" id="<?= esc_attr( $page_name ) ?>-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
 <?php if ( count( $user_sources ) > 0 ) : ?>
-                          <button class="btn btn-primary" type="button" id="global-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid" type="button" id="global-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid hide" type="button" id="global-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-success onValid hide" type="button" id="<?= esc_attr( $page_name ) ?>-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
 <?php endif; ?>
                         </div>
                       </div>

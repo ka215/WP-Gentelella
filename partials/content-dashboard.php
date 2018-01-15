@@ -21,11 +21,11 @@ $current_source_name = $_plotter['current_source_name'];
           <div <?php post_class(); ?>>
             <div class="page-title">
               <div class="title_left">
-                <h3><?php if ( __ctl( 'lib' )::is_first_visit() ) {
+                <h2><?php if ( __ctl( 'lib' )::is_first_visit() ) {
                     _e( 'Welcome Plotter!', WPGENT_DOMAIN );
                 } else {
                     echo empty( $user_sources ) ? _e( "Let's add a new story", WPGENT_DOMAIN ) : $current_source_name;
-                } ?></h3>
+                } ?></h2>
               </div>
             </div>
 
@@ -35,19 +35,19 @@ $current_source_name = $_plotter['current_source_name'];
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h2><?php if ( empty( $user_sources ) ) {
+                    <h3><?php if ( empty( $user_sources ) ) {
                         _e( "First of all, let's enter the title of your story.", WPGENT_DOMAIN );
                     } else {
                         _e( "Let's get started!", WPGENT_DOMAIN );
-                    } ?></h2>
+                    } ?></h3>
                     <?php get_template_part( 'partials/toolbox' ); ?>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">
 <?php if ( empty( $user_sources ) ) : ?>
                     <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
-                      <input type="hidden" name="from_page" value="<?= $page_name ?>">
-                      <?php wp_nonce_field( 'initial-setting_' . $current_user_id ); ?>
+                      <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
+                      <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
                       <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', WPGENT_DOMAIN ); ?></p>
                       <div class="item form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required">*</span></label>
@@ -58,7 +58,7 @@ $current_source_name = $_plotter['current_source_name'];
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
-                          <button type="submit" class="btn btn-success"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
+                          <button type="submit" class="btn btn-success" id="<?= esc_attr( $page_name ) ?>-submit"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
                         </div>
                       </div>
                     </form>

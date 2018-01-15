@@ -752,8 +752,24 @@ table.no-margin .progress {
 }
 
 h1, .h1, h2, .h2, h3, .h3 {
-  margin-top: 10px;
+  margin-top: 4px;
   margin-bottom: 10px;
+  font-weight: 400;
+}
+
+h1 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+
+h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
 }
 
 a {
@@ -1274,11 +1290,6 @@ article.media {
 .expand h2 {
   width: 85%;
   float: left;
-}
-
-h2 {
-  font-size: 18px;
-  font-weight: 400;
 }
 
 #left, #right {
@@ -4565,6 +4576,11 @@ div[data-role="editor-toolbar"] {
 .switchery > small {
   width: 20px;
   height: 20px;
+}
+
+.js-switch {
+  display: none;
+  /* default is hidden */
 }
 
 /** /Switchery **/

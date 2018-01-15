@@ -25,7 +25,7 @@ if ( 'username' == $theme_my_login->get_option( 'login_type' ) ) {
               </div>
               <?php do_action( 'login_form' ); ?>
               <div>
-                <input type="submit" name="wp-submit" class="btn btn-default submit" id="wp-submit<?php $template->the_instance(); ?>" value="<?php esc_attr_e( 'Sign In', WPGENT_DOMAIN ); ?>" />
+                <input type="submit" name="wp-submit" class="btn btn-default submit" id="wp-submit-login<?php $template->the_instance(); ?>" value="<?php esc_attr_e( 'Sign In', WPGENT_DOMAIN ); ?>" />
                 <input type="hidden" name="redirect_to" value="<?php $template->the_redirect_url( 'login' ); ?>" />
                 <input type="hidden" name="instance" value="<?php $template->the_instance(); ?>" />
                 <input type="hidden" name="action" value="login" />
@@ -61,7 +61,7 @@ if ( 'username' == $theme_my_login->get_option( 'login_type' ) ) {
               <?php $template->the_errors(); ?>
               <?php if ( 'email' != $theme_my_login->get_option( 'login_type' ) ) : ?>
               <div>
-                <input type="text" name="user_login" id="user_login<?php $template->the_instance(); ?>" class="form-control" placeholder="<?php _e( 'Username', WPGENT_DOMAIN ); ?>" value="<?php $template->the_posted_value( 'user_login' ); ?>" required="" />
+                <input type="text" name="user_login" id="user_name<?php $template->the_instance(); ?>" class="form-control" placeholder="<?php _e( 'Username', WPGENT_DOMAIN ); ?>" value="<?php $template->the_posted_value( 'user_login' ); ?>" required="" />
               </div>
               <?php endif; ?>
               <div>

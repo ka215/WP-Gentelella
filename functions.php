@@ -230,13 +230,13 @@ add_action( 'wp_enqueue_scripts', function() {
   
   // Common Custom Scripts
   $_common_custom_scriptfile = sprintf( '%s/js/custom%s.js', ( WP_DEBUG ? 'src' : 'build' ), ( WP_DEBUG ? '' : '.min' ) );
-  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
+  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array( 'wp-api' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
   wp_enqueue_script( WPGENT_HANDLE );
   
   // Single Page Custom Scripts
   $_paged_custom_scriptfile = sprintf( 'build/js/custom-%s%s.js', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
   if ( file_exists( WPGENT_PATH . $_paged_custom_scriptfile ) ) {
-    wp_register_script( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_scriptfile, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_scriptfile ) ), true );
+    wp_register_script( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_scriptfile, array( WPGENT_HANDLE ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_scriptfile ) ), true );
     wp_enqueue_script( WPGENT_HANDLE .'-'. $_pagename );
   }
   
@@ -443,6 +443,14 @@ EOT;
   }
 } );
 
+/**
+ * Override the template path of Theme My Login
+ */
+add_filter( 'tml_template_paths', function( $args ) {
+  $args[0] = WPGENT_PATH . '/partials_tml';
+  return $args;
+} );
+
 
 
 /**
@@ -477,7 +485,7 @@ add_action( 'wp_footer', function() {
     $_hash = __ctl( 'lib' )::custom_hash( date("Y-m-d H:i:s") );
     $debug_logs[] = "logger.debug('Current hash: %c{$_hash}', {$log_style[1]});";
     if ( session_status() == PHP_SESSION_ACTIVE ) {
-      $debug_logs[] = "logger.debug( JSON.parse('". json_encode( $_SESSION ) ."') );";
+      $debug_logs[] = "logger.debug( JSON.parse('". json_encode( $_plotter ) ."') );";
     }
     
     echo '<script>' . implode( PHP_EOL, $debug_logs ) . '</script>' . PHP_EOL;
