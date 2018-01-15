@@ -415,7 +415,9 @@ var //xhrResponse = {},
               if ( debug_mode ) {
                 console.log({ xhr: xhr, set: set });
               }
-              xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+              if ( wpApiSettings ) {
+                xhr.setRequestHeader( 'X-WP-Nonce', wpApiSettings.nonce );
+              }
             }
           });
 

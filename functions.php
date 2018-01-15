@@ -70,11 +70,11 @@ add_action( 'after_setup_theme', function() {
   add_image_size( WPGENT_DOMAIN . '-featured-image', 2000, 2000, true );
   add_image_size( WPGENT_DOMAIN . '-thumbnail-avatar', 140, 140, true );
   
-  add_theme_support( 'custom-logo', array(
+  add_theme_support( 'custom-logo', [
     'width'       => 250,
     'height'      => 250,
     'flex-width'  => true,
-  ) );
+  ] );
   
   if ( is_front_page() ) {
     
@@ -84,20 +84,20 @@ add_action( 'after_setup_theme', function() {
     
     $GLOBALS['content_width'] = 525;
     
-    register_nav_menus( array(
+    register_nav_menus( [
       'top'    => __( 'Top Menu', WPGENT_DOMAIN ),
       'social' => __( 'Social Links Menu', WPGENT_DOMAIN ),
-    ) );
+    ] );
     
-    add_theme_support( 'html5', array(
+    add_theme_support( 'html5', [
       'search-form',
       'comment-form',
       'comment-list',
       'gallery',
       'caption',
-    ) );
+    ] );
     
-    add_theme_support( 'post-formats', array(
+    add_theme_support( 'post-formats', [
       'aside',
       'image',
       'video',
@@ -105,13 +105,13 @@ add_action( 'after_setup_theme', function() {
       'link',
       'gallery',
       'audio',
-    ) );
+    ] );
     
     add_theme_support( 'customize-selective-refresh-widgets' );
     
     //add_editor_style( array( 'assets/css/editor-style.css', twentyseventeen_fonts_url() ) );
     
-    register_sidebar( array(
+    register_sidebar( [
       'name'          => __( 'Sidebar Menu', WPGENT_DOMAIN ),
       'id'            => 'side-menu',
       'description'   => __( 'Add widgets here.', WPGENT_DOMAIN ),
@@ -119,165 +119,213 @@ add_action( 'after_setup_theme', function() {
       'after_widget'  => '</section>',
       'before_title'  => '<h2 class="widget-title">',
       'after_title'   => '</h2>',
-    ) );
+    ] );
     
   }
   
 });
 
 /**
- * Include resources for theme
+ * Register resources for plotter
  */
 add_action( 'wp_enqueue_scripts', function() {
-  $_pagename = __ctl( 'lib' )::get_pageinfo();
+  // $_pagename = __ctl( 'lib' )::get_pageinfo();
+  $_plotter  = get_query_var( 'plotter' );
+  $_pagename = $_plotter['page_name'];
   // Stylesheets
+  // bootstrap:
   if ( USE_CDN_RESOURCES ) {
     wp_register_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', false, '3.3.7' );
   } else {
     wp_register_style( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/css/bootstrap.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/bootstrap/dist/css/bootstrap.min.css' ) ) );
   }
-  wp_enqueue_style( 'bootstrap' );
   
+  // font-awesome
   wp_deregister_style( 'font-awesome' );
   if ( USE_CDN_RESOURCES ) {
     wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0' );
   } else {
     wp_register_style( 'font-awesome', WPGENT_DIR . 'vendors/font-awesome/css/font-awesome.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/font-awesome/css/font-awesome.min.css' ) ) );
   }
-  wp_enqueue_style( 'font-awesome' );
   
+  // icons:
   wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/icons.min.css' ) ) );
-  wp_enqueue_style( WPGENT_HANDLE . '-icon' );
   
+  // noprogress:
   wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.css' ) ) );
-  wp_enqueue_style( 'nprogress' );
   
-  if ( in_array( $_pagename, array( 'login', 'register' ) ) ) {
-    // Login page & Register page only
-    wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
-    wp_enqueue_style( 'animate' );
-    
-  } else
-  if ( is_front_page() ) {
-    // Front page only
-  } else {
-    wp_register_style( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.css' ) ) );
-    wp_enqueue_style( 'pnotify' );
-    
-    wp_register_style( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.css' ) ) );
-    wp_enqueue_style( 'switchery' );
-    
+  // animate: Login page & Register page only
+  wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
+  
+  // vendoers styles:
+  $vendor_styles = [
+    'pnotify'     => 'vendors/pnotify/dist/pnotify.css',
+    'switchery'   => 'vendors/switchery/dist/switchery.min.css',
+    'smartwizard' => 'vendors/jQuery-Smart-Wizard/styles/smart_wizard.css',
+    // etc.
+  ];
+  foreach ( $vendor_styles as $_handle => $_path ) {
+    wp_register_style( $_handle, WPGENT_DIR . $_path, false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_path ) ) );
   }
   
   // Common Custom Styles
   wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/custom.min.css' ) ) );
-  wp_enqueue_style( WPGENT_HANDLE );
   
-  $font_params = array(
+  $font_params = [
     get_bloginfo( 'language' ), // Current Language
     0, // is serif: 1 = true | 0 = false
     400, // base weight
-  );
+  ];
   wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/fonts.php' ) ) );
-  wp_enqueue_style( WPGENT_HANDLE . '-font' );
   
   // Single Page Custom Styles
   $_paged_custom_stylesheet = sprintf( 'build/css/custom-%s%s.css', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
   if ( file_exists( WPGENT_PATH . $_paged_custom_stylesheet ) ) {
-    wp_register_style( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_stylesheet, array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_stylesheet ) ) );
-    wp_enqueue_style( WPGENT_HANDLE .'-'. $_pagename );
+    wp_register_style( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_stylesheet, [], __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_stylesheet ) ) );
   }
   
   
   // JavaScripts
+  // jquery:
   wp_deregister_script( 'jquery' );
   if ( USE_CDN_RESOURCES ) {
     wp_register_script( 'jquery', '//code.jquery.com/jquery-3.2.1.min.js', array(), '3.2.1' );
   } else {
     wp_register_script( 'jquery', WPGENT_DIR . 'vendors/jquery/dist/jquery.min.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/jquery/dist/jquery.min.js' ) ) );
   }
-  wp_enqueue_script( 'jquery' );
   
+  // bootstrap:
   if ( USE_CDN_RESOURCES ) {
     wp_register_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ), '3.3.7', true );
   } else {
     wp_register_script( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/js/bootstrap.min.js', array( 'jquery' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/bootstrap/dist/js/bootstrap.min.js' ) ), true );
   }
-  wp_enqueue_script( 'bootstrap' );
   
+  // fastclick:
   wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/fastclick/lib/fastclick.js' ) ), true );
-  wp_enqueue_script( 'fastclick' );
   
+  // nprogress:
   wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
-  wp_enqueue_script( 'nprogress' );
   
-  if ( in_array( $_pagename, array( 'login', 'register' ) ) ) {
-    // Login page & Register page only
-  } else
-  if ( is_front_page() ) {
-    // Front page only
-  } else {
-    wp_register_script( 'validator', WPGENT_DIR . 'vendors/validator/validator.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/validator/validator.js' ) ), true );
-    wp_enqueue_script( 'validator' );
-    
-    wp_register_script( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/pnotify.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/pnotify/dist/pnotify.js' ) ), true );
-    wp_enqueue_script( 'pnotify' );
-    
-    wp_register_script( 'switchery', WPGENT_DIR . 'vendors/switchery/dist/switchery.min.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/switchery/dist/switchery.min.js' ) ), true );
-    wp_enqueue_script( 'switchery' );
-    
+  // vendoers scripts:
+  $vendor_scripts = [
+    'validator'   => 'vendors/validator/validator.js',
+    'pnotify'     => 'vendors/pnotify/dist/pnotify.js',
+    'switchery'   => 'vendors/switchery/dist/switchery.min.js',
+    'smartwizard' => 'vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js',
+    // etc.
+  ];
+  foreach ( $vendor_scripts as $_handle => $_path ) {
+    wp_register_script( $_handle, WPGENT_DIR . $_path, [], __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_path ) ), true );
   }
   
   // Common Custom Scripts
   $_common_custom_scriptfile = sprintf( '%s/js/custom%s.js', ( WP_DEBUG ? 'src' : 'build' ), ( WP_DEBUG ? '' : '.min' ) );
   wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array( 'wp-api' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
-  wp_enqueue_script( WPGENT_HANDLE );
   
   // Single Page Custom Scripts
   $_paged_custom_scriptfile = sprintf( 'build/js/custom-%s%s.js', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
   if ( file_exists( WPGENT_PATH . $_paged_custom_scriptfile ) ) {
     wp_register_script( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_scriptfile, array( WPGENT_HANDLE ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_scriptfile ) ), true );
-    wp_enqueue_script( WPGENT_HANDLE .'-'. $_pagename );
   }
   
 }, 2 );
 
 /**
- * Finalize including resources
+ * Finalize enqueue resources
  */
 add_action( 'wp_enqueue_scripts', function() {
+  $_plotter  = get_query_var( 'plotter' );
+  $_pagename = $_plotter['page_name'];
+  $registered_style_handles = [
+    'common' => [
+      'bootstrap', 'font-awesome', WPGENT_HANDLE . '-icon', 
+    ],
+    'wp' => [
+      'theme-my-login',
+    ],
+    'vendoers' => [
+      'nprogress', 'animate', 'pnotify', 'switchery', 'smartwizard',
+    ],
+    'extend' => [
+      WPGENT_HANDLE, WPGENT_HANDLE . '-font', WPGENT_HANDLE .'-'. $_pagename,
+    ],
+  ];
+  $registered_script_handles = [
+    'common' => [
+      'jquery', 'bootstrap', 
+    ],
+    'wp' => [
+      'tml-themed-profiles', 'wp-embed', 
+    ],
+    'vendoers' => [
+      'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery', 'smartwizard', 
+    ],
+    'extend' => [
+      WPGENT_HANDLE, WPGENT_HANDLE .'-'. $_pagename,
+    ],
+  ];
   if ( is_front_page() ) {
     // Stylesheets
-    $style_handles = array(
-      'theme-my-login', 'nprogress', 'animate', 'pnotify', 'switchery', WPGENT_HANDLE,
-      // WPGENT_HANDLE . '-icon'
-    );
-    foreach ( $style_handles as $_handle ) {
-      wp_deregister_style( $_handle );
+    $enqueue_style_handles = array_merge( $registered_style_handles['common'], $registered_style_handles['extend'] );
+    foreach ( $enqueue_style_handles as $_handle ) {
+      wp_enqueue_style( $_handle );
     }
+    wp_deregister_style( 'theme-my-login' );
     // JavaScripts
-    $script_handles = array(
-      'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery', WPGENT_HANDLE,
-      'tml-themed-profiles', 'wp-embed', 
-    );
-    foreach ( $script_handles as $_handle ) {
-      wp_deregister_script( $_handle );
+    $enqueue_script_handles = array_merge( $registered_script_handles['common'], $registered_script_handles['extend'] );
+    foreach ( $enqueue_script_handles as $_handle ) {
+      wp_enqueue_script( $_handle );
     }
+    wp_deregister_script( 'tml-themed-profiles' );
   } else {
     // Masking resource path
     global $wp_scripts, $wp_styles;
-    $masking_styles = array( 'theme-my-login' => 'theme-my-login' );
+    $masking_styles = [
+      'theme-my-login' => 'theme-my-login'
+    ];
     foreach ( $wp_styles->registered as $_k => $_v ) {
       if ( array_key_exists( $_k, $masking_styles ) ) {
         $wp_styles->registered[$_k]->src = str_replace( $masking_styles[$_k], '.' . hash( 'crc32', $masking_styles[$_k] ), dirname( $_v->src ) ) . '/' . basename( $_v->src );
       }
     }
-    $masking_scripts = array( 'tml-themed-profiles' => 'theme-my-login' );
+    $masking_scripts = [
+      'tml-themed-profiles' => 'theme-my-login'
+    ];
     foreach ( $wp_scripts->registered as $_k => $_v ) {
       if ( array_key_exists( $_k, $masking_scripts ) ) {
         $wp_scripts->registered[$_k]->src = str_replace( $masking_scripts[$_k], '.' . hash( 'crc32', $masking_scripts[$_k] ), dirname( $_v->src ) ) . '/' . basename( $_v->src );
       }
     }
+    
+    $enqueue_style_handles = array_merge( $registered_style_handles['common'], $registered_style_handles['wp'] );
+    $enqueue_script_handles = array_merge( $registered_script_handles['common'], $registered_script_handles['wp'] );
+    switch ( $_pagename ) {
+      case 'account':
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'animate', 'pnotify', 'switchery' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery' ] );
+        break;
+      case 'dashboard':
+      case 'global':
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'pnotify', 'switchery' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery' ] );
+        break;
+      case 'create-new':
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'pnotify', 'switchery', 'smartwizard' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery', 'smartwizard' ] );
+        break;
+      default:
+        
+    }
+    $enqueue_style_handles = array_merge( $enqueue_style_handles, $registered_style_handles['extend'] );
+    foreach ( $enqueue_style_handles as $_handle ) {
+      wp_enqueue_style( $_handle );
+    }
+    $enqueue_script_handles = array_merge( $enqueue_script_handles, $registered_script_handles['extend'] );
+    foreach ( $enqueue_script_handles as $_handle ) {
+      wp_enqueue_script( $_handle );
+    }
+    
   }
 }, PHP_INT_MAX );
 
