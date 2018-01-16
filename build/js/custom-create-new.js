@@ -5,39 +5,89 @@ $(document).ready(function() {
   
   var gf              = $("#structureSettings"),
       wls             = window.localStorage,
-      currentSrcId    = Number( $('#change_source option:selected').val() );
-  //storedSrcCache( currentSrcId );
+      currentSrcId    = Number( $('#source_id').val() );
   
-  if ( typeof $.fn.smartWizard === 'function' ) {
-    $('#wizard').smartWizard({
-      // Properties
-      selected: 0,  // Selected Step, 0 = first step   
-      keyNavigation: true, // Enable/Disable key navigation(left and right keys are used if enabled)
-      enableAllSteps: true,  // Enable/Disable all steps on first load
-      transitionEffect: 'fade', // Effect on navigation, none/fade/slide/slideleft
-      contentURL:null, // specifying content url enables ajax content loading
-      contentURLData:null, // override ajax query parameters
-      contentCache:true, // cache step contents, if false content is fetched always from ajax url
-      cycleSteps: true, // cycle step navigation
-      enableFinishButton: false, // makes finish button enabled always
-      hideButtonsOnDisabled: false, // when the previous/next/finish buttons are disabled, hide them instead
-      errorSteps:[],    // array of step numbers to highlighting as error steps
-      labelNext:'Next', // label for Next button
-      labelPrevious:'Previous', // label for Previous button
-      labelFinish:'Finish',  // label for Finish button        
-      noForwardJumping:false,
-      ajaxType: 'POST',
-      // Events
-      onLeaveStep: null, // triggers when leaving a step
-      onShowStep: null,  // triggers when showing a step
-      onFinish: null,  // triggers when Finish button is clicked  
-      buttonOrder: ['Next','Previous','Finish']  // button order, to hide a button remove it from the list
-    });
+  function renderSmartWizard() {
+    if ( typeof $.fn.smartWizard === 'function' ) {
+      $('#wizard').smartWizard({
+        // Properties
+        selected: 0,  // Selected Step, 0 = first step   
+        keyNavigation: true, // Enable/Disable key navigation(left and right keys are used if enabled)
+        enableAllSteps: true,  // Enable/Disable all steps on first load
+        transitionEffect: 'fade', // Effect on navigation, none/fade/slide/slideleft
+        contentURL:null, // specifying content url enables ajax content loading
+        contentURLData:null, // override ajax query parameters
+        contentCache:true, // cache step contents, if false content is fetched always from ajax url
+        cycleSteps: true, // cycle step navigation
+        enableFinishButton: false, // makes finish button enabled always
+        hideButtonsOnDisabled: false, // when the previous/next/finish buttons are disabled, hide them instead
+        errorSteps:[],    // array of step numbers to highlighting as error steps
+        // labelNext:'Next', // label for Next button
+        // labelPrevious:'Previous', // label for Previous button
+        // labelFinish:'Finish',  // label for Finish button        
+        noForwardJumping:false,
+        ajaxType: 'POST',
+        // Events
+        onLeaveStep: null, // triggers when leaving a step
+        onShowStep: null,  // triggers when showing a step
+        onFinish: null,  // triggers when Finish button is clicked  
+        // buttonOrder: ['Next','Previous','Finish']  // button order, to hide a button remove it from the list
+      });
+    }
   }
   
   // Event handlers
-  $('#change_source').on('change', function(){
-    logger.debug( currentSrcId, $(this).val() );
+  $('#structure-presets').on('change', function(){
+    // プリセットを選択した時のイベント
+    var selectedVar = $(this).val(),
+        selectedActs = JSON.parse( $($(this).find('option:selected')[0]).data('acts').replace(/\'/g, '"') );
+    logger.debug( currentSrcId, selectedVar, selectedActs );
+    // 現在のすべてのAct項目をローカルに保存する
+    saveActsAsCache();
+    
+    // ActのDOM要素を初期化
+    initActElements();
+    
+    // Wizardを再度レンダリング
+    buildWizard( selectedActs );
+    
+    // ローカルからすべてのAct項目を読み込む
+    loadActsCache();
+    
+  });
+  
+  
+  
+  
+  function saveActsAsCache() {
+  }
+  
+  function initActElements() {
+    $('#wizard ul.wizard_steps').remove();
+    $('#wizard div.stepContainer').remove();
+    $('#wizard div.actionBar').remove();
+    $('#wizard div[id^="act-"]').remove();
+console.info(     $('#wizard') );
+  }
+  
+  function buildWizard( acts ) {
+    $('#wizard').append('<ul class="wizard_steps"></ul>');
+    $.each( acts, function( i, v ){
+console.info( i, v );
+      var step_tmpl = $('#wizard-templates ul.wizard-step-template li').clone(),
+          newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, i+1);
+      $('#wizard ul.wizard_steps').append( $(newStep)[0].outerHTML );
+      var act_tmpl = $('#wizard-templates div.wizard-act-template div[id^="act-"]').clone(),
+          newAct   = act_tmpl[0].outerHTML.replace(/\%N/g, i+1);
+      $('#wizard').append( $(newAct)[0].outerHTML );
+    });
+    renderSmartWizard();
+  }
+  
+  function loadActsCache() {
+  }
+  
+  /*
     if ( $(this).val() === '' ) {
       // Add new story
       storedSrcCache( currentSrcId ); // 現ソースIDをローカルに保存
@@ -81,6 +131,7 @@ $(document).ready(function() {
       gf.find('#global-btn-add').addClass('hide');
     }
   });
+  */
   
   
   $(document).on('click', 'button.btn[id^="create-new-btn"]', function(e){

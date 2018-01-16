@@ -4771,10 +4771,12 @@ fieldset {
   list-style: none;
   position: relative;
   width: 100%;
-  margin: 0 0 20px;
+  margin: 0 0 100px;
+  /* margin-bottom: +80px */
 }
 
 .wizard_horizontal ul.wizard_steps li {
+  position: relative;
   display: table-cell;
   text-align: center;
 }
@@ -4834,6 +4836,12 @@ fieldset {
   right: 50%;
   width: 50%;
   left: auto;
+}
+
+.wizard_horizontal ul.wizard_steps li .step-bottom-block {
+  position: absolute;
+  left: calc(50% - 40px);
+  padding-top: 10px;
 }
 
 .wizard_verticle .stepContainer {
