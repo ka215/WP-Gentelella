@@ -148,7 +148,7 @@ body {
 }
 .page-title {
   width: 100%;
-  height: 65px;
+  height: auto;
   padding: 10px 0;
 }
 .page-title .title_left {
@@ -313,6 +313,26 @@ a, a:visited, a:focus, a:active, :visited, :focus, :active, .btn:focus, .btn:act
 a:hover, a:focus {
   color: $alink_color_hover;
   text-decoration: none
+}
+.required {
+  position: relative;
+  display: inline-block;
+  color: $red;
+  width: .5rem;
+  height: 1rem;
+}
+.required:before {
+  position: absolute;
+  content: "\f069";
+  left: .35rem;
+  top: -.5rem;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  font-size: .5rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $red;
 }
 .navbar {
   margin-bottom: 0
@@ -3926,173 +3946,286 @@ fieldset {
 }
 /** /Cropper **/
 
-/** jQuery Smart Wizard  **/
-.form_wizard .stepContainer {
+/** Wizard  **/
+.form_wizard {
   display: block;
   position: relative;
-  margin: 0;
+  margin: 0 27px 0 0;
   padding: 0;
-  border: 0 solid #CCC;
+  border: 0 solid transparent;
   overflow-x: hidden;
 }
 
-.wizard_horizontal ul.wizard_steps {
-  display: table;
+.wizard_horizontal> ul.wizard_steps {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: stretch;
   list-style: none;
   position: relative;
-  width: 100%;
-  margin: 0 0 100px; /* margin-bottom: +80px */
+  min-width: 100%;
+  margin: 0;
+  overflow-x: auto;
 }
 
-.wizard_horizontal ul.wizard_steps li {
+.wizard_horizontal> ul.wizard_steps>li {
   position: relative;
-  display: table-cell;
+  flex-grow: 1;
   text-align: center;
+  min-width: 20%;
+  padding: 20px 0;
 }
 
-.wizard_horizontal ul.wizard_steps li a, .wizard_horizontal ul.wizard_steps li:hover {
+.wizard_horizontal> ul.wizard_steps li div.step_indicator {
   display: block;
   position: relative;
   -moz-opacity: 1;
   filter: alpha(opacity= 100);
   opacity: 1;
-  color: #666;
+  color: $gray;
 }
 
-.wizard_horizontal ul.wizard_steps li a:before {
+.wizard_horizontal> ul.wizard_steps li div.step_indicator:before, 
+.wizard_horizontal> ul.wizard_steps li div.step_indicator:after {
   content: "";
   position: absolute;
   height: 4px;
-  background: #ccc;
-  top: 20px;
-  width: 100%;
+  background: $gray;
+  top: 26px;
+  width: 50%;
   z-index: 4;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator:before {
   left: 0;
 }
 
-.wizard_horizontal ul.wizard_steps li a.disabled .step_no {
-  background: #ccc;
+.wizard_horizontal> ul.wizard_steps li:first-child div.step_indicator:before {
+  width: 0;
 }
 
-.wizard_horizontal ul.wizard_steps li a .step_no {
-  width: 40px;
-  height: 40px;
-  line-height: 40px;
-  border-radius: 100px;
-  display: block;
-  margin: 0 auto 5px;
-  font-size: 16px;
-  text-align: center;
-  position: relative;
-  z-index: 5;
-}
-
-.wizard_horizontal ul.wizard_steps li a.selected:before, .step_no {
-  background: #34495E;
-  color: #fff;
-}
-
-.wizard_horizontal ul.wizard_steps li a.done:before, .wizard_horizontal ul.wizard_steps li a.done .step_no {
-  background: $global_active;
-  color: #fff;
-}
-
-.wizard_horizontal ul.wizard_steps li:first-child a:before {
+.wizard_horizontal> ul.wizard_steps li div.step_indicator:after {
   left: 50%;
 }
 
-.wizard_horizontal ul.wizard_steps li:last-child a:before {
-  right: 50%;
-  width: 50%;
-  left: auto;
+.wizard_horizontal> ul.wizard_steps li:last-child div.step_indicator:after {
+  width: 0;
 }
 
-.wizard_horizontal ul.wizard_steps li .step-bottom-block {
+.wizard_horizontal> ul.wizard_steps li div.step_indicator.selected:before, 
+.wizard_horizontal> ul.wizard_steps li div.step_indicator.selected:after {
+  background: $global_active;
+  color: #FFFFFF;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no {
+  width: 54px;
+  height: 54px;
+  line-height: 54px;
+  border-radius: 100px;
+  background: $dark;
+  display: block;
+  margin: 0 auto 5px;
+  font-size: 16px;
+  text-align: center;
+  color: #FFFFFF;
+  position: relative;
+  z-index: 5;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no:hover, 
+.wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no:active, 
+.wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no:focus {
+  background: $alink_color;
+  color: #FFFFFF;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator.selected a.step_no {
+  background: $global_active;
+  color: #FFFFFF;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no {
+  background: $panel_title_icon_color;
+  color: $main_content_text;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no:hover, 
+.wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no:active, 
+.wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no:focus {
+  background: $alink_color;
+  color: #FFFFFF;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator ul.step_meta {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: stretch;
+  list-style: none;
+  position: relative;
+  width: 100%;
+  margin: 5px 0;
+  padding: 0;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator ul.step_meta li {
+  color: $main_content_text;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator ul.step_meta li.step_name {
+  font-weight: 600;
+  /* color: $gray; */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_indicator button.btn-remove-act {
   position: absolute;
-  left: calc(50% - 40px);
-  padding-top: 10px;
+  top: -15px;
+  left: calc(50% + 20px);
+  background: $panel_title_icon_color;
+  color: $main_content_text;
+  border: 1px solid #999;
+  z-index: 10;
 }
 
-.wizard_verticle .stepContainer {
-  width: 80%;
-  float: left;
+.wizard_horizontal> ul.wizard_steps li div.step_indicator button.btn-remove-act:hover {
+  background: $alink_color;
+  color: #FFFFFF;
+  border: 1px solid $alink_color;
+}
+
+.wizard_horizontal> ul.wizard_steps li div.step_relational {
+  position: relative;
+  width: 100%;
+  margin: 10px 0;
   padding: 0 10px;
 }
 
-.actionBar {
-  width: 100%;
-  border-top: 1px solid #ddd;
-  padding: 10px 5px;
-  text-align: right;
-  margin-top: 10px;
+.wizard_horizontal> ul.wizard_steps li div.step_relational.wizard_vertical {
+  width: 50%;
+  left: calc(50% - 22px);
 }
 
-.actionBar .buttonDisabled {
-  cursor: not-allowed;
-  pointer-events: none;
-  opacity: .65;
-  filter: alpha(opacity=65);
-  -webkit-box-shadow: none;
-  box-shadow: none;
-}
-
-.actionBar a {
-  margin: 0 3px;
-}
-
-.wizard_verticle .wizard_content {
-  width: 80%;
-  float: left;
-  padding-left: 20px;
-}
-
-.wizard_verticle ul.wizard_steps {
-  display: table;
+.wizard_vertical> ul.wizard_steps {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: stretch;
   list-style: none;
   position: relative;
-  width: 20%;
-  float: left;
-  margin: 0 0 20px;
+  width: 100%;
+  margin: 5px 0;
+  padding: 0;
 }
 
-.wizard_verticle ul.wizard_steps li {
-  display: list-item;
-  text-align: center;
-}
-
-.wizard_verticle ul.wizard_steps li a {
-  height: 80px;
-}
-
-.wizard_verticle ul.wizard_steps li a:first-child {
-  margin-top: 20px;
-}
-
-.wizard_verticle ul.wizard_steps li a, .wizard_verticle ul.wizard_steps li:hover {
-  display: block;
+.wizard_vertical> ul.wizard_steps li {
   position: relative;
-  -moz-opacity: 1;
-  filter: alpha(opacity= 100);
-  opacity: 1;
-  color: #666;
+  text-align: left;
+  max-width: inherit;
+  height: 32px;
+  line-height: 32px;
+  padding-left: 20px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
-.wizard_verticle ul.wizard_steps li a:before {
+.wizard_vertical> ul.wizard_steps li:before, 
+.wizard_vertical> ul.wizard_steps li:after {
   content: "";
   position: absolute;
-  height: 100%;
-  background: #ccc;
-  top: 20px;
+  height: 50%;
+  border-left: 4px solid $gray;
   width: 4px;
   z-index: 4;
-  left: 49%;
+  left: 6px;
 }
 
-.wizard_verticle ul.wizard_steps li a.disabled .step_no {
+.wizard_vertical> ul.wizard_steps li:before {
+  top: 0;
+}
+
+.wizard_vertical> ul.wizard_steps li:after {
+  top: calc(50% + 1px);
+}
+
+.wizard_vertical> ul.wizard_steps li:first-child:before {
+  border-left: 4px dotted $gray;
+}
+
+.wizard_vertical> ul.wizard_steps li:last-child:after {
+  height: 0;
+}
+
+.wizard_vertical> ul.wizard_steps li a {
+  position: relative;
+  display: inline;
+  width: 100%;
+  height: 100%;
+  margin-left: -19px;
+  font-weight: 600;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  z-index: 9;
+}
+
+.wizard_vertical> ul.wizard_steps li a:before {
+  content: "\f111";
+  font-family: FontAwesome;
+  color: $dark;
+  font-size: 16px;
+  margin-right: 5px;
+  z-index: 10;
+}
+
+.wizard_vertical> ul.wizard_steps li a:hover:before {
+  color: $alink_color;
+}
+
+.wizard_vertical> ul.wizard_steps li a.add_sub:before {
+  content: "\f111";
+  font-family: FontAwesome;
+  color: $main_content_text;
+  font-size: 16px;
+  margin-right: 5px;
+  z-index: 9;
+}
+
+.wizard_vertical> ul.wizard_steps li a.add_sub:after {
+  content: "\f055";
+  font-family: FontAwesome;
+  color: $panel_title_icon_color;
+  font-size: 16px;
+  position: absolute;
+  left: 0;
+  z-index: 10;
+}
+
+.wizard_vertical> ul.wizard_steps li a.add_sub:hover:before, 
+.wizard_vertical> ul.wizard_steps li a.add_sub:active:before, 
+.wizard_vertical> ul.wizard_steps li a.add_sub:focus:before {
+  color: #FFFFFF;
+}
+
+.wizard_vertical> ul.wizard_steps li a.add_sub:hover:after, 
+.wizard_vertical> ul.wizard_steps li a.add_sub:active:after, 
+.wizard_vertical> ul.wizard_steps li a.add_sub:focus:after {
+  color: $alink_color;
+}
+
+
+.wizard_vertical> ul.wizard_steps li a.disabled .step_no {
   background: #ccc;
 }
 
-.wizard_verticle ul.wizard_steps li a .step_no {
+.wizard_vertical> ul.wizard_steps li a .step_no {
   width: 40px;
   height: 40px;
   line-height: 40px;
@@ -4105,24 +4238,29 @@ fieldset {
   z-index: 5;
 }
 
-.wizard_verticle ul.wizard_steps li a.selected:before, .step_no {
+.wizard_vertical> ul.wizard_steps li a.selected:before, .step_no {
   background: #34495E;
   color: #fff;
 }
 
-.wizard_verticle ul.wizard_steps li a.done:before, .wizard_verticle ul.wizard_steps li a.done .step_no {
+.wizard_vertical> ul.wizard_steps li a.done:before, .wizard_verticle ul.wizard_steps li a.done .step_no {
   background: $global_active;
   color: #fff;
 }
 
-.wizard_verticle ul.wizard_steps li:first-child a:before {
+.wizard_vertical> ul.wizard_steps li:first-child a:before {
   left: 49%;
 }
 
-.wizard_verticle ul.wizard_steps li:last-child a:before {
+.wizard_vertical> ul.wizard_steps li:last-child a:before {
   left: 49%;
   left: auto;
   width: 0;
+}
+
+#wizard-templates {
+  display: none !important;
+  visibility: hidden !important;
 }
 
 .form_wizard .loader {

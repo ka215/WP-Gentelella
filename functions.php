@@ -311,8 +311,8 @@ add_action( 'wp_enqueue_scripts', function() {
         $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery' ] );
         break;
       case 'create-new':
-        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'pnotify', 'switchery', 'smartwizard' ] );
-        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery', 'smartwizard' ] );
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'pnotify', ] ); // 'switchery', 'smartwizard' 
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', ] ); // 'switchery', 'smartwizard' 
         break;
       default:
         

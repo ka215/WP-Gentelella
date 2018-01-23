@@ -1,190 +1,260 @@
 /**
  * For Whole Story (Global Settings)
  */
+'use strict';
 $(document).ready(function() {
   
   var gf              = $("#structureSettings"),
-      wls             = window.localStorage,
-      currentSrcId    = Number( $('#source_id').val() );
+      wss             = window.sessionStorage,
+      currentSrcId    = Number( $('#source_id').val() ),
+      structureType   = Number( $('#structure-presets').find('option:selected').val() );
   
-  function renderSmartWizard() {
-    if ( typeof $.fn.smartWizard === 'function' ) {
-      $('#wizard').smartWizard({
-        // Properties
-        selected: 0,  // Selected Step, 0 = first step   
-        keyNavigation: true, // Enable/Disable key navigation(left and right keys are used if enabled)
-        enableAllSteps: true,  // Enable/Disable all steps on first load
-        transitionEffect: 'fade', // Effect on navigation, none/fade/slide/slideleft
-        contentURL:null, // specifying content url enables ajax content loading
-        contentURLData:null, // override ajax query parameters
-        contentCache:true, // cache step contents, if false content is fetched always from ajax url
-        cycleSteps: true, // cycle step navigation
-        enableFinishButton: false, // makes finish button enabled always
-        hideButtonsOnDisabled: false, // when the previous/next/finish buttons are disabled, hide them instead
-        errorSteps:[],    // array of step numbers to highlighting as error steps
-        // labelNext:'Next', // label for Next button
-        // labelPrevious:'Previous', // label for Previous button
-        // labelFinish:'Finish',  // label for Finish button        
-        noForwardJumping:false,
-        ajaxType: 'POST',
-        // Events
-        onLeaveStep: null, // triggers when leaving a step
-        onShowStep: null,  // triggers when showing a step
-        onFinish: null,  // triggers when Finish button is clicked  
-        // buttonOrder: ['Next','Previous','Finish']  // button order, to hide a button remove it from the list
-      });
-    }
-  }
+  // 初期処理: sessionStorageを初期化
+  clearSessionData();
   
   // Event handlers
   $('#structure-presets').on('change', function(){
     // プリセットを選択した時のイベント
-    var selectedVar = $(this).val(),
+    var selectedVar = Number( $(this).val() ),
         selectedActs = JSON.parse( $($(this).find('option:selected')[0]).data('acts').replace(/\'/g, '"') );
-    logger.debug( currentSrcId, selectedVar, selectedActs );
-    // 現在のすべてのAct項目をローカルに保存する
-    saveActsAsCache();
-    
-    // ActのDOM要素を初期化
-    initActElements();
-    
-    // Wizardを再度レンダリング
-    buildWizard( selectedActs );
-    
-    // ローカルからすべてのAct項目を読み込む
-    loadActsCache();
-    
+    if ( structureType === selectedVar ) {
+      // 選択変更なしのためなにもしない
+      return;
+    } else {
+      structureType = selectedVar;
+      // sessionStorageを初期化
+      clearSessionData();
+    }
+    // WizardのDOM要素を初期化
+    initWizardElements();
+    // Wizardを再生成
+    rebuildWizard( selectedActs );
   });
   
-  
-  
-  
-  function saveActsAsCache() {
-  }
-  
-  function initActElements() {
-    $('#wizard ul.wizard_steps').remove();
-    $('#wizard div.stepContainer').remove();
-    $('#wizard div.actionBar').remove();
-    $('#wizard div[id^="act-"]').remove();
-console.info(     $('#wizard') );
-  }
-  
-  function buildWizard( acts ) {
-    $('#wizard').append('<ul class="wizard_steps"></ul>');
-    $.each( acts, function( i, v ){
-console.info( i, v );
-      var step_tmpl = $('#wizard-templates ul.wizard-step-template li').clone(),
-          newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, i+1);
-      $('#wizard ul.wizard_steps').append( $(newStep)[0].outerHTML );
-      var act_tmpl = $('#wizard-templates div.wizard-act-template div[id^="act-"]').clone(),
-          newAct   = act_tmpl[0].outerHTML.replace(/\%N/g, i+1);
-      $('#wizard').append( $(newAct)[0].outerHTML );
+  $('#create-new-btn-reset').on('click', function(e){
+    // Resetボタン押下時
+    e.preventDefault();
+    $('#structure-presets> option').each(function(){
+      if ( $(this).index() == 0 ) {
+        $(this).prop('selected', true);
+      } else {
+        $(this).prop('selected', false);
+      }
     });
-    renderSmartWizard();
-  }
+    $('#structure-presets').trigger('change');
+    logger.debug( 'Reseted Step' );
+    // sessionStorageを初期化
+    clearSessionData();
+  });
   
-  function loadActsCache() {
-  }
+  $(document).on('click', '.btn-remove-act', function(e){
+    // step削除ボタン押下時
+    e.preventDefault();
+    var targetStep = Number( $(this).parents('li').data('step') );
+    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+      var idx = $(this).index();
+      if ( Number( $(this).data('step') ) == targetStep ) {
+        $(this).remove();
+      } else
+      if ( $(this).data('step') !== 'last' && Number( $(this).data('step') ) > targetStep ) {
+        $(this).attr('data-step', idx+1);
+        $(this).find('.step_no').text(idx+1);
+      }
+    });
+    // プリセットをカスタムへ変更
+    $('#structure-presets> option').each(function(){
+      if ( $(this).index() == 0 ) {
+        $(this).prop('selected', true);
+      } else {
+        $(this).prop('selected', false);
+      }
+    });
+    logger.debug( 'Removed Step: ', targetStep );
+    // sessionStorageから対象ステップのフォームデータを削除する
+    removeStepData( targetStep );
+  });
   
-  /*
-    if ( $(this).val() === '' ) {
-      // Add new story
-      storedSrcCache( currentSrcId ); // 現ソースIDをローカルに保存
-      gf.find('input[name="source_id"]').val('');
-      gf.find('#source_name').val('');
-      gf.find('input[id^="wh"]').val('');
-      gf.find('#team_writing').prop( 'checked', false );
-      rebuildSwitchery( '#team_writing' );
-      gf.find('#global-btn-add').removeClass('hide');
-      gf.find('#global-btn-update').addClass('hide');
-      gf.find('#global-btn-remove').addClass('hide');
+  $(document).on('click', '.add_new a', function(e){
+    // step追加ボタン押下時
+    e.preventDefault();
+    var nowSteps  = $('#wizard.wizard_horizontal> ul.wizard_steps> li').length,
+        step_tmpl = $('#wizard-templates ul.common-step-template li').clone();
+    step_tmpl.find('button.btn-remove-act').removeClass('hide');
+    var newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, nowSteps);
+    $('#wizard.wizard_horizontal> ul.wizard_steps> li:last-child').remove();
+    $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(newStep)[0].outerHTML );
+    var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
+    $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
+    logger.debug( 'Added Step: ', nowSteps );
+  });
+  
+  $(document).on('click', '.step_indicator:not(.add_new) a', function(e){
+    // step選択時
+    e.preventDefault();
+    var newStep = Number( $(this).parents('li').data('step') );
+    if ( $('#wizard.wizard_horizontal> ul.wizard_steps> li> div.step_indicator.selected').length > 0 ) {
+      // 現在のフォームデータをsessionStorageに保存
+      saveStepData();
+    }
+    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+      if ( newStep == Number( $(this).data('step') ) ) {
+        $(this).find('.step_indicator').addClass('selected');
+      } else {
+        $(this).find('.step_indicator').removeClass('selected');
+      }
+    });
+    $('#act-turn').val( newStep );
+    logger.debug( 'Selected Step: ', newStep );
+    // sessionStorageから対象ステップのフォームデータを取得する
+    retriveStepData( newStep );
+  });
+  
+  $(document).on('click', '#create-new-btn-create', function(e){
+    // 新規作成ボタン押下時
+    e.preventDefault();
+    var action = $(this).attr('id').replace('create-new-btn-', ''),
+        steps  = $('#wizard.wizard_horizontal> ul.wizard_steps> li').length - 1;
+    logger.debug( action, steps );
+    // 現在のフォームデータをsessionStorageに保存
+    saveStepData();
+    $('#create-new-post-action').val( action );
+    // セッションストレージ上の全ステップデータをマージする
+    var step_data = new Array();
+    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+      var availableStep = $(this).data('step'),
+          searchKey     = 'plt_str_' + availableStep;
+      if ( wss.hasOwnProperty( searchKey ) ) {
+        step_data[$(this).index()] = JSON.parse( wss.getItem( searchKey ) );
+      }
+    });
+    if ( step_data.length > 0 ) {
+      var addField = $('<input>', { 'type': 'hidden', 'name': 'step_data', 'value': _.escape( JSON.stringify( step_data ) ) });
+      gf.append( addField );
+      $('#act-structure-id').prop('disabled', true);
+      $('#act-dependency').prop('disabled', true);
+      $('#act-turn').prop('disabled', true);
+      $('#act-name').prop('disabled', true);
+      $('#act-context').prop('disabled', true);
+      gf.submit();
     } else {
-      // Switch another story
-      var newSrcId = Number( $(this).val() );
-      if ( currentSrcId != newSrcId ) {
-        // ajaxで新ソースIDのデータを取得する
-        currentSrcId = newSrcId;
-        callAjax( wpApiSettings.root + 'plotter/v1/src/' + currentSrcId, 'GET' )
-        .then( function( data, stat, self ){
-          if ( 'success' === stat ) {
-            logger.debug( data[0] );
-            gf.find('#source_name').val( data[0].name );
-            gf.find('input#who').val( data[0].who );
-            gf.find('input#what').val( data[0].what );
-            gf.find('input#where').val( data[0].where );
-            gf.find('input#when').val( data[0].when );
-            gf.find('input#why').val( data[0].why );
-            gf.find('#team_writing').prop( 'checked', ( data[0].type == 1 ) );
-            rebuildSwitchery( '#team_writing' );
+      return false;
+    }
+  });
+  
+  $('#act-name').on('click blur keyup', function(){
+    // ACT名の入力同期
+    if ( ! is_empty( $(this).val() ) ) {
+      var currentStep = Number( $('#act-turn').val() ),
+          currentName = $(this).val();
+      if ( currentStep > 0 ) {
+        $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+          if ( Number( $(this).data('step') ) == currentStep ) {
+            $(this).find('.step_name').text( currentName );
+            return false;
           }
         });
-        // Cookie値の lastSource を新ソースIDに更新する
-        
-        storedSrcCache( currentSrcId ); // 新ソースIDをローカルに保存
-      } else {
-        restoreSrcCache( currentSrcId ); // 現ソースIDをロード
       }
-      gf.find('input[name="source_id"]').val(currentSrcId);
-      gf.find('#global-btn-remove').removeClass('hide');
-      gf.find('#global-btn-update').removeClass('hide');
-      gf.find('#global-btn-add').addClass('hide');
-    }
-  });
-  */
-  
-  
-  $(document).on('click', 'button.btn[id^="create-new-btn"]', function(e){
-    e.preventDefault();
-    var action = $(this).attr('id').replace('create-new-btn-', '');
-    if ( 'cancel' == action ) {
-      return location.href = '/dashboard/';
-    } else {
-      $('#create-new-post-action').val( action );
-      gf.submit();
     }
   });
   
   
-  function rebuildSwitchery( selector ) {
-    $('.js-switch').each(function(){
-        if ( $(this).is(selector) ) {
-            $(this).next('.switchery').remove();
-            var switchery = new Switchery( this, { color: '#26B99A' } );
-        }
+  
+  // 個別処理（関数）
+  function initWizardElements() {
+    logger.debug( 'Initialize Wizard Elements' );
+    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+      $(this).remove();
     });
+    formatFormItems();
   }
   
-  function storedSrcCache( sid ) {
-    if ( sid == Number( gf.find('[name="source_id"]').val() ) ) {
-      var src_data = {
-        'source_id': currentSrcId,
-        'source_name': gf.find('#source_name').val(),
-        'who': gf.find('#who').val(),
-        'what': gf.find('#what').val(),
-        'where': gf.find('#where').val(),
-        'when': gf.find('#when').val(),
-        'why': gf.find('#why').val(),
-        'team_writing': gf.find('#team_writing').val(),
-        'permission': gf.find('#permission').val()
-      };
-      wls.setItem( 'plt_cursrc', JSON.stringify( src_data ) );
+  function formatFormItems() {
+    // var afc = $('#act-form-current');
+    $('#act-structure-id').val('');
+    $('#act-dependency').val('0');
+    $('#act-turn').val('1');
+    $('#act-name').val('');
+    $('#act-context').val('');
+  }
+  
+  function rebuildWizard( acts ) {
+    logger.debug( 'Build Wizard', acts );
+    $.each( acts, function( i, v ){
+      var step_tmpl = $('#wizard-templates ul.common-step-template li').clone();
+      if ( ! is_empty( v ) ) {
+        step_tmpl.find('ul.step_meta> li.step_name').text( v );
+        if ( i == 0 ) {
+          $('#act-name').val( v );
+        }
+        var step_data = {
+          'structure_id': '',
+          'dependency'  : '0',
+          'turn'        : i + 1,
+          'name'        : v,
+          'context'     : '',
+        };
+        wss.setItem( 'plt_str_' + (i+1), JSON.stringify( step_data ) );
+      }
+      if ( i > 0 ) {
+        step_tmpl.find('button.btn-remove-act').removeClass('hide');
+      } else {
+        step_tmpl.find('.step_indicator').addClass('selected');
+      }
+      var newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, i+1);
+      $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(newStep)[0].outerHTML );
+    });
+    var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
+    $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
+  }
+  
+  
+  
+  // セッションストレージ関連
+  function clearSessionData() {
+    // セッションストレージ初期化
+    logger.debug( 'Clear All SessionStorage' );
+    wss.clear();
+  }
+  
+  function removeStepData( step ) {
+    // セッションストレージから指定ステップデータを削除
+    var key = 'plt_str_' + step;
+    if ( wss.hasOwnProperty( key ) ) {
+      wss.removeItem( key );
     }
   }
   
-  function restoreSrcCache( sid ) {
-    var src_data = JSON.parse( wls.getItem( 'plt_cursrc' ) );
-    if ( sid == Number( src_data.source_id ) ) {
-      gf.find('[name="source_id"]').val( sid );
-      gf.find('#source_name').val( src_data.source_name );
-      gf.find('#who').val( src_data.who );
-      gf.find('#what').val( src_data.what );
-      gf.find('#where').val( src_data.where );
-      gf.find('#when').val( src_data.when );
-      gf.find('#why').val( src_data.why );
-      gf.find('#team_writing').val( src_data.team_writing );
-      gf.find('#permission').val( src_data.permission );
+  function retriveStepData( step ) {
+    // セッションストレージから指定ステップデータを取得してフォームにセット
+    var key = 'plt_str_' + step;
+    if ( ! wss.hasOwnProperty( key ) ) {
+      gf.find('#act-structure-id').val( '' );
+      gf.find('#act-dependency').val( '0' );
+      gf.find('#act-turn').val( step );
+      gf.find('#act-name').val( '' );
+      gf.find('#act-context').val( '' );
+    } else {
+      var step_data = JSON.parse( wss.getItem( key ) );
+      gf.find('#act-structure-id').val( step_data['structure_id'] );
+      gf.find('#act-dependency').val( step_data['dependency'] );
+      gf.find('#act-turn').val( step_data['turn'] );
+      gf.find('#act-name').val( step_data['name'] );
+      gf.find('#act-context').val( step_data['context'] );
     }
+    gf.find('#act-name').trigger('blur');
+  }
+  
+  function saveStepData() {
+    // 現在選択中のステップデータをセッションストレージへ保存
+    var step_data = {
+      'structure_id': gf.find('#act-structure-id').val(),
+      'dependency':   gf.find('#act-dependency').val(),
+      'turn':         gf.find('#act-turn').val(),
+      'name':         gf.find('#act-name').val(),
+      'context':      gf.find('#act-context').val(),
+      // 'type':         gf.find('#structure-presets> option:selected').val(),
+    };
+    wss.setItem( 'plt_str_' + step_data.turn, JSON.stringify( step_data ) );
   }
   
   
