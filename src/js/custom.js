@@ -284,6 +284,26 @@ if (typeof NProgress != 'undefined') {
     });
 }
 
+// PNotify
+if ( typeof PNotify != 'undefined' ) {
+  // PNotify.desktop.permission();
+  PNotify.prototype.options.delay -= 3000;
+  var notify = function ( headline, message, notify_type, icon_class=false ) {
+    new PNotify({
+      title: headline,
+      text: message,
+      icon: icon_class,
+      type: notify_type,
+      animate: {
+        animate: true,
+        in_class: 'slideInDown',
+        out_class: 'slideOutUp'
+      },
+      hide: false
+    });
+  };
+}
+
 // Init localStorage
 if ( ! window.localStorage ) {
   window.localStorage = {
@@ -341,7 +361,7 @@ if ( ! window.sessionStorage ) {
 }
 
 // is_empty()
-var is_empty = function( _var ) {
+function is_empty( _var ) {
   if ( _var == null ) {
     // typeof null -> object : for hack a bug of ECMAScript
     // Refer: https://developer.mozilla.org/ja/docs/Web/JavaScript/Reference/Operators/typeof
@@ -380,29 +400,61 @@ var is_empty = function( _var ) {
     default:
       return false;
   }
-};
+}
 // /is_empty()
 
-// Closure : Call REST API via Ajax
-var //xhrResponse = {},
-    //dfd = new $.Deferred,
-    callbackAjax = {},
+// Convert serialized array ( eq. $.serializeArray() ) to key values type
+function conv_kv( _array ) {
+  var kv_object = {};
+  for ( idx in _array ) {
+    var key   = _array[idx]['name'];
+    var value = _array[idx]['value'];
+    kv_object[key] = value;
+  }
+  return kv_object;
+}
+// /conv_kv
+
+/* Closure : Ajax call corresponding to WP REST API
+ * Usage : callAjax( ajax_url, method [, ...] )
+ *
+ * @param string ajax_url      (required)
+ * @param string method        (required: "post" or "get")
+ * @param mixed  post_data     (optional: default null)
+ * @param string data_type     (optional: default "json")
+ * @param string content_type  (optional: default "application/x-www-form-urlencoded")
+ * @param string callback_func (optional: default null)
+ * @param bool   debug_mode    (optional: default false)
+ */
+// var xhrResponse = {},
+// dfd = new $.Deferred,
+var callbackAjax = {
+      notify: function ( data ) {
+        if ( typeof notify != 'undefined' ) {
+          var icon_class = ! is_empty( data.addclass ) ? data.addclass : 'fa fa-info-circle';
+          // icon_class = icon_class == null ? false : icon_class;
+          notify( data.title, data.text, data.type, icon_class );
+        }
+      } 
+    },
     callAjax = function() {
       if ( arguments.length < 2 ) {
         return false;
       }
-      var ajax_url   = arguments[0],
-          method     = arguments[1],
-          post_data  = ! is_empty( arguments[2] ) ? arguments[2] : null,
-          data_type  = ! is_empty( arguments[3] ) ? arguments[3] : 'json',
-          callback_func = ! is_empty( arguments[4] ) ? arguments[4] : null,
-          debug_mode = ! is_empty( arguments[5] ) ? Boolean( arguments[5] ) :false,
+      var ajax_url      = arguments[0],
+          method        = arguments[1],
+          post_data     = ! is_empty( arguments[2] ) ? arguments[2] : null,
+          data_type     = ! is_empty( arguments[3] ) ? arguments[3] : 'json',
+          content_type  = ! is_empty( arguments[4] ) ? arguments[4] : 'application/x-www-form-urlencoded',
+          callback_func = ! is_empty( arguments[5] ) ? arguments[5] : null,
+          debug_mode    = ! is_empty( arguments[6] ) ? Boolean( arguments[6] ) : false,
           jqXHR = $.ajax({
             async: true,
             url:   ajax_url,
             type:  method,
             data:  post_data,
             dataType: data_type,
+            contentType: content_type,
             cache: false,
             beforeSend: function( xhr, set ) {
               if ( debug_mode ) {
@@ -424,7 +476,7 @@ var //xhrResponse = {},
         }
         if ( ! is_empty( callback_func ) ) {
           if ( $.inArray( callback_func, Object.keys( callbackAjax ) ) !== -1 ) {
-            return callback[callback_func]();
+            return callbackAjax[callback_func]( data );
           } else {
             if ( debug_mode ) {
               console.error( 'Callback method "' + callback_func + '" does not exist.' );

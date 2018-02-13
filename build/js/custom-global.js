@@ -26,7 +26,7 @@ $(document).ready(function() {
       // Switch another story
       var newSrcId = Number( $(this).val() );
       if ( currentSrcId != newSrcId ) {
-        // ajaxで新ソースIDのデータを取得する
+        // ajax(WP REST API)で新ソースIDのデータを取得する
         currentSrcId = newSrcId;
         callAjax( wpApiSettings.root + 'plotter/v1/src/' + currentSrcId, 'GET' )
         .then( function( data, stat, self ){
@@ -63,7 +63,18 @@ $(document).ready(function() {
       return location.href = '/dashboard/';
     } else {
       $('#global-post-action').val( action );
-      gf.submit();
+      // gf.submit();
+      // ajaxでPOST
+      var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
+      callAjax(
+        '/global/',
+        'post',
+        post_data,
+        'json',
+        'application/json; charset=utf-8',
+        'notify',
+        true
+      );
     }
   });
   
