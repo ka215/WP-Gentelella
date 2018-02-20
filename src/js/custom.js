@@ -288,18 +288,28 @@ if (typeof NProgress != 'undefined') {
 if ( typeof PNotify != 'undefined' ) {
   // PNotify.desktop.permission();
   PNotify.prototype.options.delay -= 3000;
-  var notify = function ( headline, message, notify_type, icon_class=false ) {
-    new PNotify({
+  var notify = function ( headline, message, notify_type, icon_class, add_class ) {
+    var notice = new PNotify({
       title: headline,
       text: message,
       icon: icon_class,
       type: notify_type,
+      styling: 'bootstrap3',
+      addclass: add_class,
       animate: {
         animate: true,
         in_class: 'slideInDown',
         out_class: 'slideOutUp'
       },
-      hide: false
+      shadow: true,
+      buttons: {
+        closer: false,
+        sticker: false,
+      },
+      /* hide: false */
+    });
+    notice.get().on('click', function(){
+      notice.remove();
     });
   };
 }
@@ -431,9 +441,21 @@ function conv_kv( _array ) {
 var callbackAjax = {
       notify: function ( data ) {
         if ( typeof notify != 'undefined' ) {
-          var icon_class = ! is_empty( data.addclass ) ? data.addclass : 'fa fa-info-circle';
-          // icon_class = icon_class == null ? false : icon_class;
-          notify( data.title, data.text, data.type, icon_class );
+          var icon_class = 'fa fa-info-circle',
+              add_class;
+          switch ( data.type ) {
+            case 'info':
+              icon_class = 'fa fa-info-circle';
+              break;
+            case 'success':
+              icon_class = 'fa fa-check-circle';
+              break;
+            case 'error':
+              icon_class = 'fa fa-exclamation-triangle';
+              break;
+          }
+          var add_class = ! is_empty( data.addclass ) ? data.addclass : '';
+          notify( data.title, data.text, data.type, icon_class, add_class );
         }
       } 
     },
