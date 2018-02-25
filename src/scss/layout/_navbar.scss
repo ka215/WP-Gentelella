@@ -1,3 +1,17 @@
+/*
+ * Section of top navigation's styles
+ */
+.main_container .top_nav {
+  display: block;
+  position: relative;
+  margin-left: 230px;
+}
+.nav-md.full-span .top_nav {
+  margin-left: 0;
+}
+.top_nav .nav>li>a:focus, .top_nav .nav>li>a:hover, .top_nav .nav .open>a, .top_nav .nav .open>a:focus, .top_nav .nav .open>a:hover {
+  background: $navi_menu_bg_hover;
+}
 .navbar.nav_title {
   box-shadow: none;
 }
@@ -15,4 +29,114 @@
   display: block;
   margin-left: 70px;
   z-index: $zi_top_nav;
+}
+.top_nav a#menu_toggle {
+  margin-top: 14px;
+  padding: 0;
+  width: 20px;
+  -moz-transition: -moz-transform .14s linear;
+  -webkit-transition: -webkit-transform .14s linear;
+  -o-transition: -o-transform .14s linear;
+  -ms-transition: -ms-transform .14s linear; 
+  transition: transform .14s linear; 
+}
+.top_nav a#menu_toggle .menu-toggle-icon {
+  font-family: 'plotter'!important;
+  font-size: 20px;
+}
+.nav-sm .top_nav a#menu_toggle .menu-toggle-icon:before {
+  content: "\edbc";
+}
+.nav-md .top_nav a#menu_toggle .menu-toggle-icon:before {
+  content: "\edc4";
+}
+/*
+.top_nav a#menu_toggle:hover {
+  -moz-transform: rotate(180deg);
+  -webkit-transform: rotate(180deg);
+  -o-transform: rotate(180deg);
+  -ms-transform: rotate(180deg);
+  transform: rotate(180deg);
+}
+*/
+.navbar {
+  margin-bottom: 0
+}
+.navbar-header {
+  background: $dark;
+}
+.navbar-brand, .navbar-nav> li> a {
+  font-weight: 500;
+  color: $menu_text_color;
+  margin-left: 0 !important;
+  line-height: 32px;
+}
+.nav.navbar-nav> li> a,
+.nav.navbar-nav> li> a.user-profile {
+  color: $navi_menu_text_color;
+}
+.nav.top_menu> li> a {
+  position: relative;
+  display: block;
+  padding: 10px 15px;
+  color: $dark !important;
+}
+.nav> li> a:hover, 
+.nav> li> a:focus {
+  background-color: transparent;
+}
+.navbar-right {
+  margin-right: 0;
+}
+.top_nav .navbar-right {
+  margin: 0;
+  width: 70%;
+  float: right;
+}
+.top_nav .navbar-right li {
+  display: inline-block;
+  float: right;
+  position: static;
+}
+.top_nav .navbar-right a.info-number {
+  margin-top: 5px;
+}
+.top_nav .navbar-right a.info-number> i[class^="plt-"] {
+  font-size: 18px;
+}
+.top_nav .navbar-right a.user-profile {
+  padding-right: 18px;
+}
+.user-profile> span.plt-dots {
+  position: absolute;
+  right: 4px;
+  bottom: 4px;
+}
+@media (min-width: 480px) {
+  .top_nav .navbar-right li {
+    position: relative;
+  }
+}
+.top_nav .dropdown-menu li {
+  width: 100%;
+}
+.top_nav .dropdown-menu li a {
+  width: 100%;
+  padding: 12px 20px;
+}
+.top_nav .dropdown-menu li a:focus, .top_nav .dropdown-menu li a:hover {
+  background: $navi_menu_dropdown_bg_hover;
+  color: $navi_menu_dropdown_text_active;
+}
+.top_nav li a i {
+  font-size: 15px;
+  color: $navi_menu_icon_color;
+}
+.top_nav li a span.fa, .top_nav li a span[class^="plt-"] {
+  color: $menu_chevron_color;
+}
+.navbar-static-top {
+  position: fixed;
+  top: 0;
+  width: 100%;
 }

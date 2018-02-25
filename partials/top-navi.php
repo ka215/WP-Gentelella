@@ -16,14 +16,17 @@ $current_user = wp_get_current_user();
           <div class="nav_menu">
             <nav>
               <div class="nav toggle">
-                <a id="menu_toggle"><i class="fa fa-angle-left"></i></a>
+<?php /*
+                <a id="menu_toggle"><i class="<?php if ( isset( $_COOKIE['current_sidebar'] ) && trim( $_COOKIE['current_sidebar'] ) === 'small' ) : ?>fa fa-angle-right<?php else : ?>fa fa-angle-left<?php endif; ?>"></i></a>
+*/ ?>
+                <a id="menu_toggle"><span class="menu-toggle-icon"></span></a>
               </div>
 
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     <img src="<?php echo WPGENT_DIR; ?>production/images/img.jpg" alt=""><?= $current_user->display_name; ?>
-                    <span class=" fa fa-angle-down"></span>
+                    <span class="plt-dots" _old="plt-circle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
                     <li><a href="/profile/"> <?php _e('Profile', WPGENT_DOMAIN); ?></a></li>
@@ -34,13 +37,13 @@ $current_user = wp_get_current_user();
                       </a>
                     </li>
                     <li><a href="javascript:;"><?php _e('Help', WPGENT_DOMAIN); ?></a></li>
-                    <li><a href="<?= wp_logout_url(); ?>"><i class="fa fa-sign-out pull-right"></i> <?php _e('Sign Out', WPGENT_DOMAIN); ?></a></li>
+                    <li><a href="<?= wp_logout_url(); ?>"><i class="plt-exit2 pull-right"></i> <?php _e('Sign Out', WPGENT_DOMAIN); ?></a></li>
                   </ul>
                 </li>
 
                 <li role="presentation" class="dropdown">
                   <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
-                    <i class="fa fa-envelope-o"></i>
+                    <i class="plt-bell"></i>
                     <span class="badge bg-green">6</span>
                   </a>
                   <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">

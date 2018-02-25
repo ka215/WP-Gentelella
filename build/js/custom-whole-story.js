@@ -1,11 +1,12 @@
 /**
- * For Whole Story (Global Settings)
+ * For Whole Story (/whole-story/)
  */
 $(document).ready(function() {
   
-  var gf              = $("#globalSettings"),
-      wls             = window.localStorage,
-      currentSrcId    = Number( $('#change_source option:selected').val() );
+  var gf               = $("#globalSettings"),
+      wls              = window.localStorage,
+      currentPermalink = 'whole-story',
+      currentSrcId     = Number( $('#change_source option:selected').val() );
   //storedSrcCache( currentSrcId );
   
   // Event handlers
@@ -19,9 +20,9 @@ $(document).ready(function() {
       gf.find('input[id^="wh"]').val('');
       gf.find('#team_writing').prop( 'checked', false );
       rebuildSwitchery( '#team_writing' );
-      gf.find('#global-btn-add').removeClass('hide');
-      gf.find('#global-btn-update').addClass('hide');
-      gf.find('#global-btn-remove').addClass('hide');
+      gf.find('#'+currentPermalink+'-btn-add').removeClass('hide');
+      gf.find('#'+currentPermalink+'-btn-update').addClass('hide');
+      gf.find('#'+currentPermalink+'-btn-remove-confirm').addClass('hide');
     } else {
       // Switch another story
       var newSrcId = Number( $(this).val() );
@@ -40,6 +41,8 @@ $(document).ready(function() {
             gf.find('input#why').val( data[0].why );
             gf.find('#team_writing').prop( 'checked', ( data[0].type == 1 ) );
             rebuildSwitchery( '#team_writing' );
+            // validatorを発火させる
+            gf.find('#source_name').trigger('blur');
           }
         });
         // Cookie値の lastSource を新ソースIDに更新する
@@ -49,25 +52,28 @@ $(document).ready(function() {
         restoreSrcCache( currentSrcId ); // 現ソースIDをロード
       }
       gf.find('input[name="source_id"]').val(currentSrcId);
-      gf.find('#global-btn-remove').removeClass('hide');
-      gf.find('#global-btn-update').removeClass('hide');
-      gf.find('#global-btn-add').addClass('hide');
+      gf.find('#'+currentPermalink+'-btn-remove-confirm').removeClass('hide');
+      gf.find('#'+currentPermalink+'-btn-update').removeClass('hide');
+      gf.find('#'+currentPermalink+'-btn-add').addClass('hide');
     }
   });
   
   
-  $(document).on('click', 'button.btn[id^="global-btn"]', function(e){
+  $(document).on('click', 'button.btn[id^="'+currentPermalink+'-btn"]', function(e){
     e.preventDefault();
-    var action = $(this).attr('id').replace('global-btn-', '');
-    if ( 'cancel' == action ) {
+    var action = $(this).attr('id').replace(currentPermalink+'-btn-', '');
+    if ( 'cancel' === action ) {
       return location.href = '/dashboard/';
     } else {
-      $('#global-post-action').val( action );
+      if ( !validator.checkAll( gf ) ) {
+        return false;
+      }
+      $('#'+currentPermalink+'-post-action').val( action );
       // gf.submit();
       // ajaxでPOST
       var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
       callAjax(
-        '/global/',
+        '/'+currentPermalink+'/',
         'post',
         post_data,
         'json',
@@ -78,6 +84,23 @@ $(document).ready(function() {
     }
   });
   
+  // このページ専用の独自処理をコールバックに追加する
+  callbackAjax['executeRemove'] = function( evt ) {
+    // 確認ダイアログ後の削除実行
+    if ( evt.options.data.addClass === 'C0G001' ) {
+      $('#'+currentPermalink+'-post-action').val( 'remove' );
+      var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
+      callAjax(
+        '/'+currentPermalink+'/',
+        'post',
+        post_data,
+        'json',
+        'application/json; charset=utf-8',
+        'notify',
+        true
+      );
+    }
+  };
   
   function rebuildSwitchery( selector ) {
     $('.js-switch').each(function(){

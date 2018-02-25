@@ -39,6 +39,60 @@
  * and open the template in the editor.
  */
 
+/*\
+ |*|
+ |*|  :: cookies.js ::
+ |*|
+ |*|  A complete cookies reader/writer framework with full unicode support.
+ |*|
+ |*|  https://developer.mozilla.org/en-US/docs/DOM/document.cookie
+ |*|
+ |*|  Syntaxes:
+ |*|
+ |*|  * docCookies.setItem(name, value[, end[, path[, domain[, secure]]]])
+ |*|  * docCookies.getItem(name)
+ |*|  * docCookies.removeItem(name[, path])
+ |*|  * docCookies.hasItem(name)
+ |*|  * docCookies.keys()
+ |*|
+ \*/
+var docCookies = {
+  getItem: function (sKey) {
+    if (!sKey || !this.hasItem(sKey)) { return null; }
+    return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
+  },
+  setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+    if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return; }
+    var sExpires = "";
+    if (vEnd) {
+      switch (vEnd.constructor) {
+        case Number:
+          sExpires = vEnd === Infinity ? "; expires=Tue, 19 Jan 2038 03:14:07 GMT" : "; max-age=" + vEnd;
+          break;
+        case String:
+          sExpires = "; expires=" + vEnd;
+          break;
+        case Date:
+          sExpires = "; expires=" + vEnd.toGMTString();
+          break;
+      }
+    }
+    document.cookie = escape(sKey) + "=" + escape(sValue) + sExpires + (sDomain ? "; domain=" + sDomain : "") + (sPath ? "; path=" + sPath : "") + (bSecure ? "; secure" : "");
+  },
+  removeItem: function (sKey, sPath) {
+    if (!sKey || !this.hasItem(sKey)) { return; }
+    document.cookie = escape(sKey) + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT" + (sPath ? "; path=" + sPath : "");
+  },
+  hasItem: function (sKey) {
+    return (new RegExp("(?:^|;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+  },
+  keys: /* optional method: you can safely remove it! */ function () {
+    var aKeys = document.cookie.replace(/((?:^|\s*;)[^\=]+)(?=;|$)|^\s*|\s*(?:\=[^;]*)?(?:\1|$)/g, "").split(/\s*(?:\=[^;]*)?;\s*/);
+    for (var nIdx = 0; nIdx < aKeys.length; nIdx++) { aKeys[nIdx] = unescape(aKeys[nIdx]); }
+    return aKeys;
+  }
+};
+
 var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
     $BODY = $('body'),
     $MENU_TOGGLE = $('#menu_toggle'),
@@ -69,22 +123,28 @@ $(document).ready(function() {
 
     $SIDEBAR_MENU.find('a').on('click', function(ev) {
         var $li = $(this).parent();
+        if ( ! is_empty( $(this).attr('href') ) && ! /^#.*/.test( $(this).attr('href') ) ) {
+            // ev.preventDefault();
+            showLoading();
+        }
 
         if ($li.is('.active')) {
             $li.removeClass('active active-sm');
-            $('ul:first', $li).slideUp(function() {
+            $('ul:first', $li).slideUp('fast', function() {
                 setContentHeight();
             });
         } else {
             // prevent closing menu if we are on child menu
             if (!$li.parent().is('.child_menu')) {
+                if ($BODY.hasClass('nav-md')){
                 $SIDEBAR_MENU.find('li').removeClass('active active-sm');
-                $SIDEBAR_MENU.find('li ul').slideUp();
+                }
+                $SIDEBAR_MENU.find('li ul').slideUp('fast');
             }
             
             $li.addClass('active');
 
-            $('ul:first', $li).slideDown(function() {
+            $('ul:first', $li).slideDown('fast', function() {
                 setContentHeight();
             });
         }
@@ -95,9 +155,11 @@ $(document).ready(function() {
         if ($BODY.hasClass('nav-md')) {
             $SIDEBAR_MENU.find('li.active ul').hide();
             $SIDEBAR_MENU.find('li.active').addClass('active-sm').removeClass('active');
+            docCookies.setItem('current_sidebar', 'small', 60*60*24*30, '/');
         } else {
             $SIDEBAR_MENU.find('li.active-sm ul').show();
             $SIDEBAR_MENU.find('li.active-sm').addClass('active').removeClass('active-sm');
+            docCookies.setItem('current_sidebar', 'large', 60*60*24*30, '/');
         }
 
         $BODY.toggleClass('nav-md nav-sm');
@@ -107,14 +169,20 @@ $(document).ready(function() {
         $('.dataTable').each ( function () { $(this).dataTable().fnDraw(); });
     });
 
-    // check active menu
-    $SIDEBAR_MENU.find('a[href="' + CURRENT_URL + '"]').parent('li').addClass('current-page');
+    // check active menu (fire on load)
+    $SIDEBAR_MENU.find('a[href="' + CURRENT_URL + '"]').parent('li').addClass('active current-page');
 
     $SIDEBAR_MENU.find('a').filter(function () {
         return this.href == CURRENT_URL;
-    }).parent('li').addClass('current-page').parents('ul').slideDown(function() {
+    }).parent('li').addClass('active current-page').parents('ul').slideDown(0, function() {
         setContentHeight();
-    }).parent().addClass('active');
+        if ($BODY.hasClass('nav-sm')) {
+            $(this).find('.child_menu').hide();
+            $(this).parent().addClass('current-page');
+        } else {
+            $(this).parent().addClass('active current-page');
+        }
+    });
 
     // recompute content when resizing
     $(window).smartresize(function(){  
@@ -131,6 +199,46 @@ $(document).ready(function() {
             mouseWheel:{ preventDefault: true }
         });
     }
+    
+    // sidebar-footer
+    $SIDEBAR_FOOTER.find('a').on('click', function(ev){
+        ev.preventDefault();
+        switch ( $(this).attr('name') ) {
+            case 'settings':
+                alert('Location to settings page.');
+                break;
+            case 'fullscreen':
+                var requestFullscreen = ['requestFullscreen','webkitRequestFullScreen','mozRequestFullScreen','msRequestFullscreen'], 
+                    //fullscreenElement = ['fullscreenElement','webkitFullscreenElement','mozFullScreenElement','msFullscreenElement'], 
+                    exitFullscreen    = ['exitFullscreen','webkitExitFullscreen','mozCancelFullScreen','msExitFullscreen'],
+                    is_fullscreen = function(){ return ( document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement || null ) };
+                if ( ! is_fullscreen() ) {
+                    $.each(requestFullscreen, function(i,v){
+                        if ( document.documentElement[v] ) {
+                            document.documentElement[v]();
+                            return false;
+                        }
+                    });
+                    $(this).children('span').attr('class', 'plt-shrink2');
+                } else {
+                    $.each(exitFullscreen, function(i,v){
+                        if ( document[v] ) {
+                            document[v]();
+                            return false;
+                        }
+                    });
+                    $(this).children('span').attr('class', 'plt-enlarge2');
+                }
+                break;
+            case 'lock':
+                alert('undefiend action, yet.');
+                break;
+            case 'signout':
+                location.href = ev.currentTarget.href;
+                break;
+        }
+    });
+    
 });
 // /Sidebar
 
@@ -284,34 +392,84 @@ if (typeof NProgress != 'undefined') {
     });
 }
 
-// PNotify
+// PNotify 4.0.0
 if ( typeof PNotify != 'undefined' ) {
-  // PNotify.desktop.permission();
-  PNotify.prototype.options.delay -= 3000;
-  var notify = function ( headline, message, notify_type, icon_class, add_class ) {
-    var notice = new PNotify({
+  PNotify.defaults.styling = "bootstrap3";
+  PNotify.defaults.icons = "fontawesome4";
+  var notify = function ( headline, message, notify_type, notice_code, add_class ) {
+    var icon_class = true;
+    add_class = ! is_empty( add_class ) ? add_class : '';
+    switch ( notify_type ) {
+      case 'notice':
+        icon_class = false; // 'fa fa-bell';
+        break;
+      case 'info':
+        icon_class = 'fa fa-info-circle';
+        break;
+      case 'success':
+        icon_class = 'fa fa-check-circle';
+        break;
+      case 'error':
+        icon_class = 'fa fa-exclamation-triangle';
+        message += ' <small class="notice-code">' + notice_code + '</small>';
+        break;
+    }
+    // Options
+    var opts = {
       title: headline,
       text: message,
+      textTrusted: true,
+      addClass: add_class,
+      cornerClass: '',
+      autoDisplay: true,
+      width: '360px',
+      minHeight: '16px',
+      type: notify_type, // 'notice','info','success','error'
       icon: icon_class,
-      type: notify_type,
-      styling: 'bootstrap3',
-      addclass: add_class,
-      animate: {
-        animate: true,
-        in_class: 'slideInDown',
-        out_class: 'slideOutUp'
-      },
+      animation: 'fade',
+      animateSpeed: 'normal', // 'slow'(400ms),'normal'(250ms),'fast'(100ms)
       shadow: true,
-      buttons: {
-        closer: false,
-        sticker: false,
-      },
-      /* hide: false */
-    });
-    notice.get().on('click', function(){
-      notice.remove();
+      hide: true,
+      delay: 3500,
+      mouseReset: true,
+      remove: true,
+      destroy: true,
+      modules: {
+        Buttons: {
+          closer: false,
+          sticker: false
+        }
+      }
+    };
+    var notice = PNotify.alert( opts );
+    notice.on('click', function() {
+      notice.close();
     });
   };
+}
+
+function showLoading() {
+  if ( typeof PNotify != 'undefined' ) {
+    var loading = PNotify.info({
+      text: 'Please Wait...',
+      icon: 'fa fa-spinner fa-pulse',
+      addClass: 'plotter-loading',
+      hide: false,
+      width: '200px',
+      stack: {
+        'dir1': 'down',
+        'firstpos1': 60,
+        'modal': true,
+        'overlayClose': false
+      },
+      modules: {
+        Buttons: {
+          closer: false,
+          sticker: false
+        }
+      }
+    });
+  }
 }
 
 // Init localStorage
@@ -441,23 +599,21 @@ function conv_kv( _array ) {
 var callbackAjax = {
       notify: function ( data ) {
         if ( typeof notify != 'undefined' ) {
-          var icon_class = 'fa fa-info-circle',
-              add_class;
-          switch ( data.type ) {
-            case 'info':
-              icon_class = 'fa fa-info-circle';
-              break;
-            case 'success':
-              icon_class = 'fa fa-check-circle';
-              break;
-            case 'error':
-              icon_class = 'fa fa-exclamation-triangle';
-              break;
+          if ( is_empty( data.action ) ) {
+            // 即時通知（レスポンスを受け取った直後に通知を表示）
+            notify( data.title, data.text, data.type, data.code, data.addclass );
+          } else
+          if ( 'stack' === data.action ) {
+            // セッションストレージに通知をスタックする
+            sessionStorage.setItem( 'stackNotify', JSON.stringify( data ) );
+            location.reload(false);
+          } else
+          if ( 'dialog' === data.action ) {
+            // 対話シーケンスを実行する
+            dialog( data );
           }
-          var add_class = ! is_empty( data.addclass ) ? data.addclass : '';
-          notify( data.title, data.text, data.type, icon_class, add_class );
         }
-      } 
+      }
     },
     callAjax = function() {
       if ( arguments.length < 2 ) {
@@ -525,3 +681,76 @@ var callbackAjax = {
       return jqXHR;
     };
 // /Closure
+
+// Stack Notify
+$(document).ready(function() {
+  if ( sessionStorage.hasOwnProperty( 'stackNotify' ) ) {
+    var data = JSON.parse( sessionStorage.getItem( 'stackNotify' ) );
+    notify( data.title, data.text, data.type, data.code, data.addclass );
+    sessionStorage.removeItem( 'stackNotify' );
+  }
+});
+// /Stack Notify
+
+// dialog()
+function dialog( data ) {
+  //console.log( data.extend );
+  var opts = {
+    title: data.title,
+    text: data.text,
+    addClass: data.code,
+    type: 'notice',
+    icon: 'fa fa-question-circle',
+    hide: false,
+    stack: {
+      'dir1': 'down',
+      'modal': true,
+      'firstpos1': 25
+    },
+    modules: {
+      Confirm: {
+        confirm: true,
+        buttons: [{
+          text: is_empty( data.extend.primary ) ? 'Ok' : data.extend.primary,
+          textTrusted: false,
+          addClass: '',
+          primary: true,
+          promptTrigger: true,
+          click: (notice, value) => {
+            notice.close();
+            notice.fire('pnotify.confirm', {notice, value});
+            if ( $.inArray( data.extend.callback, Object.keys( callbackAjax ) ) !== -1 ) {
+              callbackAjax[data.extend.callback]( notice );
+            }
+          }
+        }, {
+          text: is_empty( data.extend.secondary ) ? 'Cancel' : data.extend.secondary,
+          textTrusted: false,
+          addClass: '',
+          click: (notice) => {
+            notice.close();
+            notice.fire('pnotify.cancel', {notice});
+          }
+        }]
+      },
+      Buttons: {
+        closer: false,
+        sticker: false
+      },
+      History: {
+        history: false
+      }
+    }
+  };
+  var dialog = PNotify.alert( opts );
+  /*
+  dialog.on('pnotify.confirm', function(){
+    data.extend.callback();
+  });
+  dialog.on('pnotify.cancel', function(){
+    dialog.close();
+  });
+  */
+}
+// /dialog()
+

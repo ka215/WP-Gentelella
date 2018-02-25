@@ -39,6 +39,7 @@ add_filter( 'template_directory_uri', function( $template_dir_uri, $template, $t
 if ( ! defined( 'WPGENT_PATH' ) )       define( 'WPGENT_PATH', get_template_directory() . '/' );
 if ( ! defined( 'WPGENT_DIR' ) )        define( 'WPGENT_DIR', get_template_directory_uri() . '/' );
 if ( ! defined( 'USE_CDN_RESOURCES' ) ) define( 'USE_CDN_RESOURCES', false );
+if ( ! defined( 'SIDEBAR_SEARCH' ) )    define( 'SIDEBAR_SEARCH', false );
 
 /**
  * Utilities:
@@ -154,12 +155,15 @@ add_action( 'wp_enqueue_scripts', function() {
   // noprogress:
   wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.css' ) ) );
   
-  // animate: Login page & Register page only
+  // animate:
   wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
+  
+  // PNotify (BrightTheme): no used
+  wp_register_style( 'pnotify', WPGENT_DIR . 'node_modules/pnotify/dist/PNotifyBrightTheme.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/PNotifyBrightTheme.css' ) ) );
   
   // vendoers styles:
   $vendor_styles = [
-    'pnotify'     => 'vendors/pnotify/dist/pnotify.css',
+    // 'pnotify'     => 'vendors/pnotify/dist/pnotify.css',
     'switchery'   => 'vendors/switchery/dist/switchery.min.css',
     'smartwizard' => 'vendors/jQuery-Smart-Wizard/styles/smart_wizard.css',
     // etc.
@@ -207,10 +211,19 @@ add_action( 'wp_enqueue_scripts', function() {
   // nprogress:
   wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
   
+  // PNotify:
+  wp_register_script( 'pnotify', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotify.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotify.js' ) ), true );
+  wp_register_script( 'pnotify-animate', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyAnimate.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyAnimate.js' ) ), true );
+  wp_register_script( 'pnotify-buttons', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyButtons.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyButtons.js' ) ), true );
+  wp_register_script( 'pnotify-confirm', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyConfirm.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyConfirm.js' ) ), true );
+  wp_register_script( 'pnotify-desktop', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyDesktop.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyDesktop.js' ) ), true );
+  wp_register_script( 'pnotify-history', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyHistory.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyHistory.js' ) ), true );
+  wp_register_script( 'pnotify-mobile', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyMobile.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyMobile.js' ) ), true );
+  
   // vendoers scripts:
   $vendor_scripts = [
     'validator'   => 'vendors/validator/validator.js',
-    'pnotify'     => 'vendors/pnotify/dist/pnotify.js',
+    // 'pnotify'     => 'vendors/pnotify/dist/pnotify.js',
     'switchery'   => 'vendors/switchery/dist/switchery.min.js',
     'smartwizard' => 'vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js',
     // etc.
@@ -240,12 +253,14 @@ add_action( 'wp_enqueue_scripts', function() {
   $registered_style_handles = [
     'common' => [
       'bootstrap', 'font-awesome', WPGENT_HANDLE . '-icon', 
+      'animate', 
     ],
     'wp' => [
       'theme-my-login',
     ],
     'vendoers' => [
-      'nprogress', 'animate', 'pnotify', 'switchery', 'smartwizard',
+      'nprogress', 
+      'switchery', 'smartwizard',
     ],
     'extend' => [
       WPGENT_HANDLE, WPGENT_HANDLE . '-font', WPGENT_HANDLE .'-'. $_pagename,
@@ -258,8 +273,12 @@ add_action( 'wp_enqueue_scripts', function() {
     'wp' => [
       'tml-themed-profiles', 'wp-embed', 
     ],
+    'pnotify' => [
+      'pnotify', 'pnotify-animate', 'pnotify-buttons', 'pnotify-confirm', 'pnotify-desktop', 'pnotify-history', 'pnotify-mobile', 
+    ],
     'vendoers' => [
-      'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery', 'smartwizard', 
+      'fastclick', 'nprogress', 'validator', 
+      'switchery', 'smartwizard', 
     ],
     'extend' => [
       WPGENT_HANDLE, WPGENT_HANDLE .'-'. $_pagename,
@@ -299,20 +318,20 @@ add_action( 'wp_enqueue_scripts', function() {
     }
     
     $enqueue_style_handles = array_merge( $registered_style_handles['common'], $registered_style_handles['wp'] );
-    $enqueue_script_handles = array_merge( $registered_script_handles['common'], $registered_script_handles['wp'] );
+    $enqueue_script_handles = array_merge( $registered_script_handles['common'], $registered_script_handles['wp'], $registered_script_handles['pnotify'] );
     switch ( $_pagename ) {
       case 'account':
-        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'animate', 'pnotify', 'switchery' ] );
-        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery' ] );
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'switchery' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'switchery' ] );
         break;
       case 'dashboard':
-      case 'global':
-        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'pnotify', 'switchery' ] );
-        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', 'switchery' ] );
+      case 'whole-story':
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'switchery' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'switchery' ] );
         break;
       case 'create-new':
-        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'pnotify', ] ); // 'switchery', 'smartwizard' 
-        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'pnotify', ] ); // 'switchery', 'smartwizard' 
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', ] ); // 'switchery', 'smartwizard' 
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', ] ); // 'switchery', 'smartwizard' 
         break;
       default:
         
@@ -490,6 +509,15 @@ EOT;
     echo '</script>' . PHP_EOL;
   }
 } );
+
+/**
+ * Render bootstrap modal container
+ */
+add_action( 'wp_footer', function() {
+  
+  
+}, PHP_INT_MAX - 1 );
+
 
 /**
  * Override the template path of Theme My Login

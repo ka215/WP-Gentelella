@@ -1,6 +1,7 @@
 /* Layout Grids */
 .left_col {
   background: $sidebar_bg;
+  transition: width .14s linear; 
 }
 .nav-md .container.body .col-md-3.left_col, 
 .nav-md .container.body .col-md-3.left_col.menu_fixed {
@@ -23,10 +24,48 @@
   overflow: visible;
 }
 .nav-sm .hidden-small {
+  display: none;
   visibility: hidden;
 }
 .nav-sm .container.body .right_col {
   padding: 10px 20px;
   margin-left: 70px;
   z-index: $zi_right_col;
+}
+@media (max-width: 991px) {
+  .nav-md .container.body .right_col, .nav-md .container.body .top_nav {
+    width: 100%;
+    margin: 0;
+  }
+  .nav-md .container.body .col-md-3.left_col {
+    display: none;
+  }
+  .nav-md .container.body .right_col {
+    width: 100%;
+    padding-right: 0
+  }
+  .right_col {
+    padding: 10px !important;
+  }
+}
+@media (max-width: 1200px) {
+  .x_title h2 {
+    width: 62%;
+    font-size: 17px;
+  }
+  .tile, .graph {
+    zoom: 85%;
+    height: inherit;
+  }
+}
+@media (max-width: 1270px) and (min-width: 192px) {
+  .x_title h2 small {
+    display: none
+  }
+}
+.left_col .mCSB_scrollTools {
+  width: 6px;
+}
+.left_col .mCSB_dragger {
+  max-height: 400px !important;
 }

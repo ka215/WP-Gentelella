@@ -31,7 +31,7 @@ switch ( $page_type ) {
     $prepend_contents[] = '      <a class="hiddenanchor" id="signin"></a>';
     break;
   default:
-    $add_class = 'nav-md';
+    $add_class = isset( $_COOKIE['current_sidebar'] ) && trim( $_COOKIE['current_sidebar'] ) === 'small' ? 'nav-sm' : 'nav-md';
     $prepend_contents[] = '    <div class="container body">';
     $prepend_contents[] = '      <div class="main_container">';
     break;

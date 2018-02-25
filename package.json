@@ -31,6 +31,7 @@
   },
   "homepage": "https://github.com/puikinsh/gentelella#readme",
   "devDependencies": {
+    "animate.css": "^3.6.1",
     "browser-sync": "^2.18.13",
     "cssnano": "^3.10.0",
     "gulp": "^3.9.1",
@@ -41,6 +42,7 @@
     "gulp-sass": "^3.1.0",
     "gulp-sass-glob": "^1.0.8",
     "gulp-uglify": "^3.0.0",
+    "pnotify": "^4.0.0-alpha.2",
     "postcss-cssnext": "^3.0.2"
   }
 }

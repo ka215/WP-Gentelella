@@ -160,7 +160,7 @@ if ( ! empty( $current_source_id ) ) {
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
                           <button class="btn btn-default" type="button" id="<?= esc_attr( $page_name ) ?>-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
 <?php if ( count( $user_sources ) > 0 ) : ?>
-                          <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove-confirm"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
                           <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Commit', WPGENT_DOMAIN ); ?></button>
                           <button class="btn btn-success onValid hide" type="button" id="<?= esc_attr( $page_name ) ?>-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
 <?php endif; ?>
@@ -168,13 +168,7 @@ if ( ! empty( $current_source_id ) ) {
                       </div>
 
                     </form>
-
-<?php /*
-  wp_link_pages( array(
-    'before' => '<div class="page-links">' . __( 'Pages:', WPGENT_DOMAIN ),
-    'after'  => '</div>',
-  ) );
-*/ endif; ?>
+<?php endif; ?>
                   </div>
                 </div>
               </div>
