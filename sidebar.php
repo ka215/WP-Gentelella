@@ -112,7 +112,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                     </ul>
                   </li>
                   <li><a><i class="plt-collaboration"></i> <?php _e('Collaboration', WPGENT_DOMAIN) ?></a></li>
-                  <li><a><i class="plt-archive"></i> <?php _e('Extensions', WPGENT_DOMAIN) ?> <span class="fa fa-chevron-down"></span></a>
+                  <li><a><i class="plt-archive"></i> <?php _e('Extensions', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/export/"><?php _e('Export', WPGENT_DOMAIN) ?></a></li>
                       <li><a href="/import/"><?php _e('Import', WPGENT_DOMAIN) ?></a></li>

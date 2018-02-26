@@ -1,5 +1,7 @@
 /*
  * Section of top navigation's styles
+ *
+ * .top_nav> .nav_menu> nav
  */
 .main_container .top_nav {
   display: block;
@@ -9,7 +11,11 @@
 .nav-md.full-span .top_nav {
   margin-left: 0;
 }
-.top_nav .nav>li>a:focus, .top_nav .nav>li>a:hover, .top_nav .nav .open>a, .top_nav .nav .open>a:focus, .top_nav .nav .open>a:hover {
+.top_nav .nav>li>a:focus, 
+.top_nav .nav>li>a:hover, 
+.top_nav .nav .open>a, 
+.top_nav .nav .open>a:focus, 
+.top_nav .nav .open>a:hover {
   background: $navi_menu_bg_hover;
 }
 .navbar.nav_title {
@@ -30,8 +36,39 @@
   margin-left: 70px;
   z-index: $zi_top_nav;
 }
+
+/* -- .nav.toggle> a#menu_toggle -- */
+.toggle {
+  float: left;
+  margin: 0;
+  padding-top: 0;
+  width: 40px; /* 70px */
+}
+.toggle a {
+  display: block;
+  padding: 14px;
+  margin: 0;
+  width: 40px; /* 70px */
+  position: relative;
+  perspective: 105px;
+  -webkit-perspective: 105px;
+  color: $menu_chevron_color !important;
+  cursor: pointer;
+}
+.toggle a i.fa-chevron {
+  text-align: center;
+  font-size: 21px;
+  position: absolute;
+  top: 16px;
+}
+.nav-md .toggle a i.fa-chevron:before {
+  content: "\f104";
+}
+.nav-sm .toggle a i.fa-chevron:before {
+  content: "\f105";
+}
 .top_nav a#menu_toggle {
-  margin-top: 14px;
+  margin-top: 12px;
   padding: 0;
   width: 20px;
   -moz-transition: -moz-transform .14s linear;
@@ -59,6 +96,7 @@
   transform: rotate(180deg);
 }
 */
+/* -- noused -- */
 .navbar {
   margin-bottom: 0
 }
@@ -71,6 +109,8 @@
   margin-left: 0 !important;
   line-height: 32px;
 }
+
+/* -- ul.nav.navbar-nav.navbar-right> li -- */
 .nav.navbar-nav> li> a,
 .nav.navbar-nav> li> a.user-profile {
   color: $navi_menu_text_color;

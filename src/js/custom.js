@@ -123,10 +123,6 @@ $(document).ready(function() {
 
     $SIDEBAR_MENU.find('a').on('click', function(ev) {
         var $li = $(this).parent();
-        if ( ! is_empty( $(this).attr('href') ) && ! /^#.*/.test( $(this).attr('href') ) ) {
-            // ev.preventDefault();
-            showLoading();
-        }
 
         if ($li.is('.active')) {
             $li.removeClass('active active-sm');
@@ -178,9 +174,9 @@ $(document).ready(function() {
         setContentHeight();
         if ($BODY.hasClass('nav-sm')) {
             $(this).find('.child_menu').hide();
-            $(this).parent().addClass('current-page');
+            $(this).parent('li').addClass('current-page');
         } else {
-            $(this).parent().addClass('active current-page');
+            $(this).parent('li').addClass('active current-page');
         }
     });
 
@@ -205,7 +201,7 @@ $(document).ready(function() {
         ev.preventDefault();
         switch ( $(this).attr('name') ) {
             case 'settings':
-                alert('Location to settings page.');
+                PNotify.notice('Location to settings page.');
                 break;
             case 'fullscreen':
                 var requestFullscreen = ['requestFullscreen','webkitRequestFullScreen','mozRequestFullScreen','msRequestFullscreen'], 
@@ -231,11 +227,19 @@ $(document).ready(function() {
                 }
                 break;
             case 'lock':
-                alert('undefiend action, yet.');
+                PNotify.notice('undefiend action, yet.');
                 break;
             case 'signout':
                 location.href = ev.currentTarget.href;
                 break;
+        }
+    });
+    
+    // all links as location.href
+    $BODY.filter(function(){ return $(this).hasClass('logged-in'); }).find('a').on('click', function(ev) {
+        if ( ! is_empty( $(this).attr('href') ) && ! /^(#.*|javascript\:.*)$/.test( $(this).attr('href') ) ) {
+            // ev.preventDefault();
+            showLoading();
         }
     });
     
@@ -451,7 +455,7 @@ if ( typeof PNotify != 'undefined' ) {
 function showLoading() {
   if ( typeof PNotify != 'undefined' ) {
     var loading = PNotify.info({
-      text: 'Please Wait...',
+      text: localize_messages.loading,
       icon: 'fa fa-spinner fa-pulse',
       addClass: 'plotter-loading',
       hide: false,
@@ -692,9 +696,8 @@ $(document).ready(function() {
 });
 // /Stack Notify
 
-// dialog()
+// dialog() via Ajax
 function dialog( data ) {
-  //console.log( data.extend );
   var opts = {
     title: data.title,
     text: data.text,
@@ -711,7 +714,7 @@ function dialog( data ) {
       Confirm: {
         confirm: true,
         buttons: [{
-          text: is_empty( data.extend.primary ) ? 'Ok' : data.extend.primary,
+          text: is_empty( data.extend.primary ) ? localize_messages.dialog_yes : data.extend.primary,
           textTrusted: false,
           addClass: '',
           primary: true,
@@ -724,7 +727,7 @@ function dialog( data ) {
             }
           }
         }, {
-          text: is_empty( data.extend.secondary ) ? 'Cancel' : data.extend.secondary,
+          text: is_empty( data.extend.secondary ) ? localize_messages.dialog_no : data.extend.secondary,
           textTrusted: false,
           addClass: '',
           click: (notice) => {
@@ -743,14 +746,73 @@ function dialog( data ) {
     }
   };
   var dialog = PNotify.alert( opts );
-  /*
-  dialog.on('pnotify.confirm', function(){
-    data.extend.callback();
-  });
-  dialog.on('pnotify.cancel', function(){
-    dialog.close();
-  });
-  */
 }
 // /dialog()
 
+// Top Navigation
+$(document).ready(function() {
+  
+  var $TOPNAV_FORM = $('#topnav-form'),
+      CURRENT_SOURCE_ID = Number( $TOPNAV_FORM.find('input[name="source_id"]').val() );
+  
+  $('#topnav-switch-source').on('change', function(){
+    var newSrcId = Number( $(this).val() );
+    if ( newSrcId != CURRENT_SOURCE_ID ) {
+      PNotify.alert({
+        title: localize_messages.switch_src_ttl,
+        text: localize_messages.switch_src_msg,
+        addClass: '',
+        type: 'notice',
+        icon: 'fa fa-question-circle',
+        hide: false,
+        stack: {
+          'dir1': 'down',
+          'modal': true,
+          'firstpos1': 25
+        },
+        modules: {
+          Confirm: {
+            confirm: true,
+            buttons: [{
+              text: localize_messages.dialog_yes,
+              textTrusted: false,
+              addClass: '',
+              primary: true,
+              promptTrigger: true,
+              click: (notice, value) => {
+                notice.close();
+                // notice.fire('pnotify.confirm', {notice, value});
+                docCookies.setItem( 'lastSource', newSrcId, 60*60*24*30, '/' );
+                showLoading();
+                location.reload();
+              }
+            }, {
+              text: localize_messages.dialog_no,
+              textTrusted: false,
+              addClass: '',
+              click: (notice) => {
+                notice.close();
+                // notice.fire('pnotify.cancel', {notice});
+                $('#topnav-switch-source').children('option').each(function(){
+                  if ( Number( $(this).val() ) == CURRENT_SOURCE_ID ) {
+                    $(this).prop('selected', true);
+                  } else {
+                    $(this).prop('selected', false);
+                  }
+                });
+              }
+            }]
+          },
+          Buttons: {
+            closer: false,
+            sticker: false
+          },
+          History: {
+            history: false
+          }
+        }
+      });
+    }
+  });
+  
+});

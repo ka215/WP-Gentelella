@@ -57,6 +57,18 @@ function __ctl( $class_snippet = 'model' ) {
     return ! empty( $_instance ) ? $_instance : new stdClass();
 }
 
+function __localize_messages() {
+    // JavaScript用の翻訳テキスト定義:
+    return [
+      'loading' => __( 'Please Wait...', 'plotter' ), // custom.js: showLoading()
+      'dialog_yes' => __( 'Ok', 'plotter' ), // custom.js: dialog()
+      'dialog_no' => __( 'Cancel', 'plotter' ), // custom.js: dialog()
+      'switch_src_ttl' => __( 'Switch Manageable Story', 'plotter' ), // custom.js: Top Navigation
+      'switch_src_msg' => __( 'Any unsaved data will be lost. Are you sure?', 'plotter' ), // custom.js: Top Navigation
+      
+    ];
+}
+
 /**
  * Initialize theme
  */
@@ -235,6 +247,8 @@ add_action( 'wp_enqueue_scripts', function() {
   // Common Custom Scripts
   $_common_custom_scriptfile = sprintf( '%s/js/custom%s.js', ( WP_DEBUG ? 'src' : 'build' ), ( WP_DEBUG ? '' : '.min' ) );
   wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array( 'wp-api' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
+  
+  wp_localize_script( WPGENT_HANDLE, 'localize_messages', __localize_messages() );
   
   // Single Page Custom Scripts
   $_paged_custom_scriptfile = sprintf( 'build/js/custom-%s%s.js', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
@@ -527,6 +541,17 @@ add_filter( 'tml_template_paths', function( $args ) {
   return $args;
 } );
 
+
+/**
+ * Custom avatar html for plotter
+ */
+add_filter( 'get_avatar', function( $avatar, $id_or_email, $size, $default, $alt, $args ) {
+  // var_dump( esc_html( $avatar ), $id_or_email, $size, $default, $alt, $args );
+  if ( ! empty( $args['extra_attr'] ) && 'no-classes' === $args['extra_attr'] ) {
+    $avatar = '<img src="'. $args['url'] .'" width="'. $size .'" height="'. $size .'" alt="'. $alt .'" class="" />';
+  }
+  return $avatar;
+}, PHP_INT_MAX, 6 );
 
 
 /**
