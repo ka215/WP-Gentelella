@@ -20,14 +20,14 @@ $current_structures  = $_plotter['current_structures'];
         <!-- page content -->
         <div class="right_col" role="main">
           <div <?php post_class(); ?>>
+<?php /*
             <div class="page-title">
               <div class="title_left">
                 <h2><?php echo esc_html( $current_source_name ) ?></h2>
               </div>
             </div>
-
             <div class="clearfix"></div>
-
+*/ ?>
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
@@ -194,7 +194,7 @@ $current_structures  = $_plotter['current_structures'];
                           <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
                           <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
 */ ?>
-                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-create"   ><?php _e( 'Create', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-primary onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-create"   ><?php _e( 'Create', WPGENT_DOMAIN ); ?></button>
                         </div>
                       </div><!-- /.form-group -->
 

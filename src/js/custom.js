@@ -201,7 +201,8 @@ $(document).ready(function() {
         ev.preventDefault();
         switch ( $(this).attr('name') ) {
             case 'settings':
-                PNotify.notice('Location to settings page.');
+                // PNotify.info('Location to settings page.');
+                PNotify.alert({text: 'Location to settings page.', addClass: 'dark' });
                 break;
             case 'fullscreen':
                 var requestFullscreen = ['requestFullscreen','webkitRequestFullScreen','mozRequestFullScreen','msRequestFullscreen'], 
@@ -227,7 +228,7 @@ $(document).ready(function() {
                 }
                 break;
             case 'lock':
-                PNotify.notice('undefiend action, yet.');
+                PNotify.error('undefiend action, yet.');
                 break;
             case 'signout':
                 location.href = ev.currentTarget.href;

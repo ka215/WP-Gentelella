@@ -19,18 +19,14 @@ $current_source_name = $_plotter['current_source_name'];
         <!-- page content -->
         <div class="right_col" role="main">
           <div <?php post_class(); ?>>
+<?php if ( __ctl( 'lib' )::is_first_visit() ) : ?>
             <div class="page-title">
               <div class="title_left">
-                <h2><?php if ( __ctl( 'lib' )::is_first_visit() ) {
-                    _e( 'Welcome Plotter!', WPGENT_DOMAIN );
-                } else {
-                    echo empty( $user_sources ) ? _e( "Let's add a new story", WPGENT_DOMAIN ) : $current_source_name;
-                } ?></h2>
+                <h2><?= __( 'Welcome Plotter!', WPGENT_DOMAIN ) ?></h2>
               </div>
             </div>
-
             <div class="clearfix"></div>
-
+<?php endif; ?>
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
@@ -62,13 +58,7 @@ $current_source_name = $_plotter['current_source_name'];
                         </div>
                       </div>
                     </form>
-<?php else : the_content(); ?>
-<?php /*
-  wp_link_pages( array(
-    'before' => '<div class="page-links">' . __( 'Pages:', WPGENT_DOMAIN ),
-    'after'  => '</div>',
-  ) );
-*/ endif; ?>
+<?php else : the_content(); endif; ?>
                   </div>
                 </div>
               </div>

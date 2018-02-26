@@ -1,12 +1,22 @@
 /**
  * For Whole Story (/whole-story/)
  */
+'use strict';
 $(document).ready(function() {
   
   var gf               = $("#globalSettings"),
       wls              = window.localStorage,
       currentPermalink = 'whole-story',
-      currentSrcId     = Number( $('#change_source option:selected').val() );
+      currentSrcId     = Number( $('#change_source option:selected').val() ),
+      SUBMIT_BUTTONS   = [ 'regist', 'remove-confirm', 'update', 'add' ];
+  
+  // common function
+  function controlSubmission( action='lock' ) {
+    $.each( SUBMIT_BUTTONS, function(i,v) {
+      $('#'+currentPermalink+'-btn-'+v).prop('disabled', ( 'lock' === action ) );
+    });
+  }
+  
   //storedSrcCache( currentSrcId );
   
   // Event handlers
@@ -29,6 +39,7 @@ $(document).ready(function() {
       if ( currentSrcId != newSrcId ) {
         // ajax(WP REST API)で新ソースIDのデータを取得する
         currentSrcId = newSrcId;
+        controlSubmission();
         callAjax( wpApiSettings.root + 'plotter/v1/src/' + currentSrcId, 'GET' )
         .then( function( data, stat, self ){
           if ( 'success' === stat ) {
@@ -41,6 +52,7 @@ $(document).ready(function() {
             gf.find('input#why').val( data[0].why );
             gf.find('#team_writing').prop( 'checked', ( data[0].type == 1 ) );
             rebuildSwitchery( '#team_writing' );
+            controlSubmission( 'unlock' );
             // validatorを発火させる
             gf.find('#source_name').trigger('blur');
           }

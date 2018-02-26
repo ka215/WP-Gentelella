@@ -31,18 +31,14 @@ if ( ! empty( $current_source_id ) ) {
         <!-- page content -->
         <div class="right_col" role="main">
           <div <?php post_class(); ?>>
+<?php if ( empty( $user_sources ) ) : ?>
             <div class="page-title">
               <div class="title_left">
-                <h2><?php if ( empty( $user_sources ) ) {
-                    _e( "Let's weave a new story!", WPGENT_DOMAIN );
-                } else {
-                    echo esc_html( $current_source_name );
-                } ?></h2>
+                <h2><?= __( "Let's weave a new story!", WPGENT_DOMAIN ) ?></h2>
               </div>
             </div>
-
             <div class="clearfix"></div>
-
+<?php endif; ?>
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
@@ -93,8 +89,9 @@ if ( ! empty( $current_source_id ) ) {
                         </div>
                       </div>
 <?php endif; ?>
-                      <h5><?php _e( 'Advanced Settings of Your Story', WPGENT_DOMAIN ); ?></h5>
                       <div class="ln_solid"></div>
+                      <h4><i class="plt-equalizer3 blue"></i> <?php _e( 'Advanced Settings of Your Story', WPGENT_DOMAIN ); ?></h4>
+                      <div class="ln_dotted ln_thin"></div>
                       <!-- p class="font-gray-dark">helper text</p -->
                       <div class="item form-group">
                         <label class="control-label col-md-2 col-sm-2 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required"></span></label>
@@ -160,9 +157,9 @@ if ( ! empty( $current_source_id ) ) {
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
                           <button class="btn btn-default" type="button" id="<?= esc_attr( $page_name ) ?>-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
 <?php if ( count( $user_sources ) > 0 ) : ?>
-                          <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove-confirm"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Commit', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid hide" type="button" id="<?= esc_attr( $page_name ) ?>-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-dark" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove-confirm"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-primary onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Commit', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-primary onValid hide" type="button" id="<?= esc_attr( $page_name ) ?>-btn-add"   ><?php _e( 'Add',    WPGENT_DOMAIN ); ?></button>
 <?php endif; ?>
                         </div>
                       </div>
