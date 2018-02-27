@@ -624,6 +624,35 @@ function conv_kv( _array ) {
 }
 // /conv_kv
 
+// sprintf
+function sprintf( format ) {
+  var i = 0, j = 0, r = "", len = format.length, 
+      next = function( args ) {
+        j += 1; i += 1;
+        return args[j] !== void 0 ? args[j] : "";
+      };
+  
+  for( i = 0; i < len; i++ ) {
+    if ( format.charCodeAt( i ) === 37 ) {
+      switch ( format.charCodeAt( i + 1 ) ) {
+        case 115:
+          r += next( arguments );
+          break;
+        case 100:
+          r += Number( next( arguments ) );
+          break;
+        default:
+          r += format[i];
+          break;
+      }
+    } else {
+      r += format[i];
+    }
+  }
+  return r;
+}
+// /sprintf
+
 /* Closure : Ajax call corresponding to WP REST API
  * Usage : callAjax( ajax_url, method [, ...] )
  *

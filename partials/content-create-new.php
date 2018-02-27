@@ -68,7 +68,7 @@ $current_structures  = $_plotter['current_structures'];
                             <div class="step_indicator selected">
                               <a href="javascript:;" class="step_no">1</a>
                               <ul class="step_meta">
-                                <li class="step_name"><?php _e( 'Act', WPGENT_DOMAIN ); ?> <var class="act_no">1</var></li>
+                                <li class="step_name"><?php printf( __( 'Act %d', WPGENT_DOMAIN ), 1 ); ?></li>
                               </ul>
                               <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
                             </div>
@@ -126,7 +126,7 @@ $current_structures  = $_plotter['current_structures'];
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-name"><?php _e('Act Name', WPGENT_DOMAIN ); ?> <span class="required"></span>
                               </label>
                               <div class="col-md-7 col-sm-9 col-xs-12">
-                                <input type="text" id="act-name" name="name" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>" value="" required="required">
+                                <input type="text" id="act-name" name="name" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>" value="<?php printf( __( 'Act %d', WPGENT_DOMAIN ), 1 ); ?>" required="required">
                               </div>
                             </div>
                             <div class="form-group">

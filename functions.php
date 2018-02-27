@@ -65,6 +65,7 @@ function __localize_messages() {
       'dialog_no' => __( 'Cancel', 'plotter' ), // custom.js: dialog()
       'switch_src_ttl' => __( 'Switch Manageable Story', 'plotter' ), // custom.js: Top Navigation
       'switch_src_msg' => __( 'Any unsaved data will be lost. Are you sure?', 'plotter' ), // custom.js: Top Navigation
+      'act_num' => __( 'Act %d', 'plotter' ), // custom-create-new.js: 
       
     ];
 }

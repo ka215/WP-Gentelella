@@ -117,6 +117,7 @@ $(document).ready(function() {
     var action = $(this).attr('id').replace('create-new-btn-', ''),
         steps  = $('#wizard.wizard_horizontal> ul.wizard_steps> li').length - 1;
     logger.debug( action, steps );
+    controlSubmission();
     // 現在のフォームデータをsessionStorageに保存
     saveStepData();
     $('#create-new-post-action').val( action );
@@ -130,14 +131,28 @@ $(document).ready(function() {
       }
     });
     if ( step_data.length > 0 ) {
-      var addField = $('<input>', { 'type': 'hidden', 'name': 'step_data', 'value': _.escape( JSON.stringify( step_data ) ) });
+      showLoading();
+      var addField = $('<input>', { 'type': 'hidden', 'name': 'step_data', 'value': JSON.stringify( step_data ) });
       gf.append( addField );
+      // 最後に表示されているフォームのデータは送信対象から除外する
       $('#act-structure-id').prop('disabled', true);
       $('#act-dependency').prop('disabled', true);
       $('#act-turn').prop('disabled', true);
       $('#act-name').prop('disabled', true);
       $('#act-context').prop('disabled', true);
-      gf.submit();
+      // gf.submit();
+      // ajaxでpost
+      var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
+      callAjax(
+        '/'+currentPermalink+'/',
+        'post',
+        post_data,
+        'json',
+        'application/json; charset=utf-8',
+        'notify',
+        true
+      );
+      controlSubmission( 'unlock' );
     } else {
       return false;
     }
@@ -233,14 +248,14 @@ $(document).ready(function() {
       gf.find('#act-structure-id').val( '' );
       gf.find('#act-dependency').val( '0' );
       gf.find('#act-turn').val( step );
-      gf.find('#act-name').val( '' );
+      gf.find('#act-name').val( sprintf( localize_messages.act_num, step ) );
       gf.find('#act-context').val( '' );
     } else {
       var step_data = JSON.parse( wss.getItem( key ) );
       gf.find('#act-structure-id').val( step_data['structure_id'] );
       gf.find('#act-dependency').val( step_data['dependency'] );
       gf.find('#act-turn').val( step_data['turn'] );
-      gf.find('#act-name').val( step_data['name'] );
+      gf.find('#act-name').val( is_empty( step_data['name'] ) ? sprintf( localize_messages.act_num, step ) : step_data['name'] );
       gf.find('#act-context').val( step_data['context'] );
     }
     gf.find('#act-name').trigger('blur');
