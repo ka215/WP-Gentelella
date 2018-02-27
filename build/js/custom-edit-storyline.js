@@ -1,16 +1,16 @@
 /**
- * For Create New Storyline
+ * For Edit Storyline
  */
 'use strict';
 $(document).ready(function() {
   
   var gf               = $("#structureSettings"),
       wss              = window.sessionStorage,
-      currentPermalink = 'create-new',
+      currentPermalink = 'edit-storyline',
       currentSrcId     = Number( $('#source_id').val() ),
       structureType    = Number( $('#structure-presets').find('option:selected').val() ),
       presetPlaceholder= [];
-  SUBMIT_BUTTONS   = [ 'create' ];
+  SUBMIT_BUTTONS   = [ 'update' ];
   $('#structure-presets> option').each(function() {
     var tmp = JSON.parse( $(this).data('acts').replace(/\'/g, '"') );
     if ( tmp.length > 0 && ! is_empty( tmp[0] ) ) {

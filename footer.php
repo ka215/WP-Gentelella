@@ -1,8 +1,11 @@
 <?php
 /**
- * The Footer for WP-Gentelella theme.
+ * The Footer for Plotter theme.
  *
- * @package WP-Gentelella
+ * @package WordPress
+ * @subpackage Plotter
+ * @since 1.0
+ * @version 1.0
  */
 $page_type = __ctl( 'lib' )::get_pageinfo();
 

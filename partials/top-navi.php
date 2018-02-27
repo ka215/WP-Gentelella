@@ -3,7 +3,7 @@
  * Template part for displaying top navigation content
  *
  * @package WordPress
- * @subpackage WP-Gentelella
+ * @subpackage Plotter
  * @since 1.0
  * @version 1.0
  */

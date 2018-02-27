@@ -3,7 +3,7 @@
  * Template part for displaying copyright as inline-footer
  *
  * @package WordPress
- * @subpackage WP-Gentelella
+ * @subpackage Plotter
  * @since 1.0
  * @version 1.0
  */

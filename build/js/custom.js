@@ -674,13 +674,17 @@ var callbackAjax = {
             notify( data.title, data.text, data.type, data.code, data.addclass );
           } else
           if ( 'stack' === data.action ) {
-            // セッションストレージに通知をスタックする
+            // セッションストレージに通知をスタック後、カレントページをリロードする
             sessionStorage.setItem( 'stackNotify', JSON.stringify( data ) );
-            location.reload(false);
+            location.reload( false );
           } else
           if ( 'dialog' === data.action ) {
             // 対話シーケンスを実行する
             dialog( data );
+          } else {
+            // セッションストレージに通知をスタック後、指定先へ遷移する
+            sessionStorage.setItem( 'stackNotify', JSON.stringify( data ) );
+            location.href = data.action;
           }
         }
       }

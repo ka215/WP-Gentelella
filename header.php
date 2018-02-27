@@ -1,8 +1,11 @@
 <?php
 /**
- * The Header for WP-Gentelella theme.
+ * The Header for Plotter theme.
  *
- * @package WP-Gentelella
+ * @package WordPress
+ * @subpackage Plotter
+ * @since 1.0
+ * @version 1.0
  */
 ?>
 <!DOCTYPE html>

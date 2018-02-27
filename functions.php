@@ -1,10 +1,11 @@
 <?php
 /**
- * 
+ * Functions of theme for Plotter
  *
  * @package WordPress
- * @subpackage WP_Gentelella
+ * @subpackage Plotter
  * @since 1.0
+ * @version 1.0
  */
 if ( ! defined( 'WPGENT_HANDLE' ) )    define( 'WPGENT_HANDLE', 'plotter' ); // 'wp-gentelella'
 if ( ! defined( 'WPGENT_DOMAIN' ) )    define( 'WPGENT_DOMAIN', 'plotter' ); // WPGENT_DOMAIN

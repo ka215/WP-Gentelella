@@ -1,9 +1,9 @@
 <?php
 /**
- * Template part for displaying create-new content in page.php
+ * Template part for displaying edit-storyline content in page.php
  *
  * @package WordPress
- * @subpackage WP-Gentelella
+ * @subpackage Plotter
  * @since 1.0
  * @version 1.0
  */
@@ -20,14 +20,14 @@ $current_structures  = $_plotter['current_structures'];
         <!-- page content -->
         <div class="right_col" role="main">
           <div <?php post_class(); ?>>
+<?php /*
             <div class="page-title">
               <div class="title_left">
                 <h2><?php echo esc_html( $current_source_name ) ?></h2>
               </div>
             </div>
-
             <div class="clearfix"></div>
-
+*/ ?>
             <div class="row">
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
