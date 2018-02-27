@@ -278,7 +278,7 @@ a:hover, a:focus {
   font-size: .5rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: $red;
+  color: $signal_red;
 }
 
 
@@ -3627,7 +3627,7 @@ fieldset {
 .wizard_horizontal> ul.wizard_steps li div.step_indicator.selected:before, 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator.selected:after {
   background: $global_active;
-  color: #FFFFFF;
+  color: $white;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no {
@@ -3635,12 +3635,12 @@ fieldset {
   height: 54px;
   line-height: 54px;
   border-radius: 100px;
-  background: $dark;
+  background: $dark_gray;
   display: block;
   margin: 0 auto 5px;
   font-size: 16px;
   text-align: center;
-  color: #FFFFFF;
+  color: $white;
   position: relative;
   z-index: 5;
 }
@@ -3648,25 +3648,25 @@ fieldset {
 .wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no:hover, 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no:active, 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator a.step_no:focus {
-  background: $alink_color;
-  color: #FFFFFF;
+  background: $global_active;
+  color: $white;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator.selected a.step_no {
   background: $global_active;
-  color: #FFFFFF;
+  color: $white;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no {
-  background: $panel_title_icon_color;
+  background: $gray;
   color: $main_content_text;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no:hover, 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no:active, 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator.add_new a.step_no:focus {
-  background: $alink_color;
-  color: #FFFFFF;
+  background: $global_active;
+  color: $white;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator ul.step_meta {
@@ -3698,16 +3698,16 @@ fieldset {
   position: absolute;
   top: -15px;
   left: calc(50% + 20px);
-  background: $panel_title_icon_color;
+  background: $gray;
   color: $main_content_text;
-  border: 1px solid #999;
+  border: 1px solid $monotone_95;
   z-index: 10;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator button.btn-remove-act:hover {
-  background: $alink_color;
-  color: #FFFFFF;
-  border: 1px solid $alink_color;
+  background: $moss_gray;
+  color: $white;
+  border: 1px solid $dark_gray;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_relational {

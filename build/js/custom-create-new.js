@@ -8,15 +8,8 @@ $(document).ready(function() {
       wss              = window.sessionStorage,
       currentPermalink = 'create-new',
       currentSrcId     = Number( $('#source_id').val() ),
-      structureType    = Number( $('#structure-presets').find('option:selected').val() ),
-      SUBMIT_BUTTONS   = [ 'create' ];
-  
-  // common function
-  function controlSubmission( action='lock' ) {
-    $.each( SUBMIT_BUTTONS, function(i,v) {
-      $('#'+currentPermalink+'-btn-'+v).prop('disabled', ( 'lock' === action ) );
-    });
-  }
+      structureType    = Number( $('#structure-presets').find('option:selected').val() );
+  SUBMIT_BUTTONS   = [ 'create' ];
   
   // 初期処理: sessionStorageを初期化
   clearSessionData();

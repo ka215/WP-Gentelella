@@ -7,15 +7,8 @@ $(document).ready(function() {
   var gf               = $("#globalSettings"),
       wls              = window.localStorage,
       currentPermalink = 'whole-story',
-      currentSrcId     = Number( $('#change_source option:selected').val() ),
-      SUBMIT_BUTTONS   = [ 'regist', 'remove-confirm', 'update', 'add' ];
-  
-  // common function
-  function controlSubmission( action='lock' ) {
-    $.each( SUBMIT_BUTTONS, function(i,v) {
-      $('#'+currentPermalink+'-btn-'+v).prop('disabled', ( 'lock' === action ) );
-    });
-  }
+      currentSrcId     = Number( $('#change_source option:selected').val() );
+  SUBMIT_BUTTONS       = [ 'regist', 'remove-confirm', 'update', 'add' ];
   
   //storedSrcCache( currentSrcId );
   

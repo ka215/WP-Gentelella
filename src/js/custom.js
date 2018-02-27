@@ -101,7 +101,8 @@ var CURRENT_URL = window.location.href.split('#')[0].split('?')[0],
     $LEFT_COL = $('.left_col'),
     $RIGHT_COL = $('.right_col'),
     $NAV_MENU = $('.nav_menu'),
-    $FOOTER = $('footer');
+    $FOOTER = $('footer'),
+    SUBMIT_BUTTONS = []; // defined per pages
 
 // Sidebar
 $(document).ready(function() {
@@ -228,7 +229,7 @@ $(document).ready(function() {
                 }
                 break;
             case 'lock':
-                PNotify.error('undefiend action, yet.');
+                PNotify.error('Undefined action, yet.');
                 break;
             case 'signout':
                 location.href = ev.currentTarget.href;
@@ -750,12 +751,13 @@ function dialog( data ) {
 }
 // /dialog()
 
-// Top Navigation
+// Control Common Object on jQuery
 $(document).ready(function() {
   
   var $TOPNAV_FORM = $('#topnav-form'),
       CURRENT_SOURCE_ID = Number( $TOPNAV_FORM.find('input[name="source_id"]').val() );
   
+  // Top Navigation
   $('#topnav-switch-source').on('change', function(){
     var newSrcId = Number( $(this).val() );
     if ( newSrcId != CURRENT_SOURCE_ID ) {
@@ -817,3 +819,12 @@ $(document).ready(function() {
   });
   
 });
+
+// Lock & Unlock the submission buttons
+function controlSubmission( action='lock', currentPermalink='', buttons=[] ) {
+  buttons = typeof SUBMIT_BUTTONS != 'undefined' && SUBMIT_BUTTONS.length > 0 ? SUBMIT_BUTTONS : buttons;
+  currentPermalink = is_empty( currentPermalink ) ? location.pathname.replace(/^\/(.*)\/$/, '$1') : currentPermalink;
+  $.each( buttons, function(i,v) {
+    $('#'+currentPermalink+'-btn-'+v).prop('disabled', ( 'lock' === action ) );
+  });
+}
