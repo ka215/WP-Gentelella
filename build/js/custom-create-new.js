@@ -94,7 +94,11 @@ $(document).ready(function() {
     $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(newStep)[0].outerHTML );
     var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
     $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
+    // スクロール調整
+    var wizard_step = $('#wizard.wizard_horizontal> ul.wizard_steps');
+    wizard_step.scrollLeft( wizard_step[0].scrollWidth - wizard_step[0].clientWidth );
     logger.debug( 'Added Step: ', nowSteps );
+    logger.debug( wizard_step.height() );
   });
   
   $(document).on('click', '.step_indicator:not(.add_new) a', function(e){
@@ -300,5 +304,9 @@ $(document).ready(function() {
     wss.setItem( 'plt_str_' + step_data.turn, JSON.stringify( step_data ) );
   }
   
+  
+  // Wizardの表示制御
+  var WIZARD_STEPS = $('#Wizard.form_wizard.wizard_horizontal> ul.wizard_steps');
+  console.log( WIZARD_STEPS.height() );
   
 });

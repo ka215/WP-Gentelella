@@ -14,7 +14,9 @@ $user_sources        = $_plotter['user_sources'];
 $current_source_id   = $_plotter['current_source_id'];
 $current_source_name = $_plotter['current_source_name'];
 $current_structures  = $_plotter['current_structures'];
-// var_dump($current_source_id);
+if ( empty( $current_structures ) ) {
+  wp_safe_redirect( '/create-new/' );
+}
 ?>
 
         <!-- page content -->
@@ -32,7 +34,7 @@ $current_structures  = $_plotter['current_structures'];
               <div class="col-md-12 col-sm-12 col-xs-12">
                 <div class="x_panel">
                   <div class="x_title">
-                    <h3><?php _e( 'Create New Storyline', WPGENT_DOMAIN ) ?></h3>
+                    <h3><?php _e( 'Edit Storyline', WPGENT_DOMAIN ) ?></h3>
                     <?php get_template_part( 'partials/toolbox' ); ?>
                     <div class="clearfix"></div>
                   </div>
@@ -42,66 +44,36 @@ $current_structures  = $_plotter['current_structures'];
                       <input type="hidden" name="source_id" value="<?= esc_attr( $current_source_id ) ?>">
                       <input type="hidden" name="post_action" id="<?= esc_attr( $page_name ) ?>-post-action" value="">
                       <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
-<?php /* if ( empty( $current_structures ) ) : ?>
-                      <div class="item form-group">
-                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="structure-presets"><?php _e( 'Storyline Type', WPGENT_DOMAIN ); ?> <span class="required"></span></label>
-                        <div class="col-md-6 col-sm-6 col-xs-12">
-                          <select class="form-control" id="structure-presets" name="structure_type">
-                            <option value="custom" data-acts="['']"><?php _e( 'Custom Structure', WPGENT_DOMAIN ); ?></option>
-                            <option value="3acts" data-acts="['<?php _e('Set-up', WPGENT_DOMAIN ); ?>','<?php _e('Confrontation', WPGENT_DOMAIN ); ?>','<?php _e('Resolution', WPGENT_DOMAIN ); ?>']"><?php _e( 'Three-act Structure', WPGENT_DOMAIN ); ?></option>
-                            <option value="4acts" data-acts="['<?php _e('Set-up', WPGENT_DOMAIN ); ?>','<?php _e('Confrontation', WPGENT_DOMAIN ); ?>','<?php _e('Resolution', WPGENT_DOMAIN ); ?>','<?php _e('Afterwards', WPGENT_DOMAIN ); ?>']"><?php _e( 'Four-act Structure', WPGENT_DOMAIN ); ?></option>
-                          </select>
-                        </div>
-                      </div>
-                      <div class="ln_solid"></div>
-<?php endif; */ ?>
-
 <?php /* Start: Wizard */ ?>
                       <p class="font-gray-dark">
                         <?php _e( 'You should be setting on the form wizard in follow to define the structures from the selected storyline type.', WPGENT_DOMAIN ); ?>
                       </p>
                       <div id="wizard" class="form_wizard wizard_horizontal">
                         <ul class="wizard_steps">
-                          <li>
-                            <div class="step_indicator selected">
-                              <a href="#act-form" class="step_no">1</a>
+<?php foreach ( $current_structures as $_idx => $_structure ) : 
+        if ( $_structure['dependency'] == 0 ) {
+            if ( $_structure['turn'] == 1 ) {
+                $_first_view_structure = $_structure;
+            } ?>
+                          <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>">
+                            <div class="step_indicator<?php if ( $_structure['turn'] == 1 ) : ?> selected<?php endif; ?>">
+                              <a href="#act-form" class="step_no"><?= esc_html( $_idx + 1 ) ?></a>
                               <ul class="step_meta">
-                                <li class="step_name"><?php _e( 'Act', WPGENT_DOMAIN ); ?> <var class="act_no">1</var></li>
+                                <li class="step_name"><?= esc_html( $_structure['name'] ) ?></li>
                               </ul>
-                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
-                            </div>
-                            <div class="step_relational"></div>
-                          </li>
-                          <li>
-                            <div class="step_indicator">
-                              <a href="#act-form" class="step_no">2</a>
-                              <ul class="step_meta">
-                                <li class="step_name">Confrontation</li>
-                              </ul>
-                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
-                            </div>
-                            <div class="step_relational wizard_vertical">
-                              <ul class="wizard_steps">
-                                <li><a href="#" class="add_sub"><?php _e('Add New', WPGENT_DOMAIN ); ?></a></li>
-                              </ul>
-                            </div>
-                          </li>
-                          <li>
-                            <div class="step_indicator">
-                              <a href="#act-form" class="step_no">3</a>
-                              <ul class="step_meta">
-                                <li class="step_name">ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ</li>
-                              </ul>
-                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
+<?php   if ( $_structure['turn'] > 1 ) : ?>
+                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="fa fa-close"></i></button>
+<?php   endif; ?>
                             </div>
                             <div class="step_relational wizard_vertical">
                               <ul class="wizard_steps">
                                 <li><a href="#">Sub Storyline 1</a></li>
                                 <li><a href="#">Sub Storyline 2 Sub Storyline 2 Sub Storyline 2 Sub Storyline 2</a></li>
-                                <li><a href="#" class="add_sub"><?php _e('Add New', WPGENT_DOMAIN ); ?></a></li>
+                                <li><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
                               </ul>
                             </div>
                           </li>
+<?php }; endforeach; ?>
                           <li>
                             <div class="step_indicator add_new">
                               <a href="#act-new" class="step_no"><i class="fa fa-plus"></i></a>
@@ -115,20 +87,32 @@ $current_structures  = $_plotter['current_structures'];
 
                         <div id="act-form">
                           <div class="form-horizontal form-label-left" id="act-form-current">
-                            <input type="hidden" id="act-structure-id" name="structure_id" value="">
-                            <input type="hidden" id="act-dependency" name="dependency" value="0">
-                            <input type="hidden" id="act-turn" name="turn" value="1">
+                            <input type="hidden" id="act-structure-id" name="structure_id" value="<?= esc_attr( $_first_view_structure['structure_id'] ) ?>">
+                            <input type="hidden" id="act-turn" name="turn" value="<?= esc_attr( $_first_view_structure['turn'] ) ?>">
+                            <input type="hidden" id="act-diff" name="diff" value="true">
                             <div class="form-group">
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-name"><?php _e('Act Name', WPGENT_DOMAIN ); ?> <span class="required"></span>
                               </label>
                               <div class="col-md-9 col-sm-9 col-xs-12">
-                                <input type="text" id="act-name" name="name" required="required" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>" value="" required="required">
+                                <input type="text" id="act-name" name="name" required="required" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $_first_view_structure['name'] ) ?>">
+                              </div>
+                            </div>
+                            <div class="form-group">
+                              <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-dependency"><?php _e('Dependency', WPGENT_DOMAIN ); ?> <span class="required"></span>
+                              </label>
+                              <div class="col-md-6 col-sm-9 col-xs-12">
+                                <select id="act-dependency" name="dependency" required="required" class="form-control col-md-7 col-xs-12" disabled>
+                                  <option value="0" <?php selected( 0, $_first_view_structure['dependency'] ); ?>><?php _e( 'None', WPGENT_DOMAIN ) ?></option>
+<?php foreach ( $current_structures as $_structure ) : ?>
+                                  <option value="<?= esc_attr( $_structure['id'] ) ?>" <?php selected( $_structure['id'], $_first_view_structure['dependency'] ); ?>><?= esc_html( $_structure['name'] ) ?></option>
+<?php endforeach; ?>
+                                </select>
                               </div>
                             </div>
                             <div class="form-group">
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-context"><?php _e('Context', WPGENT_DOMAIN ); ?></label>
                               <div class="col-md-9 col-sm-9 col-xs-12">
-                                <textarea id="act1-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"></textarea>
+                                <textarea id="act1-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= esc_html( $_first_view_structure['context'] ) ?></textarea>
                               </div>
                             </div>
                             <div class="form-group hide">

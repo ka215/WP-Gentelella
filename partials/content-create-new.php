@@ -14,7 +14,9 @@ $user_sources        = $_plotter['user_sources'];
 $current_source_id   = $_plotter['current_source_id'];
 $current_source_name = $_plotter['current_source_name'];
 $current_structures  = $_plotter['current_structures'];
-// var_dump($current_source_id);
+if ( ! empty( $current_structures ) ) {
+  wp_safe_redirect( '/edit-storyline/' );
+}
 ?>
 
         <!-- page content -->
@@ -50,7 +52,7 @@ $current_structures  = $_plotter['current_structures'];
                       </p>
 <?php if ( empty( $current_structures ) ) : ?>
                       <div class="item form-group">
-                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="structure-presets"><?php _e( 'Storyline Type', WPGENT_DOMAIN ); ?> <span class="required"></span></label>
+                        <label class="control-label col-md-2 col-sm-2 col-xs-12" for="structure-presets"><?php _e( 'Storyline Type', WPGENT_DOMAIN ); ?></label>
                         <div class="col-md-6 col-sm-6 col-xs-12">
                           <select class="form-control" id="structure-presets" name="structure_type">
                             <option value="0" data-acts="['']" selected="selected"><?php _e( 'Custom Structure', WPGENT_DOMAIN ); ?></option>
