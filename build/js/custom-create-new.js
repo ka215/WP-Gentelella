@@ -96,9 +96,9 @@ $(document).ready(function() {
     $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
     // スクロール調整
     var wizard_step = $('#wizard.wizard_horizontal> ul.wizard_steps');
-    wizard_step.scrollLeft( wizard_step[0].scrollWidth - wizard_step[0].clientWidth );
+    wizard_step.scrollLeft( wizard_step[0].scrollWidth - wizard_step.width() );
     logger.debug( 'Added Step: ', nowSteps );
-    logger.debug( wizard_step.height() );
+    logger.debug( wizard_step.width(), wizard_step[0].scrollWidth, wizard_step[0].clientWidth, wizard_step.children('li').width(), wizard_step.children('li').width() * (nowSteps + 1) );
   });
   
   $(document).on('click', '.step_indicator:not(.add_new) a', function(e){
