@@ -94,11 +94,8 @@ $(document).ready(function() {
     $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(newStep)[0].outerHTML );
     var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
     $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
-    // スクロール調整
-    var wizard_step = $('#wizard.wizard_horizontal> ul.wizard_steps');
-    wizard_step.scrollLeft( wizard_step[0].scrollWidth - wizard_step.width() );
     logger.debug( 'Added Step: ', nowSteps );
-    logger.debug( wizard_step.width(), wizard_step[0].scrollWidth, wizard_step[0].clientWidth, wizard_step.children('li').width(), wizard_step.children('li').width() * (nowSteps + 1) );
+    resizeWizardSteps();
   });
   
   $(document).on('click', '.step_indicator:not(.add_new) a', function(e){
@@ -213,6 +210,21 @@ $(document).ready(function() {
       $(this).remove();
     });
     formatFormItems();
+  }
+  
+  function resizeWizardSteps() {
+    // リサイズ・スクロール調整
+    var wizard_step = $('#wizard.wizard_horizontal> ul.wizard_steps'),
+        nowSteps    = wizard_step.children('li').length,
+        step_width  = wizard_step.children('li').width();
+    if ( wizard_step.parent().width().scrollWidth < step_width * nowSteps ) {
+      // wizard_step.addClass('overflow').children('li').width( wizard_step[0].scrollWidth / nowSteps >= step_width ? wizard_step[0].scrollWidth / nowSteps : step_width );
+    } else {
+      // wizard_step.removeClass('overflow').children('li').removeAttr('style');
+    }
+    wizard_step.scrollLeft( wizard_step[0].scrollWidth - wizard_step.width() );
+    logger.debug( wizard_step.parent().width(), wizard_step.width(), nowSteps, wizard_step[0].scrollWidth, wizard_step[0].clientWidth, wizard_step.children('li').width(), wizard_step.children('li').width() * nowSteps );
+    
   }
   
   function formatFormItems() {

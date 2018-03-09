@@ -3575,17 +3575,31 @@ fieldset {
   align-items: stretch;
   list-style: none;
   position: relative;
-  min-width: 100%;
+  width: 100%;
   margin: 0;
   overflow-x: auto;
 }
 
-.wizard_horizontal> ul.wizard_steps>li {
+.wizard_horizontal> ul.wizard_steps.overflow {
+  display: table;
+  min-width: initial;
+  width: 100%;
+  overflow-x: scroll;
+}
+
+.wizard_horizontal> ul.wizard_steps> li {
   position: relative;
   flex-grow: 1;
+  flex-shrink: 1;
+  flex-basis: 20%;
   text-align: center;
-  min-width: 20%;
+  min-width: 120px;
   padding: 20px 0;
+}
+
+.wizard_horizontal> ul.wizard_steps.overflow> li {
+  display: table-cell;
+  min-width: 120px;
 }
 
 .wizard_horizontal> ul.wizard_steps li div.step_indicator {
