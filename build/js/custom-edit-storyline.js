@@ -60,7 +60,7 @@ $(document).ready(function() {
     // step削除ボタン押下時
     e.preventDefault();
     var targetStep = Number( $(this).parents('li').data('step') );
-    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
       var idx = $(this).index();
       if ( Number( $(this).data('step') ) == targetStep ) {
         $(this).remove();
@@ -70,6 +70,9 @@ $(document).ready(function() {
         $(this).find('.step_no').text(idx+1);
       }
     });
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').removeAttr('style');
+    resizeWizardSteps();
+    /*
     // プリセットをカスタムへ変更
     $('#structure-presets> option').each(function(){
       if ( $(this).index() == 0 ) {
@@ -78,6 +81,7 @@ $(document).ready(function() {
         $(this).prop('selected', false);
       }
     });
+    */
     logger.debug( 'Removed Step: ', targetStep );
     // sessionStorageから対象ステップのフォームデータを削除する
     removeStepData( targetStep );
@@ -86,26 +90,27 @@ $(document).ready(function() {
   $(document).on('click', '.add_new a', function(e){
     // step追加ボタン押下時
     e.preventDefault();
-    var nowSteps  = $('#wizard.wizard_horizontal> ul.wizard_steps> li').length,
+    var nowSteps  = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').length,
         step_tmpl = $('#wizard-templates ul.common-step-template li').clone();
     step_tmpl.find('button.btn-remove-act').removeClass('hide');
     var newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, nowSteps);
-    $('#wizard.wizard_horizontal> ul.wizard_steps> li:last-child').remove();
-    $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(newStep)[0].outerHTML );
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li:last-child').remove();
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(newStep)[0].outerHTML );
     var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
-    $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
     logger.debug( 'Added Step: ', nowSteps );
+    resizeWizardSteps();
   });
   
   $(document).on('click', '.step_indicator:not(.add_new) a', function(e){
     // step選択時
     e.preventDefault();
     var newStep = Number( $(this).parents('li').data('step') );
-    if ( $('#wizard.wizard_horizontal> ul.wizard_steps> li> div.step_indicator.selected').length > 0 ) {
+    if ( $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li> div.step_indicator.selected').length > 0 ) {
       // 現在のフォームデータをsessionStorageに保存
       saveStepData();
     }
-    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
       if ( newStep == Number( $(this).data('step') ) ) {
         $(this).find('.step_indicator').addClass('selected');
       } else {
@@ -122,7 +127,7 @@ $(document).ready(function() {
     // 新規作成ボタン押下時
     e.preventDefault();
     var action = $(this).attr('id').replace('create-new-btn-', ''),
-        steps  = $('#wizard.wizard_horizontal> ul.wizard_steps> li').length - 1;
+        steps  = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').length - 1;
     logger.debug( action, steps );
     controlSubmission();
     // 現在のフォームデータをsessionStorageに保存
@@ -130,7 +135,7 @@ $(document).ready(function() {
     $('#create-new-post-action').val( action );
     // セッションストレージ上の全ステップデータをマージする
     var step_data = new Array();
-    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
       var availableStep = $(this).data('step'),
           searchKey     = 'plt_str_' + availableStep;
       if ( wss.hasOwnProperty( searchKey ) ) {
@@ -165,32 +170,13 @@ $(document).ready(function() {
     }
   });
   
-  /*
-  $('#act-name').on('click blur', function(e){
-    // 初期ACT名の制御
-    if ( e.type === 'blur' ) {
-      if ( is_empty( $(this).val() ) ) {
-        $(this).val( $(this).data('prev') );
-      }
-      $(this).removeAttr('data-prev');
-    } else {
-      var step = Number( $('#act-turn').val() );
-        console.info( $(this).val().indexOf( sprintf( localize_messages.act_num, step ) ) );
-      if ( $.inArray( $(this).val(), presetPlaceholder ) != -1 || $(this).val().indexOf( sprintf( localize_messages.act_num, step ) ) != -1 ) {
-        $(this).attr('data-prev', $(this).val());
-        $(this).val('');
-      }
-    }
-  });
-  */
-  
   $('#act-name').on('focus keyup', function(){
     // ACT名の入力同期
     if ( ! is_empty( $(this).val() ) ) {
       var currentStep = Number( $('#act-turn').val() ),
           currentName = $(this).val();
       if ( currentStep > 0 ) {
-        $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+        $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
           if ( Number( $(this).data('step') ) == currentStep ) {
             $(this).find('.step_name').text( currentName );
             return false;
@@ -205,10 +191,32 @@ $(document).ready(function() {
   // 個別処理（関数）
   function initWizardElements() {
     logger.debug( 'Initialize Wizard Elements' );
-    $('#wizard.wizard_horizontal> ul.wizard_steps> li').each(function(){
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
       $(this).remove();
     });
     formatFormItems();
+  }
+  
+  function resizeWizardSteps() {
+    var wizard_step = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps'),
+        wizard_steps_container_width = wizard_step.parent().width(),
+        wizard_steps_width = Math.ceil( wizard_step.width() ),
+        error_width = Math.ceil( wizard_steps_width / ( (window.innerWidth) ? window.innerWidth : document.body.clientWidth ) * 2 ),
+        wizard_steps_scrollwidth = Math.ceil( wizard_step[0].scrollWidth ),
+        nowSteps    = wizard_step.children('li').length,
+        step_width  = wizard_step.children('li').width(),
+        expected_width = Math.ceil( nowSteps * step_width );
+    //if ( wizard_steps_width + error_width < wizard_steps_scrollwidth || wizard_steps_width + error_width < expected_width ) {
+    if ( wizard_steps_container_width + error_width < wizard_steps_scrollwidth || wizard_steps_container_width + error_width < expected_width ) {
+      logger.debug( 'onScroll', wizard_steps_container_width, wizard_steps_width, wizard_steps_scrollwidth, expected_width, error_width );
+      $('#act-form').addClass('off-mask');
+      wizard_step.width( expected_width );
+    } else {
+      logger.debug( 'offScroll', wizard_steps_container_width, wizard_steps_width, wizard_steps_scrollwidth, expected_width, error_width );
+      $('#act-form').removeClass('off-mask');
+      wizard_step.width( '100%' );
+    }
+    wizard_step.parent().scrollLeft( expected_width - wizard_steps_container_width );
   }
   
   function formatFormItems() {
@@ -244,10 +252,10 @@ $(document).ready(function() {
         step_tmpl.find('.step_indicator').addClass('selected');
       }
       var newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, i+1);
-      $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(newStep)[0].outerHTML );
+      $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(newStep)[0].outerHTML );
     });
     var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
-    $('#wizard.wizard_horizontal> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
   }
   
   

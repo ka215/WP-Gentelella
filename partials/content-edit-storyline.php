@@ -17,6 +17,7 @@ $current_structures  = $_plotter['current_structures'];
 if ( empty( $current_structures ) ) {
   wp_safe_redirect( '/create-new/' );
 }
+$current_dependency  = 0;
 ?>
 
         <!-- page content -->
@@ -46,44 +47,56 @@ if ( empty( $current_structures ) ) {
                       <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
 <?php /* Start: Wizard */ ?>
                       <p class="font-gray-dark">
-                        <?php _e( 'You should be setting on the form wizard in follow to define the structures from the selected storyline type.', WPGENT_DOMAIN ); ?>
+                        <?php _e( 'Editing of the storyline, you should be done per the storyline on the horizontal line having the same dependency.', WPGENT_DOMAIN ); ?>
                       </p>
                       <div id="wizard" class="form_wizard wizard_horizontal">
-                        <ul class="wizard_steps">
+                        <div id="parent-step" class="step_relational wizard_prefix<?php if ( $current_dependency == 0 ) : ?> non-parent<?php endif; ?>">
+<?php if ( $current_dependency == 0 ) : ?>
+                          <label class="root-dependency"><?php _e('Main Storyline', WPGENT_DOMAIN ); ?></label>
+<?php else : ?>
+                          <ul class="wizard_steps">
+                            <li><a href="#">Parent Storyline</a></li>
+                          </ul>
+<?php endif; ?>
+                        </div>
+                        <div class="wizard_steps_container">
+                          <ul class="wizard_steps">
 <?php foreach ( $current_structures as $_idx => $_structure ) : 
-        if ( $_structure['dependency'] == 0 ) {
+//var_dump( $_structure );
+        if ( $_structure['dependency'] == $current_dependency ) {
             if ( $_structure['turn'] == 1 ) {
                 $_first_view_structure = $_structure;
             } ?>
-                          <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>">
-                            <div class="step_indicator<?php if ( $_structure['turn'] == 1 ) : ?> selected<?php endif; ?>">
-                              <a href="#act-form" class="step_no"><?= esc_html( $_idx + 1 ) ?></a>
-                              <ul class="step_meta">
-                                <li class="step_name"><?= esc_html( $_structure['name'] ) ?></li>
-                              </ul>
+                            <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>" data-step="<?= esc_attr( $_idx + 1 ) ?>">
+                              <div class="step_indicator<?php if ( $_structure['turn'] == 1 ) : ?> selected<?php endif; ?>">
+                                <a href="#act-form" class="step_no"><?= esc_html( $_idx + 1 ) ?></a>
+                                <ul class="step_meta">
+                                  <li class="step_name"><?= esc_html( $_structure['name'] ) ?></li>
+                                </ul>
 <?php   if ( $_structure['turn'] > 1 ) : ?>
-                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="fa fa-close"></i></button>
+                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="fa fa-close"></i></button>
 <?php   endif; ?>
-                            </div>
-                            <div class="step_relational wizard_vertical">
-                              <ul class="wizard_steps">
-                                <li><a href="#">Sub Storyline 1</a></li>
-                                <li><a href="#">Sub Storyline 2 Sub Storyline 2 Sub Storyline 2 Sub Storyline 2</a></li>
-                                <li><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
-                              </ul>
-                            </div>
-                          </li>
+                              </div>
+                              <div class="step_relational wizard_vertical">
+                                <ul class="wizard_steps">
+                                  <li><a href="#">Sub Storyline 1</a></li>
+                                  <li><a href="#">Sub Storyline 2 Sub Storyline 2 Sub Storyline 2 Sub Storyline 2</a></li>
+                                  <li><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
+                                </ul>
+                              </div>
+                            </li>
 <?php }; endforeach; ?>
-                          <li>
-                            <div class="step_indicator add_new">
-                              <a href="#act-new" class="step_no"><i class="fa fa-plus"></i></a>
-                              <ul class="step_meta">
-                                <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
-                              </ul>
-                            </div>
-                            <div class="step_relational"></div>
-                          </li>
-                        </ul><!-- /.wizard_steps -->
+                            <li>
+                              <div class="step_indicator add_new">
+                                <a href="#act-new" class="step_no"><i class="fa fa-plus"></i></a>
+                                <ul class="step_meta">
+                                  <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
+                                </ul>
+                              </div>
+                              <div class="step_relational"></div>
+                            </li>
+                          </ul><!-- /.wizard_steps -->
+                        </div><!-- /.wizard_steps_container -->
 
                         <div id="act-form">
                           <div class="form-horizontal form-label-left" id="act-form-current">
@@ -133,59 +146,40 @@ if ( empty( $current_structures ) ) {
                                 <ul class="list-inline"><li><?php _e('None', WPGENT_DOMAIN ); ?></li></ul>
                               </div>
                             </div>
-                          </div><!-- /#act-form-1 -->
-                        </div><!-- /#act-1 -->
-                        <div id="act-new">
-                        </div>
-
+                          </div><!-- /#act-form-current -->
+                        </div><!-- /#act-form -->
                       </div><!-- /#wizard -->
+
                       <div id="wizard-templates" class="hide">
-                        <ul class="wizard-step-template">
-                          <li><a href="#act-%N">
-                            <span class="step_no">%N</span>
-                            <span class="step_descr"><?php _e('Act', WPGENT_DOMAIN ); ?> %N<br /><small></small></span>
-                            </a>
-                            <div class="step-bottom-block">
-                              <button class="btn btn-success btn-sm hide" id="btn-addsub-act-%N"><i class="fa fa-plus"></i> <?php _e('Sub Story', WPGENT_DOMAIN ); ?></button>
-                              <br />
-                              <button class="btn btn-default btn-sm hide" id="btn-remove-act-%N"><i class="fa fa-close"></i> <?php _e('Remove Act', WPGENT_DOMAIN ); ?></button>
+                        <ul class="common-step-template">
+                          <li data-structure-id="%N" data-step="%N">
+                            <div class="step_indicator">
+                              <a href="javascript:;" class="step_no">%N</a>
+                              <ul class="step_meta">
+                                <li class="step_name"><?php _e('Act', WPGENT_DOMAIN ); ?> %N</li>
+                              </ul>
+                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="%N">
+                                <i class="fa fa-close"></i>
+                              </button>
+                            </div>
+                            <div class="step_relational wizard_vertical">
+                              <ul class="wizard_steps">
+                                <li><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
+                              </ul>
                             </div>
                           </li>
-                        </ul><!-- /.wizard-step-template -->
-                        <div class="wizard-act-template">
-                          <div id="act-%N">
-                            <div class="form-horizontal form-label-left" id="act-form-%N">
-                              <input type="hidden" id="act%N-structure-id" name="act%N[structure_id]" value="">
-                              <input type="hidden" id="act%N-dependency" name="act%N[dependency]" value="0">
-                              <input type="hidden" id="act%N-turn" name="act%N[turn]" value="%N">
-                              <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="act%N-name">Act Name <span class="required">*</span>
-                                </label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <input type="text" id="act%N-name" name="act%N[name]" required="required" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>">
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="act%N-context"><?php _e('Context', WPGENT_DOMAIN ); ?></label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <textarea id="act%N-context" name="act%N[context]" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"></textarea>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="act%N-sequences"><?php _e('Connected Sequences', WPGENT_DOMAIN ); ?></label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <ul class="list-inline"><li><?php _e('None', WPGENT_DOMAIN ); ?></li></ul>
-                                </div>
-                              </div>
-                              <div class="form-group">
-                                <label class="control-label col-md-3 col-sm-3 col-xs-12" for="act%N-scenes"><?php _e('Connected Scenes', WPGENT_DOMAIN ); ?></label>
-                                <div class="col-md-6 col-sm-6 col-xs-12">
-                                  <ul class="list-inline"><li><?php _e('None', WPGENT_DOMAIN ); ?></li></ul>
-                                </div>
-                              </div>
-                            </div><!-- /#act-form-%N -->
-                          </div><!-- /#act-%N -->
-                        </div><!-- /.wizard-act-template -->
+                        </ul>
+                        <ul class="last-step-template">
+                          <li data-step="last">
+                            <div class="step_indicator add_new">
+                              <a href="javascript:;" class="step_no"><i class="fa fa-plus"></i></a>
+                              <ul class="step_meta">
+                                <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
+                              </ul>
+                            </div>
+                            <div class="step_relational wizard_vertical"></div>
+                          </li>
+                        </ul>
                       </div><!-- /#wizard-templates -->
 <?php /* End: Smart Wizard */ ?>
 
@@ -193,11 +187,8 @@ if ( empty( $current_structures ) ) {
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
                           <button class="btn btn-default" type="button" id="<?= esc_attr( $page_name ) ?>-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
-<?php /*
                           <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Update', WPGENT_DOMAIN ); ?></button>
-*/ ?>
-                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-create"   ><?php _e( 'Create', WPGENT_DOMAIN ); ?></button>
+                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Commit', WPGENT_DOMAIN ); ?></button>
                         </div>
                       </div><!-- /.form-group -->
 

@@ -65,59 +65,29 @@ if ( ! empty( $current_structures ) ) {
 <?php endif; ?>
 
                       <div id="wizard" class="form_wizard wizard_horizontal">
-                        <ul class="wizard_steps">
-                          <li data-step="1">
-                            <div class="step_indicator selected">
-                              <a href="javascript:;" class="step_no">1</a>
-                              <ul class="step_meta">
-                                <li class="step_name"><?php printf( __( 'Act %d', WPGENT_DOMAIN ), 1 ); ?></li>
-                              </ul>
-                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
-                            </div>
-                            <div class="step_relational wizard_vertical"></div>
-                          </li>
-<?php /*
-                          <li data-step="2">
-                            <div class="step_indicator">
-                              <a href="javascript:;" class="step_no">2</a>
-                              <ul class="step_meta">
-                                <li class="step_name">Confrontation</li>
-                              </ul>
-                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
-                            </div>
-                            <div class="step_relational wizard_vertical">
-                              <ul class="wizard_steps">
-                                <li><a href="#" class="add_sub"><?php _e('Add New', WPGENT_DOMAIN ); ?></a></li>
-                              </ul>
-                            </div>
-                          </li>
-                          <li data-step="3">
-                            <div class="step_indicator">
-                              <a href="javascript:;" class="step_no">3</a>
-                              <ul class="step_meta">
-                                <li class="step_name">ABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZABCDEFGHIJKLMNOPQRSTUVWXYZ</li>
-                              </ul>
-                              <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
-                            </div>
-                            <div class="step_relational wizard_vertical">
-                              <ul class="wizard_steps">
-                                <li><a href="#">Sub Storyline 1</a></li>
-                                <li><a href="#">Sub Storyline 2 Sub Storyline 2 Sub Storyline 2 Sub Storyline 2</a></li>
-                                <li><a href="#" class="add_sub"><?php _e('Add New', WPGENT_DOMAIN ); ?></a></li>
-                              </ul>
-                            </div>
-                          </li>
-*/ ?>
-                          <li data-step="last">
-                            <div class="step_indicator add_new">
-                              <a href="javascript:;" class="step_no"><i class="fa fa-plus"></i></a>
-                              <ul class="step_meta">
-                                <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
-                              </ul>
-                            </div>
-                            <div class="step_relational wizard_vertical"></div>
-                          </li>
-                        </ul><!-- /.wizard_steps -->
+                        <div class="wizard_steps_container">
+                          <ul class="wizard_steps">
+                            <li data-step="1">
+                              <div class="step_indicator selected">
+                                <a href="javascript:;" class="step_no">1</a>
+                                <ul class="step_meta">
+                                  <li class="step_name"><?php printf( __( 'Act %d', WPGENT_DOMAIN ), 1 ); ?></li>
+                                </ul>
+                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
+                              </div>
+                              <div class="step_relational wizard_vertical"></div>
+                            </li>
+                            <li data-step="last">
+                              <div class="step_indicator add_new">
+                                <a href="javascript:;" class="step_no"><i class="fa fa-plus"></i></a>
+                                <ul class="step_meta">
+                                  <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
+                                </ul>
+                              </div>
+                              <div class="step_relational wizard_vertical"></div>
+                            </li>
+                          </ul><!-- /.wizard_steps -->
+                        </div><!-- /.wizard_steps_container -->
 
                         <div id="act-form">
                           <div class="form-horizontal form-label-left" id="act-form-current">
