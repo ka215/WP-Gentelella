@@ -346,6 +346,7 @@ add_action( 'wp_enqueue_scripts', function() {
         $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'switchery' ] );
         break;
       case 'create-new':
+      case 'edit-storyline':
         $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', ] ); // 'switchery', 'smartwizard' 
         $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', ] ); // 'switchery', 'smartwizard' 
         break;

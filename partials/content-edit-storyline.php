@@ -17,7 +17,8 @@ $current_structures  = $_plotter['current_structures'];
 if ( empty( $current_structures ) ) {
   wp_safe_redirect( '/create-new/' );
 }
-$current_dependency  = 0;
+$current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['dependency'] : 0;
+//var_dump( __ctl( 'lib' )::get_dependency() );
 ?>
 
         <!-- page content -->
@@ -43,6 +44,7 @@ $current_dependency  = 0;
                     <form id="structureSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
                       <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
                       <input type="hidden" name="source_id" value="<?= esc_attr( $current_source_id ) ?>">
+                      <input type="hidden" name="dependency" value="<?= esc_attr( $current_dependency ) ?>">
                       <input type="hidden" name="post_action" id="<?= esc_attr( $page_name ) ?>-post-action" value="">
                       <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
 <?php /* Start: Wizard */ ?>
@@ -61,32 +63,38 @@ $current_dependency  = 0;
                         </div>
                         <div class="wizard_steps_container">
                           <ul class="wizard_steps">
+<?php $_step_order = 0; $_child_step_order = 0; ?>
 <?php foreach ( $current_structures as $_idx => $_structure ) : 
-//var_dump( $_structure );
         if ( $_structure['dependency'] == $current_dependency ) {
+            $_step_order = $_structure['turn'] * 10;
             if ( $_structure['turn'] == 1 ) {
                 $_first_view_structure = $_structure;
             } ?>
-                            <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>" data-step="<?= esc_attr( $_idx + 1 ) ?>">
+                            <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>" data-step="<?= esc_attr( $_idx + 1 ) ?>" style="order: <?= esc_attr( $_step_order ) ?>">
                               <div class="step_indicator<?php if ( $_structure['turn'] == 1 ) : ?> selected<?php endif; ?>">
                                 <a href="#act-form" class="step_no"><?= esc_html( $_idx + 1 ) ?></a>
                                 <ul class="step_meta">
                                   <li class="step_name"><?= esc_html( $_structure['name'] ) ?></li>
                                 </ul>
-<?php   if ( $_structure['turn'] > 1 ) : ?>
+<?php       if ( $_structure['turn'] > 1 ) : ?>
                                 <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="fa fa-close"></i></button>
-<?php   endif; ?>
+<?php       endif; ?>
                               </div>
                               <div class="step_relational wizard_vertical">
                                 <ul class="wizard_steps">
-                                  <li><a href="#">Sub Storyline 1</a></li>
-                                  <li><a href="#">Sub Storyline 2 Sub Storyline 2 Sub Storyline 2 Sub Storyline 2</a></li>
-                                  <li><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
+<?php       foreach ( $current_structures as $_order => $_child_structure ) : 
+              if ( $_child_structure['dependency'] == $_structure['id'] && $_child_structure['turn'] == 1 ) : 
+                  $_child_step_order = $_order; ?>
+                                  <li data-structure-id="<?= esc_attr( $_child_structure['id'] ) ?>" data-group-id="<?= esc_attr( $_child_structure['group_id'] ) ?>" style="order: <?= esc_attr( $_order ) ?>"><a href="#"><?= esc_html( $_child_structure['name'] ) ?></a></li>
+<?php         endif;
+            endforeach; ?>
+                                  <li style="order: <?= esc_attr( $_order + 1 ) ?>"><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
                                 </ul>
                               </div>
                             </li>
-<?php }; endforeach; ?>
-                            <li>
+<?php   };
+      endforeach; ?>
+                            <li style="order: <?= esc_attr( $_step_order * 10 ) ?>">
                               <div class="step_indicator add_new">
                                 <a href="#act-new" class="step_no"><i class="fa fa-plus"></i></a>
                                 <ul class="step_meta">
@@ -123,6 +131,20 @@ $current_dependency  = 0;
                               </div>
                             </div>
                             <div class="form-group">
+                              <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-turn"><?php _e('Previous Act', WPGENT_DOMAIN ); ?> <span class="required"></span>
+                              </label>
+                              <div class="col-md-6 col-sm-9 col-xs-12">
+                                <select id="act-turn" name="turn" required="required" class="form-control col-md-7 col-xs-12">
+                                  <option value="0" <?php selected( 0, $_first_view_structure['dependency'] ); ?>><?php _e( 'None', WPGENT_DOMAIN ) ?></option>
+<?php foreach ( $current_structures as $_structure ) : 
+          if ( $_structure['dependency'] == $current_dependency ) : ?>
+                                  <option value="<?= esc_attr( $_structure['turn'] ) ?>" <?php selected( $_structure['id'], $_first_view_structure['id'] ); ?>><?= esc_html( $_structure['name'] ) ?></option>
+<?php     endif;
+      endforeach; ?>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="form-group">
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-context"><?php _e('Context', WPGENT_DOMAIN ); ?></label>
                               <div class="col-md-9 col-sm-9 col-xs-12">
                                 <textarea id="act1-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= esc_html( $_first_view_structure['context'] ) ?></textarea>
@@ -152,11 +174,11 @@ $current_dependency  = 0;
 
                       <div id="wizard-templates" class="hide">
                         <ul class="common-step-template">
-                          <li data-structure-id="%N" data-step="%N">
+                          <li data-structure-id="%s" data-step="%d" style="order: %d">
                             <div class="step_indicator">
-                              <a href="javascript:;" class="step_no">%N</a>
+                              <a href="javascript:;" class="step_no">%d</a>
                               <ul class="step_meta">
-                                <li class="step_name"><?php _e('Act', WPGENT_DOMAIN ); ?> %N</li>
+                                <li class="step_name"><?php _e('Act', WPGENT_DOMAIN ); ?> %d</li>
                               </ul>
                               <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="%N">
                                 <i class="fa fa-close"></i>
@@ -170,7 +192,7 @@ $current_dependency  = 0;
                           </li>
                         </ul>
                         <ul class="last-step-template">
-                          <li data-step="last">
+                          <li data-step="last" style="order: %d">
                             <div class="step_indicator add_new">
                               <a href="javascript:;" class="step_no"><i class="fa fa-plus"></i></a>
                               <ul class="step_meta">

@@ -11,12 +11,6 @@ $(document).ready(function() {
       structureType    = Number( $('#structure-presets').find('option:selected').val() ),
       presetPlaceholder= [];
   SUBMIT_BUTTONS   = [ 'update' ];
-  $('#structure-presets> option').each(function() {
-    var tmp = JSON.parse( $(this).data('acts').replace(/\'/g, '"') );
-    if ( tmp.length > 0 && ! is_empty( tmp[0] ) ) {
-      presetPlaceholder = presetPlaceholder.concat( tmp );
-    }
-  });
   
   // 初期処理: sessionStorageを初期化
   clearSessionData();
@@ -40,20 +34,14 @@ $(document).ready(function() {
     rebuildWizard( selectedActs );
   });
   
-  $('#create-new-btn-reset').on('click', function(e){
-    // Resetボタン押下時
+  $('#'+currentPermalink+'-btn-cancel').on('click', function(e){
+    // Cancelボタン押下時
     e.preventDefault();
-    $('#structure-presets> option').each(function(){
-      if ( $(this).index() == 0 ) {
-        $(this).prop('selected', true);
-      } else {
-        $(this).prop('selected', false);
-      }
-    });
-    $('#structure-presets').trigger('change');
-    logger.debug( 'Reseted Step' );
+    logger.debug( 'Canceled' );
     // sessionStorageを初期化
     clearSessionData();
+    // reload?
+    location.reload(false);
   });
   
   $(document).on('click', '.btn-remove-act', function(e){
@@ -72,16 +60,6 @@ $(document).ready(function() {
     });
     $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').removeAttr('style');
     resizeWizardSteps();
-    /*
-    // プリセットをカスタムへ変更
-    $('#structure-presets> option').each(function(){
-      if ( $(this).index() == 0 ) {
-        $(this).prop('selected', true);
-      } else {
-        $(this).prop('selected', false);
-      }
-    });
-    */
     logger.debug( 'Removed Step: ', targetStep );
     // sessionStorageから対象ステップのフォームデータを削除する
     removeStepData( targetStep );
@@ -93,12 +71,14 @@ $(document).ready(function() {
     var nowSteps  = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').length,
         step_tmpl = $('#wizard-templates ul.common-step-template li').clone();
     step_tmpl.find('button.btn-remove-act').removeClass('hide');
-    var newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, nowSteps);
+    var newStep   = sprintf( step_tmpl[0].outerHTML, '', nowSteps, nowSteps * 10, nowSteps, nowSteps );
     $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li:last-child').remove();
     $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(newStep)[0].outerHTML );
     var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
+    last_step_tmpl = sprintf( $(last_step_tmpl)[0].outerHTML, (nowSteps + 1) * 10 );
     $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
     logger.debug( 'Added Step: ', nowSteps );
+    reorderSteps();
     resizeWizardSteps();
   });
   
@@ -195,6 +175,27 @@ $(document).ready(function() {
       $(this).remove();
     });
     formatFormItems();
+  }
+  
+  function reorderSteps() {
+    // STEPのorder番号を再採番（正規化）する
+    var nowOrder  = [],
+        optOrder  = [];
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
+      nowOrder.push( Number( $(this).css('order') ) );
+      optOrder.push( $(this).index() + 1 );
+    });
+    var sortOrder = nowOrder.slice();
+    sortOrder.sort(function(a,b){ return a - b; });
+    nowOrder.forEach(function(v,i,m){
+      sortOrder.find(function(d,j){ if ( d == v ) nowOrder[i] = optOrder[j]; });
+    });
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
+      $(this).css( 'order', nowOrder[$(this).index()] * 10 );
+      // set turn...
+      
+    });
+    logger.debug( nowOrder, optOrder, sortOrder );
   }
   
   function resizeWizardSteps() {
