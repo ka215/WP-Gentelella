@@ -17,8 +17,9 @@ $current_structures  = $_plotter['current_structures'];
 if ( empty( $current_structures ) ) {
   wp_safe_redirect( '/create-new/' );
 }
-$current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['dependency'] : 0;
 //var_dump( __ctl( 'lib' )::get_dependency() );
+$current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['dependency'] : 0;
+
 ?>
 
         <!-- page content -->
@@ -110,7 +111,7 @@ $current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['depende
                           <div class="form-horizontal form-label-left" id="act-form-current">
                             <input type="hidden" id="act-structure-id" name="structure_id" value="<?= esc_attr( $_first_view_structure['structure_id'] ) ?>">
                             <input type="hidden" id="act-turn" name="turn" value="<?= esc_attr( $_first_view_structure['turn'] ) ?>">
-                            <input type="hidden" id="act-diff" name="diff" value="true">
+                            <input type="hidden" id="act-diff" name="diff" value="false">
                             <div class="form-group">
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-name"><?php _e('Act Name', WPGENT_DOMAIN ); ?> <span class="required"></span>
                               </label>
@@ -147,7 +148,7 @@ $current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['depende
                             <div class="form-group">
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-context"><?php _e('Context', WPGENT_DOMAIN ); ?></label>
                               <div class="col-md-9 col-sm-9 col-xs-12">
-                                <textarea id="act1-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= esc_html( $_first_view_structure['context'] ) ?></textarea>
+                                <textarea id="act-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= esc_html( $_first_view_structure['context'] ) ?></textarea>
                               </div>
                             </div>
                             <div class="form-group hide">

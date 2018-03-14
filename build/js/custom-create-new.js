@@ -1,5 +1,5 @@
 /**
- * For Create New Storyline
+ * For Create New Storyline (/create-new/)
  */
 'use strict';
 $(document).ready(function() {
@@ -11,6 +11,7 @@ $(document).ready(function() {
       structureType    = Number( $('#structure-presets').find('option:selected').val() ),
       presetPlaceholder= [];
   SUBMIT_BUTTONS   = [ 'create' ];
+  
   $('#structure-presets> option').each(function() {
     var tmp = JSON.parse( $(this).data('acts').replace(/\'/g, '"') );
     if ( tmp.length > 0 && ! is_empty( tmp[0] ) ) {
@@ -18,12 +19,14 @@ $(document).ready(function() {
     }
   });
   
-  // 初期処理: sessionStorageを初期化
+  // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
   clearSessionData();
   
-  // Event handlers
+  // ----- Event handlers -------------------------------------------------------------------------
+  /*
+   * Selected Structure Preset (:> プリセットを選択した時のイベント
+   */
   $('#structure-presets').on('change', function(){
-    // プリセットを選択した時のイベント
     var selectedVar = Number( $(this).val() ),
         selectedActs = JSON.parse( $($(this).find('option:selected')[0]).data('acts').replace(/\'/g, '"') );
     if ( structureType === selectedVar ) {
@@ -40,8 +43,10 @@ $(document).ready(function() {
     rebuildWizard( selectedActs );
   });
   
+  /*
+   * Clicked Reset (:> Resetボタン押下時のイベント
+   */
   $('#create-new-btn-reset').on('click', function(e){
-    // Resetボタン押下時
     e.preventDefault();
     $('#structure-presets> option').each(function(){
       if ( $(this).index() == 0 ) {
@@ -56,11 +61,15 @@ $(document).ready(function() {
     clearSessionData();
   });
   
+  /*
+   * Remove Step (:> Step削除ボタン押下時のイベント
+   */
   $(document).on('click', '.btn-remove-act', function(e){
     // step削除ボタン押下時
     e.preventDefault();
-    var targetStep = Number( $(this).parents('li').data('step') );
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
+    var targetStep   = Number( $(this).parents('li').data('step') ),
+        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
+    $wizardSteps.each(function(){
       var idx = $(this).index();
       if ( Number( $(this).data('step') ) == targetStep ) {
         $(this).remove();
@@ -70,7 +79,7 @@ $(document).ready(function() {
         $(this).find('.step_no').text(idx+1);
       }
     });
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').removeAttr('style');
+    $wizardSteps.parent('ul').removeAttr('style');
     resizeWizardSteps();
     // プリセットをカスタムへ変更
     $('#structure-presets> option').each(function(){
@@ -85,17 +94,23 @@ $(document).ready(function() {
     removeStepData( targetStep );
   });
   
+  /*
+   * Add New Step (:> Step追加ボタン押下時のイベント
+   */
   $(document).on('click', '.add_new a', function(e){
-    // step追加ボタン押下時
     e.preventDefault();
-    var nowSteps  = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').length,
-        step_tmpl = $('#wizard-templates ul.common-step-template li').clone();
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
+        nowSteps     = $wizardSteps.length,
+        step_tmpl    = $('#wizard-templates ul.common-step-template li').clone();
     step_tmpl.find('button.btn-remove-act').removeClass('hide');
     var newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, nowSteps);
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li:last-child').remove();
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(newStep)[0].outerHTML );
+    // $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li:last-child').remove();
+    $wizardSteps.filter(':last-child').remove();
+    // $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(newStep)[0].outerHTML );
+    $wizardSteps.parent('.wizard_steps').append( $(newStep)[0].outerHTML );
     var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
+    // $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
+    $wizardSteps.parent('.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
     // プリセットをカスタムへ変更
     $('#structure-presets> option').each(function(){
       if ( $(this).index() == 0 ) {
@@ -108,15 +123,19 @@ $(document).ready(function() {
     resizeWizardSteps();
   });
   
+  /*
+   * Selected Step (:> Step選択時のイベント
+   */
   $(document).on('click', '.step_indicator:not(.add_new) a', function(e){
     // step選択時
     e.preventDefault();
-    var newStep = Number( $(this).parents('li').data('step') );
-    if ( $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li> div.step_indicator.selected').length > 0 ) {
+    var newStep      = Number( $(this).parents('li').data('step') ),
+        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
+    if ( $wizardSteps.children('div.step_indicator.selected').length > 0 ) {
       // 現在のフォームデータをsessionStorageに保存
       saveStepData();
     }
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
+    $wizardSteps.each(function(){
       if ( newStep == Number( $(this).data('step') ) ) {
         $(this).find('.step_indicator').addClass('selected');
       } else {
@@ -129,11 +148,14 @@ $(document).ready(function() {
     retriveStepData( newStep );
   });
   
+  /*
+   * Clicked Create (:> 新規作成ボタン押下時のイベント
+   */
   $(document).on('click', '#create-new-btn-create', function(e){
-    // 新規作成ボタン押下時
     e.preventDefault();
-    var action = $(this).attr('id').replace('create-new-btn-', ''),
-        steps  = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').length - 1;
+    var action       = $(this).attr('id').replace('create-new-btn-', ''),
+        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
+        steps        = $wizardSteps.length - 1;
     logger.debug( action, steps );
     controlSubmission();
     // 現在のフォームデータをsessionStorageに保存
@@ -141,7 +163,7 @@ $(document).ready(function() {
     $('#create-new-post-action').val( action );
     // セッションストレージ上の全ステップデータをマージする
     var step_data = new Array();
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
+    $wizardSteps.each(function(){
       var availableStep = $(this).data('step'),
           searchKey     = 'plt_str_' + availableStep;
       if ( wss.hasOwnProperty( searchKey ) ) {
@@ -195,13 +217,17 @@ $(document).ready(function() {
   });
   */
   
+  /*
+   *  (:> ACT名の入力同期
+   */
   $('#act-name').on('focus keyup', function(){
     // ACT名の入力同期
     if ( ! is_empty( $(this).val() ) ) {
-      var currentStep = Number( $('#act-turn').val() ),
-          currentName = $(this).val();
+      var currentStep  = Number( $('#act-turn').val() ),
+          currentName  = $(this).val(),
+          $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
       if ( currentStep > 0 ) {
-        $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
+        $wizardSteps.each(function(){
           if ( Number( $(this).data('step') ) == currentStep ) {
             $(this).find('.step_name').text( currentName );
             return false;
@@ -213,15 +239,23 @@ $(document).ready(function() {
   
   
   
-  // 個別処理（関数）
+  // ----- 個別処理（関数）------------------------------------------------------------------------
+  
+  /*
+   *  (:> 
+   */
   function initWizardElements() {
     logger.debug( 'Initialize Wizard Elements' );
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li').each(function(){
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
+    $wizardSteps.each(function(){
       $(this).remove();
     });
     formatFormItems();
   }
   
+  /*
+   * Resize Wizard Steps (:> 
+   */
   function resizeWizardSteps() {
     var wizard_step = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps'),
         wizard_steps_container_width = wizard_step.parent().width(),
@@ -244,6 +278,9 @@ $(document).ready(function() {
     wizard_step.parent().scrollLeft( expected_width - wizard_steps_container_width );
   }
   
+  /*
+   *  (:> 
+   */
   function formatFormItems() {
     // var afc = $('#act-form-current');
     $('#act-structure-id').val('');
@@ -253,6 +290,9 @@ $(document).ready(function() {
     $('#act-context').val('');
   }
   
+  /*
+   *  (:> 
+   */
   function rebuildWizard( acts ) {
     logger.debug( 'Build Wizard', acts );
     $.each( acts, function( i, v ){
@@ -286,23 +326,30 @@ $(document).ready(function() {
   
   
   
-  // セッションストレージ関連
+  // ----- セッションストレージ関連 ---------------------------------------------------------------
+  
+  /*
+   *  (:> セッションストレージ初期化
+   */
   function clearSessionData() {
-    // セッションストレージ初期化
     logger.debug( 'Clear All SessionStorage' );
     wss.clear();
   }
   
+  /*
+   *  (:> セッションストレージから指定ステップデータを削除
+   */
   function removeStepData( step ) {
-    // セッションストレージから指定ステップデータを削除
     var key = 'plt_str_' + step;
     if ( wss.hasOwnProperty( key ) ) {
       wss.removeItem( key );
     }
   }
   
+  /*
+   *  (:> セッションストレージから指定ステップデータを取得してフォームにセット
+   */
   function retriveStepData( step ) {
-    // セッションストレージから指定ステップデータを取得してフォームにセット
     var key = 'plt_str_' + step;
     if ( ! wss.hasOwnProperty( key ) ) {
       gf.find('#act-structure-id').val( '' );
@@ -321,8 +368,10 @@ $(document).ready(function() {
     gf.find('#act-name').trigger('blur');
   }
   
+  /*
+   *  (:> 現在選択中のステップデータをセッションストレージへ保存
+   */
   function saveStepData() {
-    // 現在選択中のステップデータをセッションストレージへ保存
     var step_data = {
       'structure_id': gf.find('#act-structure-id').val(),
       'dependency':   gf.find('#act-dependency').val(),
@@ -333,5 +382,6 @@ $(document).ready(function() {
     };
     wss.setItem( 'plt_str_' + step_data.turn, JSON.stringify( step_data ) );
   }
+  
   
 });

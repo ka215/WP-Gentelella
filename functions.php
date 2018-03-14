@@ -561,12 +561,12 @@ add_filter( 'get_avatar', function( $avatar, $id_or_email, $size, $default, $alt
  * debug_code
  */
 add_action( 'wp_footer', function() {
+  $debug_logs = [];
   if ( WP_DEBUG ) {
     global $template; // , $wp_query;
     $_plotter = get_query_var( 'plotter' );
     $template_name = basename( $template, '.php' );
     $log_style = [ "'color: red; font-weight: bold'", "'color: blue; font-weight: bold'" ];
-    $debug_logs = [];
     //$debug_logs[] = "logger.level = logger.LEVEL.FULL;";
     $debug_logs[] = "logger.debug('Current Page Template: %c{$template_name}', {$log_style[0]} );";
     if ( ! is_front_page() ) {
@@ -586,12 +586,17 @@ add_action( 'wp_footer', function() {
       $debug_logs[] = "logger.debug('Current User: %c{$current_user->display_name}%c (%c{$current_user->ID}%c : %c{$current_user->user_nicename}%c)', {$log_style[0]}, '', {$log_style[0]}, '', {$log_style[0]}, '');";
       $debug_logs[] = "logger.debug({ isFirstVisit: ". ( __ctl( 'lib' )::is_first_visit() ? 'true' : 'false' ) .", isDashboard: ". ( __ctl( 'lib' )::is_dashboard() ? 'true' : 'false' ) .", isProfile: ". ( __ctl( 'lib' )::is_profile() ? 'true' : 'false' ) .", hasForms: ". ( __ctl( 'lib' )::has_forms_in_page() ? 'true' : 'false' ) ."});";
     }
-    $_hash = __ctl( 'lib' )::custom_hash( date("Y-m-d H:i:s") );
-    $debug_logs[] = "logger.debug('Current hash: %c{$_hash}', {$log_style[1]});";
+    // $_hash = __ctl( 'lib' )::custom_hash( date("Y-m-d H:i:s") );
+    // $debug_logs[] = "logger.debug('Current hash: %c{$_hash}', {$log_style[1]});";
     if ( session_status() == PHP_SESSION_ACTIVE ) {
       $debug_logs[] = "logger.debug( JSON.parse('". json_encode( $_plotter ) ."') );";
     }
-    
+  } else {
+    if ( session_status() == PHP_SESSION_ACTIVE && ! is_front_page() ) {
+      // $debug_logs[] = '';
+    }
+  }
+  if ( ! empty( $debug_logs ) ) {
     echo '<script>' . implode( PHP_EOL, $debug_logs ) . '</script>' . PHP_EOL;
   }
 }, PHP_INT_MAX );
