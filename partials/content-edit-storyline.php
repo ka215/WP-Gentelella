@@ -17,8 +17,10 @@ $current_structures  = $_plotter['current_structures'];
 if ( empty( $current_structures ) ) {
   wp_safe_redirect( '/create-new/' );
 }
-//var_dump( __ctl( 'lib' )::get_dependency() );
-$current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['dependency'] : 0;
+$current_dependency  = $_plotter['current_dependency'];
+$current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'] : 0;
+//var_dump( $_COOKIE['group_id'], $current_group_id );
+//$current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['dependency'] : 0;
 
 ?>
 
@@ -56,24 +58,44 @@ $current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['depende
                         <div id="parent-step" class="step_relational wizard_prefix<?php if ( $current_dependency == 0 ) : ?> non-parent<?php endif; ?>">
 <?php if ( $current_dependency == 0 ) : ?>
                           <label class="root-dependency"><?php _e('Main Storyline', WPGENT_DOMAIN ); ?></label>
-<?php else : ?>
+<?php else : 
+        foreach ( $current_structures as $_structure ) {
+          if ( $_structure['id'] == $current_dependency ) { 
+            $_parent_dependency = $_structure['dependency']; ?>
                           <ul class="wizard_steps">
-                            <li><a href="#">Parent Storyline</a></li>
+                            <li data-dependency="<?= esc_attr( $_parent_dependency ) ?>"><a href="#" class="parent_storyline"><?= esc_html( $_structure['name'] ) ?></a></li>
                           </ul>
+<?php       break;
+          }
+        }
+      endif; ?>
+                        </div><!-- /#parent-step -->
+<?php if ( $current_dependency != 0 ) : ?>
+                        <div id="dependency-selector" class="">
+                          <select id="act-dependency" name="dependency" class="form-control">
+                            <option value="">&#x2014; <?php _e('Change Dependency', WPGENT_DOMAIN ); ?> &#x2014;</option>
+<?php   foreach ( $current_structures as $_structure ) { 
+          if ( $_parent_dependency == $_structure['dependency'] && $current_dependency != $_structure['id'] ) { ?>
+                            <option value="<?= esc_attr( $_structure['id'] ) ?>"><?= esc_html( $_structure['name'] ) ?></option>
+<?php     } 
+        } ?>
+                          </select>
+                        </div><!-- /#dependency-selector -->
 <?php endif; ?>
-                        </div>
+                        <div class="clearfix"></div>
                         <div class="wizard_steps_container">
                           <ul class="wizard_steps">
-<?php $_step_order = 0; $_child_step_order = 0; ?>
-<?php foreach ( $current_structures as $_idx => $_structure ) : 
-        if ( $_structure['dependency'] == $current_dependency ) {
+<?php $_step_order = 0; $_child_step_order = 0; $_step_counter = 0;
+      foreach ( $current_structures as $_idx => $_structure ) : 
+        if ( $_structure['dependency'] == $current_dependency && $_structure['group_id'] == $current_group_id ) {
             $_step_order = $_structure['turn'] * 10;
+            $_step_counter++;
             if ( $_structure['turn'] == 1 ) {
                 $_first_view_structure = $_structure;
             } ?>
-                            <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>" data-step="<?= esc_attr( $_idx + 1 ) ?>" style="order: <?= esc_attr( $_step_order ) ?>">
+                            <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>" data-step="<?= esc_attr( $_step_counter ) ?>" style="order: <?= esc_attr( $_step_order ) ?>">
                               <div class="step_indicator<?php if ( $_structure['turn'] == 1 ) : ?> selected<?php endif; ?>">
-                                <a href="#act-form" class="step_no"><?= esc_html( $_idx + 1 ) ?></a>
+                                <a href="#act-form" class="step_no"><?= esc_html( $_step_counter ) ?></a>
                                 <ul class="step_meta">
                                   <li class="step_name"><?= esc_html( $_structure['name'] ) ?></li>
                                 </ul>
@@ -81,15 +103,19 @@ $current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['depende
                                 <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="fa fa-close"></i></button>
 <?php       endif; ?>
                               </div>
-                              <div class="step_relational wizard_vertical">
+                              <div class="step_relational wizard_vertical" style="z-index: <?= ( count( $current_structures ) - $_structure['turn'] + 10 ) ?>;">
                                 <ul class="wizard_steps">
 <?php       foreach ( $current_structures as $_order => $_child_structure ) : 
               if ( $_child_structure['dependency'] == $_structure['id'] && $_child_structure['turn'] == 1 ) : 
                   $_child_step_order = $_order; ?>
-                                  <li data-structure-id="<?= esc_attr( $_child_structure['id'] ) ?>" data-group-id="<?= esc_attr( $_child_structure['group_id'] ) ?>" style="order: <?= esc_attr( $_order ) ?>"><a href="#"><?= esc_html( $_child_structure['name'] ) ?></a></li>
+                                  <li data-dependency="<?= esc_attr( $_child_structure['dependency'] ) ?>" data-structure-id="<?= esc_attr( $_child_structure['id'] ) ?>" data-group-id="<?= esc_attr( $_child_structure['group_id'] ) ?>" style="order: <?= esc_attr( $_order ) ?>">
+                                    <a href="#" class="sub_storyline"><?= esc_html( $_child_structure['name'] ) ?></a>
+                                  </li>
 <?php         endif;
             endforeach; ?>
-                                  <li style="order: <?= esc_attr( $_order + 1 ) ?>"><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
+                                  <li data-parent-structure-id="<?= esc_attr( $_structure['id'] ) ?>" style="order: <?= esc_attr( $_order + 1 ) ?>">
+                                    <a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a>
+                                  </li>
                                 </ul>
                               </div>
                             </li>
@@ -117,18 +143,6 @@ $current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['depende
                               </label>
                               <div class="col-md-9 col-sm-9 col-xs-12">
                                 <input type="text" id="act-name" name="name" required="required" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $_first_view_structure['name'] ) ?>">
-                              </div>
-                            </div>
-                            <div class="form-group">
-                              <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-dependency"><?php _e('Dependency', WPGENT_DOMAIN ); ?> <span class="required"></span>
-                              </label>
-                              <div class="col-md-6 col-sm-9 col-xs-12">
-                                <select id="act-dependency" name="dependency" required="required" class="form-control col-md-7 col-xs-12" disabled>
-                                  <option value="0" <?php selected( 0, $_first_view_structure['dependency'] ); ?>><?php _e( 'None', WPGENT_DOMAIN ) ?></option>
-<?php foreach ( $current_structures as $_structure ) : ?>
-                                  <option value="<?= esc_attr( $_structure['id'] ) ?>" <?php selected( $_structure['id'], $_first_view_structure['dependency'] ); ?>><?= esc_html( $_structure['name'] ) ?></option>
-<?php endforeach; ?>
-                                </select>
                               </div>
                             </div>
                             <div class="form-group">

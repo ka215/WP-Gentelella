@@ -41,6 +41,10 @@ $(document).ready(function() {
     logger.debug( 'Canceled' );
     // sessionStorageを初期化
     clearSessionData();
+    // Cookieを初期化
+    docCookies.removeItem( 'dependency', '/' );
+    docCookies.removeItem( 'group_id', '/' );
+    showLoading();
     // reload?
     location.reload(false);
   });
@@ -116,6 +120,33 @@ $(document).ready(function() {
     // sessionStorageから対象ステップのフォームデータを取得する
     retriveStepData( newStep );
   });
+  
+  /*
+   * Clicked Sub-Storyline and Parent-Storyline (:> サブストーリーラインおよび親ストーリーライン選択時のイベント
+   */
+  $(document).on('click', 'a.sub_storyline, a.parent_storyline', function(e){
+    e.preventDefault();
+    var strAtts = $(this).parent('li').data();
+    docCookies.setItem( 'dependency', strAtts.dependency, 60*60*24*30, '/' );
+    docCookies.setItem( 'group_id', strAtts.groupId, 60*60*24*30, '/' )
+    showLoading();
+    location.reload(false);
+  });
+  
+  /*
+   * Clicked "Add Sub-Storyline" (:> サブストーリーライン追加時のイベント
+   */
+  $(document).on('click', 'a.add_sub', function(e){
+    e.preventDefault();
+    var strAtts = $(this).parent('li').data();
+    docCookies.setItem( 'dependency', strAtts.parentStructureId, 60*60*24*30, '/' );
+    docCookies.setItem( 'group_id', '-1', 60*60*24*30, '/' );
+    showLoading();
+    location.reload(false);
+  });
+  
+  
+  
   
   /*
    *  (:> 時のイベント

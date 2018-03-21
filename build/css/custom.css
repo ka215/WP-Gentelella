@@ -5581,13 +5581,18 @@ ul.notifications {
 /* -- wizard_prefix -- */
 .wizard_prefix {
   position: relative;
+  float: left;
   margin: 0;
-  width: auto;
+  width: calc(50% - 2px);
+  height: 40px;
   -webkit-transform: skewX(-174deg);
           transform: skewX(-174deg);
 }
 
 .wizard_prefix.non-parent {
+  clear: left;
+  width: auto;
+  height: auto;
   -webkit-transform: none;
           transform: none;
 }
@@ -5684,6 +5689,31 @@ ul.notifications {
 .wizard_prefix > ul.wizard_steps li a:active:after,
 .wizard_prefix > ul.wizard_steps li a:focus:after {
   color: #1ABB9C;
+}
+
+#dependency-selector {
+  display: inline-block;
+  position: relative;
+  float: right;
+  width: calc(50% - 2px);
+  height: 40px;
+}
+
+#dependency-selector > select {
+  position: relative;
+  top: 6px;
+  left: 2em;
+  width: calc(100% - 2em);
+}
+
+#dependency-selector:before {
+  content: "\ee38";
+  font-family: 'plotter';
+  font-size: 18px;
+  color: #BDC3C7;
+  position: absolute;
+  left: 0;
+  top: calc(50% - 11px);
 }
 
 /* -- others -- */

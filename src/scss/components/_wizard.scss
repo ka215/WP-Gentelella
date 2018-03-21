@@ -347,12 +347,17 @@
 
 .wizard_prefix {
   position: relative;
+  float: left;
   margin: 0;
-  width: auto;
+  width: calc( 50% - 2px );
+  height: 40px;
   transform: skewX(-174deg);
 }
 
 .wizard_prefix.non-parent {
+  clear: left;
+  width: auto;
+  height: auto;
   transform: none;
 }
 
@@ -449,6 +454,30 @@
   color: $global_active;
 }
 
+#dependency-selector {
+  display: inline-block;
+  position: relative;
+  float: right;
+  width: calc( 50% - 2px );
+  height: 40px;
+}
+
+#dependency-selector> select {
+  position: relative;
+  top: 6px;
+  left: 2em;
+  width: calc( 100% - 2em );
+}
+
+#dependency-selector:before {
+  content: "\ee38";
+  font-family: 'plotter';
+  font-size: 18px;
+  color: $gray;
+  position: absolute;
+  left: 0;
+  top: calc( 50% - 11px );
+}
 
 /* -- others -- */
 
