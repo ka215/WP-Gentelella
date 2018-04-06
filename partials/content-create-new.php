@@ -73,13 +73,13 @@ if ( ! empty( $current_structures ) ) {
                                 <ul class="step_meta">
                                   <li class="step_name"><?php printf( __( 'Act %d', WPGENT_DOMAIN ), 1 ); ?></li>
                                 </ul>
-                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="fa fa-close"></i></button>
+                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="plt-cross2"></i></button>
                               </div>
                               <div class="step_relational wizard_vertical"></div>
                             </li>
                             <li data-step="last">
                               <div class="step_indicator add_new">
-                                <a href="javascript:;" class="step_no"><i class="fa fa-plus"></i></a>
+                                <a href="javascript:;" class="step_no"><i class="plt-plus3"></i></a>
                                 <ul class="step_meta">
                                   <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
                                 </ul>
@@ -138,7 +138,7 @@ if ( ! empty( $current_structures ) ) {
                                 <li class="step_name"><?php _e('Act', WPGENT_DOMAIN ); ?> %N</li>
                               </ul>
                               <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>">
-                                <i class="fa fa-close"></i>
+                                <i class="plt-cross2"></i>
                               </button>
                             </div>
                             <div class="step_relational wizard_vertical"></div>
@@ -147,7 +147,7 @@ if ( ! empty( $current_structures ) ) {
                         <ul class="last-step-template">
                           <li data-step="last">
                             <div class="step_indicator add_new">
-                              <a href="javascript:;" class="step_no"><i class="fa fa-plus"></i></a>
+                              <a href="javascript:;" class="step_no"><i class="plt-plus3"></i></a>
                               <ul class="step_meta">
                                 <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
                               </ul>

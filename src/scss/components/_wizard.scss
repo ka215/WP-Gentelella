@@ -109,6 +109,7 @@
 }
 
 .wizard_horizontal> .wizard_steps_container> ul.wizard_steps li div.step_indicator.add_new a.step_no {
+  padding-top: 2px;
   background: $gray;
   color: $main_content_text;
 }
@@ -149,6 +150,7 @@
   position: absolute;
   top: -15px;
   left: calc(50% + 20px);
+  padding: 6px 8px 4px;
   background: $gray;
   color: $main_content_text;
   border: 1px solid $monotone_95;
@@ -375,7 +377,7 @@
 
 .wizard_prefix> ul.wizard_steps li {
   position: relative;
-  max-width: 50%;
+  /* max-width: 100%; */
   height: 40px;
   line-height: 40px;
   padding-left: 40px;

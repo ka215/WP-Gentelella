@@ -10,9 +10,14 @@ $(document).ready(function() {
       currentSrcId     = Number( $('#change_source option:selected').val() );
   SUBMIT_BUTTONS       = [ 'regist', 'remove-confirm', 'update', 'add' ];
   
+  // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
   //storedSrcCache( currentSrcId );
   
-  // Event handlers
+  // ----- Event handlers -------------------------------------------------------------------------
+  
+  /*
+   * Changed Select Box named "Switch or Add Story" (:> セレクトボックス変更時のイベント
+   */
   $('#change_source').on('change', function(){
     logger.debug( currentSrcId, $(this).val() );
     if ( $(this).val() === '' ) {
@@ -63,7 +68,9 @@ $(document).ready(function() {
     }
   });
   
-  
+  /*
+   * Clicked Each Buttons (:> 各種ボタンクリック時のイベント
+   */
   $(document).on('click', 'button.btn[id^="'+currentPermalink+'-btn"]', function(e){
     e.preventDefault();
     var action = $(this).attr('id').replace(currentPermalink+'-btn-', '');
@@ -89,7 +96,12 @@ $(document).ready(function() {
     }
   });
   
-  // このページ専用の独自処理をコールバックに追加する
+  
+  // ----- 個別処理（関数）------------------------------------------------------------------------
+  
+  /*
+   * Add Custom Callback for this page only (:> このページ専用の独自処理をコールバックに追加する
+   */
   callbackAjax['executeRemove'] = function( evt ) {
     // 確認ダイアログ後の削除実行
     if ( evt.options.data.addClass === 'C0G001' ) {
@@ -107,6 +119,9 @@ $(document).ready(function() {
     }
   };
   
+  /*
+   * Rebuild Switchery Component (:> 
+   */
   function rebuildSwitchery( selector ) {
     $('.js-switch').each(function(){
         if ( $(this).is(selector) ) {
@@ -116,6 +131,11 @@ $(document).ready(function() {
     });
   }
   
+  // ----- WEBストレージ(ローカルストレージ)関連 ---------------------------------------------------------------
+  
+  /*
+   *  (:> 指定のソースデータ（source_id）をWEBストレージへ保存する
+   */
   function storedSrcCache( sid ) {
     if ( sid == Number( gf.find('[name="source_id"]').val() ) ) {
       var src_data = {
@@ -133,6 +153,9 @@ $(document).ready(function() {
     }
   }
   
+  /*
+   *  (:> WEBストレージから指定のソースデータ（source_id）を読み込みフォームへ展開する
+   */
   function restoreSrcCache( sid ) {
     var src_data = JSON.parse( wls.getItem( 'plt_cursrc' ) );
     if ( sid == Number( src_data.source_id ) ) {

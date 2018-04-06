@@ -58,18 +58,10 @@ function __ctl( $class_snippet = 'model' ) {
     return ! empty( $_instance ) ? $_instance : new stdClass();
 }
 
-function __localize_messages() {
-    // JavaScript用の翻訳テキスト定義:
-    return [
-      'loading' => __( 'Please Wait...', 'plotter' ), // custom.js: showLoading()
-      'dialog_yes' => __( 'Ok', 'plotter' ), // custom.js: dialog()
-      'dialog_no' => __( 'Cancel', 'plotter' ), // custom.js: dialog()
-      'switch_src_ttl' => __( 'Switch Manageable Story', 'plotter' ), // custom.js: Top Navigation
-      'switch_src_msg' => __( 'Any unsaved data will be lost. Are you sure?', 'plotter' ), // custom.js: Top Navigation
-      'act_num' => __( 'Act %d', 'plotter' ), // custom-create-new.js: 
-      
-    ];
-}
+/**
+ * Import the defined localize messages
+ */
+require WPGENT_PATH .'/messages.php'; 
 
 /**
  * Initialize theme

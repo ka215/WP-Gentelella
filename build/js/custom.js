@@ -438,6 +438,9 @@ if ( typeof PNotify != 'undefined' ) {
   PNotify.defaults.styling = "bootstrap3";
   PNotify.defaults.icons = "fontawesome4";
   var notify = function ( headline, message, notify_type, notice_code, add_class ) {
+    if ( message == undefined ) {
+      return false;
+    }
     var icon_class = true;
     add_class = ! is_empty( add_class ) ? add_class : '';
     switch ( notify_type ) {
@@ -445,13 +448,13 @@ if ( typeof PNotify != 'undefined' ) {
         icon_class = false; // 'fa fa-bell';
         break;
       case 'info':
-        icon_class = 'fa fa-info-circle';
+        icon_class = 'plt-notification'; // 'fa fa-info-circle';
         break;
       case 'success':
         icon_class = 'fa fa-check-circle';
         break;
       case 'error':
-        icon_class = 'fa fa-exclamation-triangle';
+        icon_class = 'plt-warning'; // 'fa fa-exclamation-triangle';
         message += ' <small class="notice-code">' + notice_code + '</small>';
         break;
     }
@@ -486,6 +489,41 @@ if ( typeof PNotify != 'undefined' ) {
     notice.on('click', function() {
       notice.close();
     });
+  };
+  // Define options for common dialog
+  var dialogOpts = {
+        title: '',
+        text: '',
+        addClass: '',
+        type: 'notice',
+        icon: 'plt-question3',
+        hide: false,
+        stack: { 'dir1': 'down', 'modal': true, 'firstpos1': 25 },
+        modules: {
+          Confirm: { confirm: true,
+            buttons: [{
+              text: localize_messages.dialog_yes,
+              textTrusted: false,
+              addClass: '',
+              primary: true,
+              promptTrigger: true,
+              click: (notice, value) => {
+                notice.close();
+                notice.fire('pnotify.confirm', {notice, value});
+              }
+            }, {
+              text: localize_messages.dialog_no,
+              textTrusted: false,
+              addClass: '',
+              click: (notice) => {
+                notice.close();
+                notice.fire('pnotify.cancel', {notice});
+              }
+            }]
+          },
+          Buttons: { closer: false, sticker: false },
+          History: { history: false }
+        }
   };
 }
 
@@ -773,7 +811,7 @@ function dialog( data ) {
     text: data.text,
     addClass: data.code,
     type: 'notice',
-    icon: 'fa fa-question-circle',
+    icon: 'plt-question3',
     hide: false,
     stack: {
       'dir1': 'down',
@@ -834,7 +872,7 @@ $(document).ready(function() {
         text: localize_messages.switch_src_msg,
         addClass: '',
         type: 'notice',
-        icon: 'fa fa-question-circle',
+        icon: 'plt-question3',
         hide: false,
         stack: {
           'dir1': 'down',
@@ -854,6 +892,12 @@ $(document).ready(function() {
                 notice.close();
                 // notice.fire('pnotify.confirm', {notice, value});
                 docCookies.setItem( 'lastSource', newSrcId, 60*60*24*30, '/' );
+                if ( docCookies.hasItem( 'dependency' ) ) {
+                  docCookies.removeItem( 'dependency', '/' );
+                }
+                if ( docCookies.hasItem( 'group_id' ) ) {
+                  docCookies.removeItem( 'group_id', '/' );
+                }
                 showLoading();
                 location.reload();
               }
@@ -888,7 +932,7 @@ $(document).ready(function() {
   
 });
 
-// Lock & Unlock the submission buttons
+// Lock & Unlock the submission buttons (:> 送信ボタンをロックまたはロック解除する
 function controlSubmission( action='lock', currentPermalink='', buttons=[] ) {
   buttons = typeof SUBMIT_BUTTONS != 'undefined' && SUBMIT_BUTTONS.length > 0 ? SUBMIT_BUTTONS : buttons;
   currentPermalink = is_empty( currentPermalink ) ? location.pathname.replace(/^\/(.*)\/$/, '$1') : currentPermalink;

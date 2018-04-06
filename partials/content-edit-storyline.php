@@ -8,6 +8,7 @@
  * @version 1.0
  */
 $_plotter = get_query_var( 'plotter', [] );
+// Define template vars as follow:
 $page_name           = $_plotter['page_name'];
 $current_user_id     = $_plotter['current_user_id'];
 $user_sources        = $_plotter['user_sources'];
@@ -18,9 +19,26 @@ if ( empty( $current_structures ) ) {
   wp_safe_redirect( '/create-new/' );
 }
 $current_dependency  = $_plotter['current_dependency'];
-$current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'] : 0;
-//var_dump( $_COOKIE['group_id'], $current_group_id );
-//$current_dependency  = isset( $_COOKIE['dependency'] ) ? (int) $_COOKIE['dependency'] : 0;
+$current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'] : null;
+if ( empty( $current_group_id ) ) {
+  foreach ( $current_structures as $_structure ) {
+    if ( $current_dependency == $_structure['dependency'] ) {
+      $current_group_id = $_structure['group_id'];
+      break;
+    }
+  }
+}
+if ( $current_group_id != -1 ) {
+    $first_view_context = __ctl( 'model' )->get_structures( 'context', 
+        [ 'source_id' => $current_source_id, 'status' => 1, 'dependency' => $current_dependency, 'group_id' => $current_group_id ],
+        'and', [ 'turn' => 'asc' ], 1 );
+    $first_view_context = __ctl( 'lib' )->array_flatten( $first_view_context )['context'];
+} else {
+    $first_view_context = '';
+}
+// For debug
+$disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '. (string) $current_group_id .')</span>' : '';
+__ctl( 'libs' )->get_dependent_structures( $current_source_id, $current_group_id );
 
 ?>
 
@@ -57,22 +75,22 @@ $current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'
                       <div id="wizard" class="form_wizard wizard_horizontal">
                         <div id="parent-step" class="step_relational wizard_prefix<?php if ( $current_dependency == 0 ) : ?> non-parent<?php endif; ?>">
 <?php if ( $current_dependency == 0 ) : ?>
-                          <label class="root-dependency"><?php _e('Main Storyline', WPGENT_DOMAIN ); ?></label>
+                          <label class="root-dependency"><?php _e('Main Storyline', WPGENT_DOMAIN ); ?><?= $disp_group_id ?></label>
 <?php else : 
         foreach ( $current_structures as $_structure ) {
           if ( $_structure['id'] == $current_dependency ) { 
             $_parent_dependency = $_structure['dependency']; ?>
                           <ul class="wizard_steps">
-                            <li data-dependency="<?= esc_attr( $_parent_dependency ) ?>"><a href="#" class="parent_storyline"><?= esc_html( $_structure['name'] ) ?></a></li>
+                            <li data-dependency="<?= esc_attr( $_parent_dependency ) ?>"><a href="#" class="parent_storyline"><?= esc_html( $_structure['name'] ) ?><?= $disp_group_id ?></a></li>
                           </ul>
 <?php       break;
           }
         }
       endif; ?>
                         </div><!-- /#parent-step -->
-<?php if ( $current_dependency != 0 ) : ?>
+<?php if ( $current_dependency != 0 && $current_group_id !== -1 ) : ?>
                         <div id="dependency-selector" class="">
-                          <select id="act-dependency" name="dependency" class="form-control">
+                          <select id="act-dependency" name="new_dependency" class="form-control">
                             <option value="">&#x2014; <?php _e('Change Dependency', WPGENT_DOMAIN ); ?> &#x2014;</option>
 <?php   foreach ( $current_structures as $_structure ) { 
           if ( $_parent_dependency == $_structure['dependency'] && $current_dependency != $_structure['id'] ) { ?>
@@ -92,15 +110,16 @@ $current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'
             $_step_counter++;
             if ( $_structure['turn'] == 1 ) {
                 $_first_view_structure = $_structure;
+                $_first_view_structure['context'] = $first_view_context;
             } ?>
-                            <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>" data-step="<?= esc_attr( $_step_counter ) ?>" style="order: <?= esc_attr( $_step_order ) ?>">
+                            <li data-structure-id="<?= esc_attr( $_structure['id'] ) ?>" data-group-id="<?= esc_attr( $_structure['group_id'] ) ?>" data-step="<?= esc_attr( $_step_counter ) ?>" style="order: <?= esc_attr( $_step_order ) ?>">
                               <div class="step_indicator<?php if ( $_structure['turn'] == 1 ) : ?> selected<?php endif; ?>">
                                 <a href="#act-form" class="step_no"><?= esc_html( $_step_counter ) ?></a>
                                 <ul class="step_meta">
                                   <li class="step_name"><?= esc_html( $_structure['name'] ) ?></li>
                                 </ul>
 <?php       if ( $_structure['turn'] > 1 ) : ?>
-                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="fa fa-close"></i></button>
+                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="plt-cross2"></i></button>
 <?php       endif; ?>
                               </div>
                               <div class="step_relational wizard_vertical" style="z-index: <?= ( count( $current_structures ) - $_structure['turn'] + 10 ) ?>;">
@@ -119,11 +138,43 @@ $current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'
                                 </ul>
                               </div>
                             </li>
-<?php   };
+<?php   } elseif ( $current_group_id == -1 ) { 
+          $_step_order = 1;
+          $_first_view_structure = [
+            'id' => null,
+            'dependency' => $current_dependency,
+            'name' => sprintf( __( 'Sub Storyline Act %d', WPGENT_DOMAIN ), $_step_order ),
+            'type' => 0,
+            'group_id' => $current_group_id,
+            'turn' => 1,
+            'last_modified_by' => $current_user_id,
+            'updated_at' => null,
+            'context' => $first_view_context
+          ]; ?>
+                            <li data-structure-id="" data-group-id="<?= esc_attr( $current_group_id ) ?>" data-step="<?= esc_attr( $_step_order ) ?>" style="order: <?= esc_attr( $_step_order ) ?>">
+                              <div class="step_indicator selected">
+                                <a href="#act-form" class="step_no">1</a>
+                                <ul class="step_meta">
+                                  <li class="step_name"><?php printf( __( 'Sub Storyline Act %d', WPGENT_DOMAIN ), $_step_order ); ?></li>
+                                </ul>
+                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>"><i class="plt-cross2"></i></button>
+                              </div>
+                              <div class="step_relational wizard_vertical" style="z-index: 10;">
+<?php /*
+                                <ul class="wizard_steps">
+                                  <li data-parent-structure-id="" style="">
+                                    <a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a>
+                                  </li>
+                                </ul>
+*/ ?>
+                              </div>
+                            </li>
+<?php     break;
+        };
       endforeach; ?>
-                            <li style="order: <?= esc_attr( $_step_order * 10 ) ?>">
+                            <li data-step="last" style="order: <?= esc_attr( $_step_order * 10 ) ?>">
                               <div class="step_indicator add_new">
-                                <a href="#act-new" class="step_no"><i class="fa fa-plus"></i></a>
+                                <a href="#act-new" class="step_no"><i class="plt-plus3"></i></a>
                                 <ul class="step_meta">
                                   <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
                                 </ul>
@@ -135,7 +186,8 @@ $current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'
 
                         <div id="act-form">
                           <div class="form-horizontal form-label-left" id="act-form-current">
-                            <input type="hidden" id="act-structure-id" name="structure_id" value="<?= esc_attr( $_first_view_structure['structure_id'] ) ?>">
+                            <input type="hidden" id="act-structure-id" name="structure_id" value="<?= esc_attr( $_first_view_structure['id'] ) ?>">
+                            <input type="hidden" id="act-group-id" name="group_id" value="<?= esc_attr( $_first_view_structure['group_id'] ) ?>">
                             <input type="hidden" id="act-turn" name="turn" value="<?= esc_attr( $_first_view_structure['turn'] ) ?>">
                             <input type="hidden" id="act-diff" name="diff" value="false">
                             <div class="form-group">
@@ -189,27 +241,23 @@ $current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'
 
                       <div id="wizard-templates" class="hide">
                         <ul class="common-step-template">
-                          <li data-structure-id="%s" data-step="%d" style="order: %d">
+                          <li data-structure-id="%s" data-group-id="<?= $current_group_id ?>" data-step="%d" style="order: %d">
                             <div class="step_indicator">
                               <a href="javascript:;" class="step_no">%d</a>
                               <ul class="step_meta">
                                 <li class="step_name"><?php _e('Act', WPGENT_DOMAIN ); ?> %d</li>
                               </ul>
                               <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="%N">
-                                <i class="fa fa-close"></i>
+                                <i class="plt-cross2"></i>
                               </button>
                             </div>
-                            <div class="step_relational wizard_vertical">
-                              <ul class="wizard_steps">
-                                <li><a href="#" class="add_sub"><?php _e('Add Sub Storyline', WPGENT_DOMAIN ); ?></a></li>
-                              </ul>
-                            </div>
+                            <div class="step_relational wizard_vertical"></div>
                           </li>
                         </ul>
                         <ul class="last-step-template">
                           <li data-step="last" style="order: %d">
                             <div class="step_indicator add_new">
-                              <a href="javascript:;" class="step_no"><i class="fa fa-plus"></i></a>
+                              <a href="javascript:;" class="step_no"><i class="plt-plus3"></i></a>
                               <ul class="step_meta">
                                 <li class="step_name"><?php _e('Add New', WPGENT_DOMAIN ); ?></li>
                               </ul>
@@ -223,9 +271,23 @@ $current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
-                          <button class="btn btn-default" type="button" id="<?= esc_attr( $page_name ) ?>-btn-cancel"><?php _e( 'Cancel', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-primary" type="button" id="<?= esc_attr( $page_name ) ?>-btn-remove"><?php _e( 'Remove', WPGENT_DOMAIN ); ?></button>
-                          <button class="btn btn-success onValid" type="button" id="<?= esc_attr( $page_name ) ?>-btn-update"><?php _e( 'Commit', WPGENT_DOMAIN ); ?></button>
+<?php $buttons = [
+        'cancel' => [ 'label' => __( 'Cancel', WPGENT_DOMAIN ), 'type' => 'default', 'addClass' => [],            'defaultView' => true  ],
+        'remove' => [ 'label' => __( 'Remove', WPGENT_DOMAIN ), 'type' => 'dark',    'addClass' => [],            'defaultView' => $current_group_id == -1 ? false : true  ],
+        'add'    => [ 'label' => __( 'Add',    WPGENT_DOMAIN ), 'type' => 'primary', 'addClass' => [ 'onValid' ], 'defaultView' => $current_group_id == -1 ? true : false ],
+        'update' => [ 'label' => __( 'Commit', WPGENT_DOMAIN ), 'type' => 'primary', 'addClass' => [ 'onValid' ], 'defaultView' => $current_group_id == -1 ? false : true ],
+      ];
+      foreach ( $buttons as $_key => $_btn ) : 
+        $_classes = 'btn btn-'. $_btn['type'];
+        if ( ! empty( $_btn['addClass'] ) ) {
+          $_classes .= ' '. implode( ' ', $_btn['addClass'] );
+        }
+        if ( ! $_btn['defaultView'] ) {
+          $_classes .= ' hide';
+        }
+      ?>
+                          <button class="<?= esc_attr( $_classes ) ?>" type="button" id="<?= esc_attr( $page_name ) ?>-btn-<?= esc_attr( $_key ) ?>"><?= esc_html( $_btn['label'] ) ?></button>
+<?php endforeach; ?>
                         </div>
                       </div><!-- /.form-group -->
 
