@@ -44,5 +44,8 @@
     "gulp-uglify": "^3.0.0",
     "pnotify": "^4.0.0-alpha.2",
     "postcss-cssnext": "^3.0.2"
+  },
+  "dependencies": {
+    "blueimp-md5": "^2.10.0"
   }
 }

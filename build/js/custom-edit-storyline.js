@@ -36,23 +36,27 @@ $(document).ready(function() {
    */
   $(document).on('click', '.btn-remove-act', function(e){
     e.preventDefault();
-    var targetStep   = Number( $(this).parents('li').data('step') ),
+    var targetStep   = Number( $(this).parents('li').attr('data-step') ),
+        hashKey      = $(this).parents('li').attr('data-hash'),
         $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
     $wizardSteps.each(function(){
-      var idx = $(this).index();
-      if ( Number( $(this).data('step') ) == targetStep ) {
+      if ( $(this).attr( 'data-hash' ) === hashKey ) {
+        // Wizard上の表示を消す
         $(this).remove();
-      } else
-      if ( $(this).data('step') !== 'last' && Number( $(this).data('step') ) > targetStep ) {
-        $(this).attr('data-step', idx+1);
-        $(this).find('.step_no').text(idx+1);
       }
     });
     $wizardSteps.parent('ul').removeAttr('style');
     resizeWizardSteps();
-    logger.debug( 'Removed Step: ', targetStep );
-    // sessionStorageから対象ステップのフォームデータを削除する
-    removeStepData( targetStep );
+    logger.debug( 'Removed Step: ', targetStep, ' Hash: ', hashKey );
+    // セッションストレージのステップデータを更新／削除する
+    if ( ! wSQL.select( hashKey, 'structure_id' ) ) {
+      // structure_idを持たないデータは物理削除
+      wSQL.delete( hashKey );
+    } else {
+      // structure_idを持つデータは論理削除
+      wSQL.update( hashKey, { turn: -1, diff: true } );
+    }
+    // リナンバリング処理
     reorderSteps();
   });
   
@@ -63,42 +67,66 @@ $(document).ready(function() {
     e.preventDefault();
     var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
         nowSteps     = $wizardSteps.length,
+        newHash      = makeHash( Date.now() ),
         step_tmpl    = $('#wizard-templates ul.common-step-template li').clone();
     step_tmpl.find('button.btn-remove-act').removeClass('hide');
+    step_tmpl.attr( 'data-hash', newHash );
     var newStep   = sprintf( step_tmpl[0].outerHTML, '', nowSteps, nowSteps * 10, nowSteps, nowSteps );
     $wizardSteps.filter(':last-child').remove();
     $wizardSteps.parent('.wizard_steps').append( $(newStep)[0].outerHTML );
     var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
     last_step_tmpl = sprintf( $(last_step_tmpl)[0].outerHTML, (nowSteps + 1) * 10 );
     $wizardSteps.parent('.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
-    logger.debug( 'Added Step: ', nowSteps );
+    logger.debug( 'Added Step: ', nowSteps, ' Hash: ', newHash );
     resizeWizardSteps();
+    // 新規追加したステップデータをセッションストレージへ保存
+    var newStepData = {
+      'hash': newHash,
+      'id': '',
+      'dependency': Number( gf.find('input[name="dependency"]').val() ),
+      'group_id': Number( gf.find('#act-group-id').val() ),
+      'turn': nowSteps,
+      'name': '',
+      'context': '',
+      'diff': true
+    };
+    saveStepData( newStepData );
+    // リナンバリング処理
     reorderSteps();
+    // 新規追加ステップをフォーカス
+    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li[data-hash="'+ newHash +'"]').find('a.step_no').trigger('click');
   });
   
   /*
    * Selected Step (:> Step選択時のイベント
    */
-  $(document).on('click', '.step_indicator:not(.add_new) a', function(e){
+  //$(document).on('click', '.step_indicator:not(.add_new) a', function(e){
+  $(document).on('click', '.step_indicator a', function(e){
     e.preventDefault();
-    var newStep = Number( $(this).parents('li').data('step') ),
-        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
     if ( $wizardSteps.children('div.step_indicator.selected').length > 0 ) {
       // 現在のフォームデータをsessionStorageに保存
-console.info( $wizardSteps.children('div.step_indicator.selected').parent('li').data().structureId );
-      saveStepData( $wizardSteps.children('div.step_indicator.selected').parent('li').data().structureId );
+      saveStepData();
     }
+    var newStep = $(this).parents('li').attr( 'data-step' ),
+        hashKey = $(this).parents('li').attr( 'data-hash' );
+    if ( 'last' === newStep ) {
+      return false;
+    } else {
+      newStep = Number( newStep );
+    }
+    $wizardSteps.find('.step_indicator').removeClass('selected');
     $wizardSteps.each(function(){
-      if ( newStep == Number( $(this).data('step') ) ) {
+      if ( newStep == Number( $(this).attr('data-step') ) ) {
         $(this).find('.step_indicator').addClass('selected');
-      } else {
-        $(this).find('.step_indicator').removeClass('selected');
       }
     });
     $('#act-turn').val( newStep );
-    logger.debug( 'Selected Step: ', newStep );
-    // sessionStorageから対象ステップのフォームデータを取得する
-    retriveStepData( newStep );
+    if ( hashKey ) {
+      // sessionStorageから対象ステップのフォームデータを取得する
+      logger.debug( 'Selected Step: ', newStep, '; hash: ', hashKey );
+      retriveStepData( hashKey );
+    }
   });
   
   /*
@@ -108,7 +136,7 @@ console.info( $wizardSteps.children('div.step_indicator.selected').parent('li').
     e.preventDefault();
     var strAtts = $(this).parent('li').data();
     dialogOpts.title = localize_messages.move_cross_dependency_ttl;
-    dialogOpts.text  = localize_messages.move_cross_dependency_msg;
+    dialogOpts.text  = [ localize_messages.move_cross_dependency_msg, localize_messages.are_you_sure ].join('<br>');
     dialogOpts.modules.Confirm.buttons[0].click = (notice, value) => {
       notice.close();
       docCookies.setItem( 'dependency', strAtts.dependency, 60*60*24*30, '/' );
@@ -126,7 +154,7 @@ console.info( $wizardSteps.children('div.step_indicator.selected').parent('li').
     e.preventDefault();
     var strAtts = $(this).parent('li').data();
     dialogOpts.title = localize_messages.add_sub_storyline_ttl;
-    dialogOpts.text  = localize_messages.move_cross_dependency_msg;
+    dialogOpts.text  = [ localize_messages.move_cross_dependency_msg, localize_messages.are_you_sure ].join('<br>');
     dialogOpts.modules.Confirm.buttons[0].click = (notice, value) => {
       notice.close();
       docCookies.setItem( 'dependency', strAtts.parentStructureId, 60*60*24*30, '/' );
@@ -144,7 +172,7 @@ console.info( $wizardSteps.children('div.step_indicator.selected').parent('li').
   $('#'+currentPermalink+'-btn-remove').on('click', function(e){
     e.preventDefault();
     dialogOpts.title = localize_messages.remove_dependent_storylines_ttl;
-    dialogOpts.text  = localize_messages.remove_dependent_storylines_msg;
+    dialogOpts.text  = [ localize_messages.remove_dependent_storylines_msg, localize_messages.are_you_sure ].join('<br>');
     dialogOpts.modules.Confirm.buttons[0].click = (notice, value) => {
       notice.close();
       // 確認ダイアログ承認後の削除処理
@@ -156,7 +184,7 @@ console.info( $wizardSteps.children('div.step_indicator.selected').parent('li').
       delete base_data.turn;
       delete base_data.diff;
       var post_data = JSON.stringify( base_data );
-console.log( value, base_data, post_data );
+      logger.debug( value, base_data, post_data );
       controlSubmission();
       showLoading();
       callAjax(
@@ -179,52 +207,84 @@ console.log( value, base_data, post_data );
    */
   $('#'+currentPermalink+'-btn-add').on('click', function(e){
     e.preventDefault();
-    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
-        steps        = $wizardSteps.length - 1;
+    var postData     = [],
+        stepDataKeys = getStoredKeys();
     controlSubmission();
     // 現在のフォームデータをsessionStorageに保存
     saveStepData();
     $('#'+currentPermalink+'-post-action').val( 'add' );
     // セッションストレージ上の全ステップデータをマージする
-    var step_data = new Array();
-    $wizardSteps.each(function(){
-      var availableStep = $(this).data('step'),
-          searchKey     = 'plt_str_' + availableStep;
-      if ( availableStep === 'last' ) {
-        return true; // as continue
-      }
-      if ( wss.hasOwnProperty( searchKey ) ) {
-        step_data[$(this).index()] = JSON.parse( wss.getItem( searchKey ) );
-      } else {
-        // セッションストレージにデータがない場合は補完する
-        step_data[$(this).index()] = {
-          'structure_id': $(this).data('structureId'),
-          'dependency':   Number( gf.find('input[name="dependency"]').val() ),
-          'group_id':     $(this).data('groupId'),
-          'turn':         Number( availableStep ),
-          'name':         $(this).find('.step_name').text(),
-          'context':      '',
-        };
+    stepDataKeys.forEach(function( key ) {
+      if ( wss.hasOwnProperty( key ) ) {
+        var step_data = JSON.parse( wss.getItem( key ) );
+        if ( step_data.diff ) {
+          if ( step_data.turn < 0 ) {
+            step_data.name = '';
+            step_data.context = '';
+          }
+          postData.push( step_data );
+        }
       }
     });
-logger.debug( steps, step_data );
-    if ( step_data.length > 0 ) {
+logger.debug( stepDataKeys, postData, postData.length );
+    if ( postData.length > 0 ) {
       showLoading();
-      var addField = $('<input>', { 'type': 'hidden', 'name': 'step_data', 'value': JSON.stringify( step_data ) });
+      var addField = $('<input>', { type: 'hidden', name: 'step_data', value: JSON.stringify( postData ) });
       gf.append( addField );
       // 画面上に表示されているフォームのデータは送信対象から除外する
       $('#act-form-current').find('input,select,textarea').each(function(){
         $(this).prop('disabled', true);
       });
-      /*
-      $('#act-structure-id').prop('disabled', true);
-      $('#act-group-id').prop('disabled', true);
-      $('#act-dependency').prop('disabled', true);
-      $('#act-turn').prop('disabled', true);
-      $('#act-name').prop('disabled', true);
-      $('#act-context').prop('disabled', true);
-      */
-      // gf.submit();
+      // ajaxでpost
+      var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
+      callAjax(
+        '/'+currentPermalink+'/',
+        'post',
+        post_data,
+        'json',
+        'application/json; charset=utf-8',
+        'notify',
+        true
+      );
+      controlSubmission( 'unlock' );
+    } else {
+      return false;
+    }
+  });
+  
+  /*
+   * Clicked Commit (:> コミットボタンクリック時のイベント
+   */
+  $('#'+currentPermalink+'-btn-update').on('click', function(e){
+    e.preventDefault();
+    var postData     = [],
+        stepDataKeys = getStoredKeys();
+    controlSubmission();
+    // 現在のフォームデータをsessionStorageに保存
+    saveStepData();
+    $('#'+currentPermalink+'-post-action').val( 'update' );
+    // POSTする全ステップデータをマージする
+    stepDataKeys.forEach(function( key ) {
+      if ( wss.hasOwnProperty( key ) ) {
+        var step_data = JSON.parse( wss.getItem( key ) );
+        if ( step_data.diff ) {
+          if ( step_data.turn < 0 ) {
+            step_data.name = '';
+            step_data.context = '';
+          }
+          postData.push( step_data );
+        }
+      }
+    });
+logger.debug( stepDataKeys, postData, postData.length );
+    if ( postData.length > 0 ) {
+      showLoading();
+      var addField = $('<input>', { type: 'hidden', name: 'step_data', value: JSON.stringify( postData ) });
+      gf.append( addField );
+      // 画面上に表示されているフォームのデータは送信対象から除外する
+      $('#act-form-current').find('input,select,textarea').each(function(){
+        $(this).prop('disabled', true);
+      });
       // ajaxでpost
       var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
       callAjax(
@@ -247,16 +307,12 @@ logger.debug( steps, step_data );
    */
   $('#act-name').on('focus keyup', function(){
     if ( ! is_empty( $(this).val() ) ) {
-      var currentStep  = Number( $('#act-turn').val() ),
-          currentName  = $(this).val(),
-          $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
-      if ( currentStep > 0 ) {
-        $wizardSteps.each(function(){
-          if ( Number( $(this).data('step') ) == currentStep ) {
-            $(this).find('.step_name').text( currentName );
-            return false;
-          }
-        });
+      var hashKey     = gf.find('#act-hash').val(),
+          currentName = $(this).val(),
+          $wizardStep = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li[data-hash="'+hashKey+'"]');
+      $wizardStep.find('.step_name').text( currentName );
+      if ( wSQL.select( hashKey, 'name' ) !== currentName ) {
+        wSQL.update( hashKey, { diff: true } );
       }
     }
   });
@@ -285,21 +341,8 @@ logger.debug( steps, step_data );
     }
   };
   
-  
   /*
-   *  (:> 
-   */
-  function initWizardElements() {
-    logger.debug( 'Initialize Wizard Elements' );
-    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
-    $wizardSteps.each(function(){
-      $(this).remove();
-    });
-    formatFormItems();
-  }
-  
-  /*
-   * reOrder Steps (:> STEPのorder番号を再採番（正規化）する
+   * reOrder Steps (:> STEPのorder番号をリナンバリング（正規化）する
    */
   function reorderSteps() {
     var nowOrder     = [],
@@ -315,11 +358,20 @@ logger.debug( steps, step_data );
       sortOrder.find(function(d,j){ if ( d == v ) nowOrder[i] = optOrder[j]; });
     });
     $wizardSteps.each(function(){
-      $(this).css( 'order', nowOrder[$(this).index()] * 10 );
-      // set turn...
-      
+      var hashKey      = $(this).data('hash'),
+          newStep      = nowOrder[$(this).index()],
+          newSortOrder = nowOrder[$(this).index()] * 10;
+      $(this).attr( 'data-step', newStep );
+      $(this).css( 'order', newSortOrder );
+      $(this).find('.step_indicator:not(.add_new) .step_no').text( newStep );
+      if ( ! is_empty( hashKey ) ) {
+        if ( wSQL.select( hashKey, 'turn' ) !== newStep ) {
+          wSQL.update( hashKey, { turn: newStep } );
+          //logger.debug( hashKey, wSQL.select( hashKey, 'turn' ), newStep );
+        }
+      }
     });
-    logger.debug( nowOrder, optOrder, sortOrder );
+    //logger.debug( { 'newOrder': nowOrder, 'sortOrder': sortOrder } );
   }
   
   /*
@@ -347,51 +399,6 @@ logger.debug( steps, step_data );
     $wizardStep.parent().scrollLeft( expected_width - wizard_steps_container_width );
   }
   
-  /*
-   *  (:> 
-   */
-  function formatFormItems() {
-    // var afc = $('#act-form-current');
-    $('#act-structure-id').val('');
-    $('#act-dependency').val('0');
-    $('#act-turn').val('1');
-    $('#act-name').val('');
-    $('#act-context').val('');
-  }
-  
-  /*
-   *  (:> 
-   */
-  function rebuildWizard( acts ) {
-    logger.debug( 'Build Wizard', acts );
-    $.each( acts, function( i, v ){
-      var step_tmpl = $('#wizard-templates ul.common-step-template li').clone(),
-          step_name = is_empty( v ) ? sprintf( localize_messages.act_num, i + 1 ) : v;
-      step_tmpl.find('ul.step_meta> li.step_name').text( step_name );
-      if ( i == 0 ) {
-        $('#act-name').val( step_name );
-      }
-      var step_data = {
-        'structure_id': '',
-        'dependency'  : '0',
-        'turn'        : i + 1,
-        'name'        : step_name,
-        'context'     : '',
-      };
-      wss.setItem( 'plt_str_' + (i+1), JSON.stringify( step_data ) );
-      
-      if ( i > 0 ) {
-        step_tmpl.find('button.btn-remove-act').removeClass('hide');
-      } else {
-        step_tmpl.find('.step_indicator').addClass('selected');
-      }
-      var newStep   = step_tmpl[0].outerHTML.replace(/\%N/g, i+1);
-      $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(newStep)[0].outerHTML );
-    });
-    var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
-  }
-  
   
   
   // ----- セッションストレージ関連 ---------------------------------------------------------------
@@ -400,58 +407,225 @@ logger.debug( steps, step_data );
    *  (:> セッションストレージ初期化
    */
   function clearSessionData() {
-    logger.debug( 'Clear All SessionStorage' );
+    logger.debug( 'Clear All SessionStorage, then set data of current steps' );
     wss.clear();
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
+        totalSteps   = $wizardSteps.length - 1;
+    $wizardSteps.each(function(){
+      var availableStep = $(this).attr('data-step'),
+          structureId   = is_empty( $(this).attr('data-structure-id') ) ? '' : Number( $(this).attr('data-structure-id') ),
+          hashKey       = is_empty( structureId ) ? makeHash( Date.now() ) : makeHash( structureId );
+      if ( availableStep === 'last' ) {
+        return true; // as continue
+      }
+      $(this).attr( 'data-hash', hashKey );
+      if ( ! is_empty( structureId ) ) {
+        // structure_idを持つステップデータをDBから読み込む
+        if ( ! window.isLoading ) {
+          showLoading();
+        }
+        callAjax( wpApiSettings.root + 'plotter/v1/str/' + structureId, 'GET' )
+        .then( function( data, stat, self ){
+          if ( 'success' === stat ) {
+            data[0]['hash'] = hashKey;
+            // logger.debug( data[0] );
+            saveStepData( data[0] );
+            totalSteps--;
+            if ( totalSteps < 1 && window.isLoading ) {
+              // PNotify.closeAll();
+              hideLoading();
+            }
+          }
+        });
+      } else {
+        // structure_idがないサブストーリーライン追加時はDBにデータがないので非同期処理はせずに、現フォームから補完
+        var data = {
+          'hash': hashKey,
+          'id': structureId,
+          'dependency': Number( gf.find('input[name="dependency"]').val() ),
+          'group_id': Number( $(this).attr('data-group-id') ),
+          'turn': Number( availableStep ),
+          'name': gf.find('#act-name').val(),
+          'context': gf.find('#act-context').val(),
+          'diff': true
+        };
+        saveStepData( data );
+      }
+    });
+  }
+  
+  /*
+   *   (:> セッションストレージ内の全データのキー名を配列として取得する
+   */
+  function getStoredKeys() {
+    var keys = [];
+    for ( var _key in wss ) {
+      if ( _key !== 'length' && typeof wss[_key] !== 'function' && ! /^wp\-api\-schema\-model/.test( _key ) ) {
+        keys.push( _key );
+      }
+    }
+    return keys;
+  }
+  
+  /*
+   *  (:> セッションストレージの指定ストラクチャーを持つステップデータの差分をチェックする（差分があれば true が返る）
+   */
+  function checkDiffStep( hashKey ) {
+    var currentData = {
+          'structure_id': is_empty( gf.find('#act-structure-id').val() ) ? '' : Number( gf.find('#act-structure-id').val() ),
+          'dependency':   Number( gf.find('input[name="dependency"]').val() ),
+          'group_id':     Number( gf.find('#act-group-id').val() ),
+          'turn':         Number( gf.find('#act-turn').val() ),
+          'name':         gf.find('#act-name').val(),
+          'context':      gf.find('#act-context').val()
+        },
+        diff = false;
+    if ( wss.hasOwnProperty( hashKey ) ) {
+      var storedData = wSQL.select( hashKey );
+      for ( var prop in currentData ) {
+        logger.debug( prop, storedData[prop] !== currentData[prop], storedData[prop], currentData[prop] );
+        diff = storedData[prop] !== currentData[prop];
+        if ( diff ) { break; }
+      }
+    }
+    return diff;
   }
   
   /*
    *  (:> セッションストレージから指定ステップデータを削除
    */
-  function removeStepData( step ) {
-    var key = 'plt_str_' + step;
-    if ( wss.hasOwnProperty( key ) ) {
-      wss.removeItem( key );
+  function removeStepData( hashKey ) {
+    var rm_list = 'plt_rm_str';
+    if ( wss.hasOwnProperty( hashKey ) ) {
+      var structureId = wSQL.select( hashKey, 'structure_id' );
+      if ( ! is_empty( structureId ) ) {
+        // StructureIdを持つステップデータの削除は、削除リストに追加する:
+        var remove_steps;
+        if ( wss.hasOwnProperty( rm_list ) ) {
+          remove_steps = JSON.parse( wss.getItem( rm_list ) );
+          remove_steps.push( structureId );
+        } else {
+          remove_steps = [ structureId ];
+        }
+        wss.setItem( rm_list, JSON.stringify( remove_steps ) );
+      }
+      wss.removeItem( hashKey );
     }
   }
   
   /*
-   *  (:> セッションストレージから指定ステップデータを取得してフォームにセット
+   *  (:> セッションストレージ内のキー名をリナンバリングする
    */
-  function retriveStepData( step ) {
-    var key = 'plt_str_' + step;
-    if ( ! wss.hasOwnProperty( key ) ) {
-      gf.find('#act-structure-id').val( '' );
+  function updateStepkeys( fromStep = 1 ) {
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
+        stepDataSize = wss.length,
+        stepDataKeys = [],
+        renumber     = fromStep;
+    for ( var i = 0; i < stepDataSize; i++ ) {
+      var key_str = wss.key( i );
+      if ( /^plt_str_\d{1,}/.test( key_str ) ) {
+        stepDataKeys.push( key_str );
+      }
+    }
+    $wizardSteps.each(function() {
+      var currentStep = Number( $(this).attr( 'data-step' ) ),
+          structureId = Number( $(this).data( 'structureId' ) ),
+          checkHash   = is_empty( $(this).data( 'hash' ) ) ? '' : $(this).data( 'hash' ),
+          checkKey    = 'plt_str_' + currentStep;
+      if ( currentStep >= fromStep ) {
+        logger.debug( currentStep, structureId, checkHash, checkKey );
+        if ( ! is_empty( checkHash ) ) {
+          $.each( stepDataKeys, function( _i, _key ) {
+            var stepData = JSON.parse( wss.getItem( _key ) );
+            if ( checkHash === stepData.hash ) {
+              if ( checkKey !== _key ) {
+                wss.setItem( checkKey, JSON.stringify( stepData ) );
+              }
+            }
+          });
+        } else {
+          wss.removeItem( checkKey );
+        }
+      }
+    });
+  }
+  
+  /*
+   *  (:> セッションストレージもしくはDBから指定ステップデータを取得してフォームにセット
+   */
+  function retriveStepData( hashKey ) {
+    if ( ! wss.hasOwnProperty( hashKey ) ) {
+      var $wizardStep  = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps').find('li[data-hash="'+ hashKey +'"]'),
+          structureId  = is_empty( $wizardStep.attr( 'data-structure-id' ) ) ? '' : Number( $wizardStep.attr( 'data-structure-id' ) ),
+          groupId      = is_empty( $wizardStep.attr( 'data-group-id' ) ) ? gf.find('#act-group-id').val() : $wizardStep.attr( 'data-group-id' ),
+          stepNumber   = Number( $wizardStep.attr( 'data-step' ) ),
+          step_name    = $wizardStep.find('.step_name').text();
+      gf.find('#act-structure-id').val( structureId );
       gf.find('#act-dependency').val( gf.find('input[name="dependency"]').val() );
-      gf.find('#act-group-id').val( gf.find('#act-group-id').val() );
-      gf.find('#act-turn').val( step );
-      gf.find('#act-name').val( sprintf( localize_messages.act_num, step ) );
-      gf.find('#act-context').val( '' );
+      gf.find('#act-group-id').val( groupId );
+      gf.find('#act-turn').val( stepNumber );
+      gf.find('#act-name').val( is_empty( step_name ) ? sprintf( localize_messages.act_num, stepNumber ) : step_name );
+      gf.find('#act-diff').val( 'false' );
+      gf.find('#act-hash').val( hashKey );
+      if ( ! is_empty( structureId ) ) {
+        controlSubmission();
+        callAjax( wpApiSettings.root + 'plotter/v1/str/' + structureId, 'GET' )
+        .then( function( data, stat, self ){
+          if ( 'success' === stat ) {
+            logger.debug( data[0] );
+            gf.find('#act-context').val( data[0].context );
+            controlSubmission( 'unlock' );
+          }
+        });
+      } else {
+        gf.find('#act-context').val( '' );
+      }
     } else {
-      var step_data = JSON.parse( wss.getItem( key ) );
+      var step_data = wSQL.select( hashKey );
       gf.find('#act-structure-id').val( step_data['structure_id'] );
       gf.find('#act-dependency').val( step_data['dependency'] );
       gf.find('#act-group-id').val( step_data['group_id'] );
       gf.find('#act-turn').val( step_data['turn'] );
-      gf.find('#act-name').val( is_empty( step_data['name'] ) ? sprintf( localize_messages.act_num, step ) : step_data['name'] );
+      gf.find('#act-name').val( is_empty( step_data['name'] ) ? sprintf( localize_messages.act_num, step_data['turn'] ) : step_data['name'] );
       gf.find('#act-context').val( step_data['context'] );
+      gf.find('#act-diff').val( step_data['diff'] );
+      gf.find('#act-hash').val( hashKey );
     }
     gf.find('#act-name').trigger('blur');
   }
   
   /*
-   *  (:> 指定のステップデータ（structure_id）をセッションストレージへ保存
+   *  (:> 指定のステップデータをセッションストレージへ保存（dataがない場合は現在のフォーム値を使用する）
    */
-  function saveStepData( structureId=null ) {
-    var step_data = {
-      'structure_id': is_empty( structureId ) ? '' : structureId,
-      'dependency':   Number( gf.find('input[name="dependency"]').val() ),
-      'group_id':     Number( gf.find('#act-group-id').val() ),
-      'turn':         Number( gf.find('#act-turn').val() ),
-      'name':         gf.find('#act-name').val(),
-      'context':      gf.find('#act-context').val(),
-      // 'type':         gf.find('#structure-presets> option:selected').val(),
-    };
-    wss.setItem( 'plt_str_' + step_data.turn, JSON.stringify( step_data ) );
+  function saveStepData( data=null ) {
+    var step_data = {};
+    if ( is_empty( data ) ) {
+      var structureId = is_empty( gf.find('#act-structure-id').val() ) ? '' : Number( gf.find('#act-structure-id').val() ),
+          hashKey     = gf.find('#act-hash').val();
+      step_data = {
+        'structure_id': structureId,
+        'dependency':   Number( gf.find('input[name="dependency"]').val() ),
+        'group_id':     Number( gf.find('#act-group-id').val() ),
+        'turn':         Number( gf.find('#act-turn').val() ),
+        'name':         gf.find('#act-name').val(),
+        'context':      gf.find('#act-context').val(),
+        'diff':         gf.find('#act-diff').val() === 'false' ? checkDiffStep( hashKey ) : true,
+      };
+    } else {
+      var hashKey = is_empty( data.hash ) ? makeHash( data.id ) : data.hash;
+      step_data = {
+        'structure_id': data.id,
+        'dependency':   data.dependency,
+        'group_id':     data.group_id,
+        'turn':         data.turn,
+        'name':         is_empty( data.name ) ? '' : data.name,
+        'context':      is_empty( data.context ) ? '' : data.context,
+        'diff':         is_empty( data.diff ) ? false : data.diff,
+      };
+    }
+    // 'plt_str_' + step_data.turn
+    //wss.setItem( hashKey, JSON.stringify( step_data ) );
+    wSQL.insert( hashKey, step_data );
   }
   
   

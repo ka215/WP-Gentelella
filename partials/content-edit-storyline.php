@@ -38,7 +38,7 @@ if ( $current_group_id != -1 ) {
 }
 // For debug
 $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '. (string) $current_group_id .')</span>' : '';
-__ctl( 'libs' )->get_dependent_structures( $current_source_id, $current_group_id );
+// var_dump( __ctl( 'libs' )->get_dependent_structures( $current_source_id, $current_dependency, $current_group_id ) );
 
 ?>
 
@@ -190,6 +190,7 @@ __ctl( 'libs' )->get_dependent_structures( $current_source_id, $current_group_id
                             <input type="hidden" id="act-group-id" name="group_id" value="<?= esc_attr( $_first_view_structure['group_id'] ) ?>">
                             <input type="hidden" id="act-turn" name="turn" value="<?= esc_attr( $_first_view_structure['turn'] ) ?>">
                             <input type="hidden" id="act-diff" name="diff" value="false">
+                            <input type="hidden" id="act-hash" name="hash" value="<?= esc_attr( md5( $_first_view_structure['id'] ) ) ?>">
                             <div class="form-group">
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-name"><?php _e('Act Name', WPGENT_DOMAIN ); ?> <span class="required"></span>
                               </label>

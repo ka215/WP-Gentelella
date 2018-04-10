@@ -459,6 +459,7 @@ if ( typeof PNotify != 'undefined' ) {
   var dialogOpts = {
         title: '',
         text: '',
+        textTrusted: true,
         addClass: '',
         type: 'notice',
         icon: 'plt-question3',
@@ -494,8 +495,9 @@ if ( typeof PNotify != 'undefined' ) {
 
 function showLoading() {
   if ( typeof PNotify != 'undefined' ) {
-    var loading = PNotify.info({
+    window.loading = PNotify.info({
       text: localize_messages.loading,
+      textTrusted: true,
       icon: 'fa fa-spinner fa-pulse',
       addClass: 'plotter-loading',
       hide: false,
@@ -513,6 +515,49 @@ function showLoading() {
         }
       }
     });
+    window.isLoading = true;
+  }
+}
+
+function hideLoading() {
+  if ( typeof PNotify != 'undefined' ) {
+    //PNotify.closeAll();
+    window.loading.close();
+    window.isLoading = false;
+  }
+}
+
+function makeHash( text ) {
+  if ( typeof jsSHA != 'undefined' ) {
+    /*
+     * jsSHA ^2.3.1
+     *
+     * @param string text
+     * @param string type : SHA-1, SHA-224, SHA3-224, SHA-256, SHA3-256, SHA-384, SHA3-384, SHA-512, SHA3-512, SHAKE128, or SHAKE256
+     * @param string output : HEX, TEXT, B64, BYTES, or ARRAYBUFFER
+     */
+    try {
+      var shaObj = new jsSHA( 'SHA-256', 'TEXT', { numRounds: 1 } );
+      //var shaObj = new jsSHA( type, 'TEXT' );
+      //shaObj.setHMACKey( 'plotter', 'TEXT' );
+      shaObj.update( text );
+      //var hash = shaObj.getHMAC( output );
+      var hash = shaObj.getHash( 'HEX' );
+    } catch(e) {
+      var hash = e.message;
+    }
+    return hash;
+  } else
+  if ( typeof md5 != 'undefined' ) {
+    /*
+     * blueimp-md5 ^2.10.0
+     *
+     * @param string text
+     */
+    return md5( text );
+    //return md5( text ).substring(0, 4);
+  } else {
+    return text;
   }
 }
 
@@ -539,6 +584,13 @@ if ( ! window.localStorage ) {
     },
     hasOwnProperty: function ( sKey ) {
       return ( new RegExp( "(?:^|;\\s*)" + escape( sKey ).replace( /[\-\.\+\*]/g, "\\$&" ) + "\\s*\\=" ) ).test( document.cookie );
+    },
+    getKeys: function () {
+      var sKeys = [], keyLength = this.length;
+      for ( var i = 0; i < keyLength; i++ ) {
+        sKeys.push( this.key( i ) );
+      }
+      return sKeys;
     }
   };
   window.localStorage.length = ( document.cookie.match( /\=/g ) || window.localStorage ).length;
@@ -567,9 +619,70 @@ if ( ! window.sessionStorage ) {
     },
     hasOwnProperty: function ( sKey ) {
       return ( new RegExp( "(?:^|;\\s*)" + escape( sKey ).replace( /[\-\.\+\*]/g, "\\$&" ) + "\\s*\\=" ) ).test( document.cookie );
+    },
+    getKeys: function () {
+      var sKeys = [], keyLength = this.length;
+      for ( var i = 0; i < keyLength; i++ ) {
+        sKeys.push( this.key( i ) );
+      }
+      return sKeys;
     }
   };
   window.sessionStorage.length = ( document.cookie.match( /\=/g ) || window.sessionStorage ).length;
+}
+
+// Use like sql on the web storage
+if ( ! window.wSQL ) {
+  window.wSQL = {
+    engine: window.sessionStorage,
+    select: function ( sKey, sProp = null ) {
+      if ( this.engine.hasOwnProperty( sKey ) ) {
+        var _data = JSON.parse( this.engine.getItem( sKey ) );
+        if ( sProp != null ) {
+          return _data[sProp];
+        } else {
+          return _data;
+        }
+      } else {
+        return false;
+      }
+    },
+    insert: function ( sKey, data = null ) {
+      if ( ! sKey ) { return false; }
+      if ( this.engine.hasOwnProperty( sKey ) ) {
+        this.update( sKey, data );
+      } else {
+        if ( typeof data === 'object' ) {
+          this.engine.setItem( sKey, JSON.stringify( data ) );
+        } else {
+          this.engine.setItem( sKey, data );
+        }
+      }
+    },
+    update: function ( sKey, data = null ) {
+      if ( ! sKey ) { return false; }
+      if ( ! this.engine.hasOwnProperty( sKey ) ) {
+        this.insert( sKey, data );
+      } else {
+        var _data = JSON.parse( this.engine.getItem( sKey ) );
+        if ( typeof _data === 'object' ) {
+          for ( _key in data ) {
+            _data[_key] = data[_key];
+          }
+          this.engine.setItem( sKey, JSON.stringify( _data ) );
+        } else {
+          this.engine.setItem( sKey, data );
+        }
+      }
+    },
+    delete: function ( sKey ) {
+      if ( this.engine.hasOwnProperty( sKey ) ) {
+        this.engine.removeItem( sKey );
+      } else {
+        return false;
+      }
+    }
+  };
 }
 
 // is_empty()
@@ -774,6 +887,7 @@ function dialog( data ) {
   var opts = {
     title: data.title,
     text: data.text,
+    textTrusted: true,
     addClass: data.code,
     type: 'notice',
     icon: 'plt-question3',
@@ -834,7 +948,8 @@ $(document).ready(function() {
     if ( newSrcId != CURRENT_SOURCE_ID ) {
       PNotify.alert({
         title: localize_messages.switch_src_ttl,
-        text: localize_messages.switch_src_msg,
+        text: [ localize_messages.switch_src_msg, localize_messages.are_you_sure].join('<br>'),
+        textTrusted: true,
         addClass: '',
         type: 'notice',
         icon: 'plt-question3',
