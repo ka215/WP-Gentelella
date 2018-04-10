@@ -226,7 +226,7 @@ $(document).ready(function() {
         }
       }
     });
-logger.debug( stepDataKeys, postData, postData.length );
+    // logger.debug( stepDataKeys, postData, postData.length );
     if ( postData.length > 0 ) {
       showLoading();
       var addField = $('<input>', { type: 'hidden', name: 'step_data', value: JSON.stringify( postData ) });
@@ -246,10 +246,11 @@ logger.debug( stepDataKeys, postData, postData.length );
         'notify',
         true
       );
-      controlSubmission( 'unlock' );
+      //controlSubmission( 'unlock' );
     } else {
-      return false;
+      logger.debug( 'There are no changes to must be updated.' );
     }
+    controlSubmission( 'unlock' );
   });
   
   /*
@@ -276,7 +277,7 @@ logger.debug( stepDataKeys, postData, postData.length );
         }
       }
     });
-logger.debug( stepDataKeys, postData, postData.length );
+    // logger.debug( stepDataKeys, postData, postData.length );
     if ( postData.length > 0 ) {
       showLoading();
       var addField = $('<input>', { type: 'hidden', name: 'step_data', value: JSON.stringify( postData ) });
@@ -296,10 +297,11 @@ logger.debug( stepDataKeys, postData, postData.length );
         'notify',
         true
       );
-      controlSubmission( 'unlock' );
+      //controlSubmission( 'unlock' );
     } else {
-      return false;
+      logger.debug( 'There are no changes to must be updated.' );
     }
+    controlSubmission( 'unlock' );
   });
   
   /*
@@ -483,7 +485,7 @@ logger.debug( stepDataKeys, postData, postData.length );
     if ( wss.hasOwnProperty( hashKey ) ) {
       var storedData = wSQL.select( hashKey );
       for ( var prop in currentData ) {
-        logger.debug( prop, storedData[prop] !== currentData[prop], storedData[prop], currentData[prop] );
+        // logger.debug( prop, storedData[prop] !== currentData[prop], storedData[prop], currentData[prop] );
         diff = storedData[prop] !== currentData[prop];
         if ( diff ) { break; }
       }
