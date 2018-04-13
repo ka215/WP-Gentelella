@@ -91,7 +91,7 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
 <?php if ( $current_dependency != 0 && $current_group_id !== -1 ) : ?>
                         <div id="dependency-selector" class="">
                           <select id="act-dependency" name="new_dependency" class="form-control">
-                            <option value="">&#x2014; <?php _e('Change Dependency', WPGENT_DOMAIN ); ?> &#x2014;</option>
+                            <option value="<?= esc_attr( $current_dependency ) ?>" selected="selected">&#x2014; <?php _e('No change with leaving the dependency', WPGENT_DOMAIN ); ?> &#x2014;</option>
 <?php   foreach ( $current_structures as $_structure ) { 
           if ( $_parent_dependency == $_structure['dependency'] && $current_dependency != $_structure['id'] ) { ?>
                             <option value="<?= esc_attr( $_structure['id'] ) ?>"><?= esc_html( $_structure['name'] ) ?></option>
@@ -118,8 +118,8 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
                                 <ul class="step_meta">
                                   <li class="step_name"><?= esc_html( $_structure['name'] ) ?></li>
                                 </ul>
-<?php       if ( $_structure['turn'] > 1 ) : ?>
-                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="plt-cross2"></i></button>
+<?php       if ( $_structure['turn'] > 0 ) : ?>
+                                <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act<?php if ( $_structure['turn'] == 1 ) : ?> hide<?php endif; ?>" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>" data-target-id="<?= esc_attr( $_structure['id'] ) ?>"><i class="plt-cross2"></i></button>
 <?php       endif; ?>
                               </div>
                               <div class="step_relational wizard_vertical" style="z-index: <?= ( count( $current_structures ) - $_structure['turn'] + 10 ) ?>;">
@@ -190,7 +190,7 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
                             <input type="hidden" id="act-group-id" name="group_id" value="<?= esc_attr( $_first_view_structure['group_id'] ) ?>">
                             <input type="hidden" id="act-turn" name="turn" value="<?= esc_attr( $_first_view_structure['turn'] ) ?>">
                             <input type="hidden" id="act-diff" name="diff" value="false">
-                            <input type="hidden" id="act-hash" name="hash" value="<?= esc_attr( md5( $_first_view_structure['id'] ) ) ?>">
+                            <input type="hidden" id="act-hash" name="hash" value="<?php if ( ! empty( $_first_view_structure['id'] ) ) { echo esc_attr( md5( $_first_view_structure['id'] ) ); } ?>">
                             <div class="form-group">
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-name"><?php _e('Act Name', WPGENT_DOMAIN ); ?> <span class="required"></span>
                               </label>
@@ -202,11 +202,13 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
                               <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-turn"><?php _e('Previous Act', WPGENT_DOMAIN ); ?> <span class="required"></span>
                               </label>
                               <div class="col-md-6 col-sm-9 col-xs-12">
-                                <select id="act-turn" name="turn" required="required" class="form-control col-md-7 col-xs-12">
-                                  <option value="0" <?php selected( 0, $_first_view_structure['dependency'] ); ?>><?php _e( 'None', WPGENT_DOMAIN ) ?></option>
+                                <select id="change-turn" name="turn" required="required" class="form-control col-md-7 col-xs-12">
+                                  <option value="0" <?php selected( 1, $_first_view_structure['turn'] ); ?>><?php _e( 'None, the first act on dependency', WPGENT_DOMAIN ) ?></option>
 <?php foreach ( $current_structures as $_structure ) : 
-          if ( $_structure['dependency'] == $current_dependency ) : ?>
-                                  <option value="<?= esc_attr( $_structure['turn'] ) ?>" <?php selected( $_structure['id'], $_first_view_structure['id'] ); ?>><?= esc_html( $_structure['name'] ) ?></option>
+          if ( $_structure['dependency'] == $current_dependency && $_structure['group_id'] == $current_group_id ) : ?>
+                                  <option value="<?= esc_attr( $_structure['turn'] ) ?>"><?= esc_html( $_structure['name'] ) ?><?php if ( WP_DEBUG ) : 
+              printf( " (%d)", esc_html( $_structure['turn'] ) );
+              endif; ?></option>
 <?php     endif;
       endforeach; ?>
                                 </select>

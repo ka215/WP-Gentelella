@@ -38,8 +38,12 @@ $(document).ready(function() {
     e.preventDefault();
     var targetStep   = Number( $(this).parents('li').attr('data-step') ),
         hashKey      = $(this).parents('li').attr('data-hash'),
-        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
+        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
+        selectedStep;
     $wizardSteps.each(function(){
+      if ( $(this).find('.step_indicator').hasClass('selected') ) {
+        selectedStep = Number( $(this).attr( 'data-step' ) );
+      }
       if ( $(this).attr( 'data-hash' ) === hashKey ) {
         // Wizard上の表示を消す
         $(this).remove();
@@ -58,6 +62,12 @@ $(document).ready(function() {
     }
     // リナンバリング処理
     reorderSteps();
+    // アクティブなSTEPがない場合はフォーカスを初期化
+    if ( targetStep == selectedStep ) {
+      $($wizardSteps[0]).find('a.step_no').trigger('click').trigger('focus');
+    }
+    // Previous Act のセレクトボックスを更新
+    updatePrevAct();
   });
   
   /*
@@ -95,6 +105,8 @@ $(document).ready(function() {
     reorderSteps();
     // 新規追加ステップをフォーカス
     $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li[data-hash="'+ newHash +'"]').find('a.step_no').trigger('click');
+    // Previous Act のセレクトボックスを更新
+    updatePrevAct();
   });
   
   /*
@@ -109,24 +121,115 @@ $(document).ready(function() {
       saveStepData();
     }
     var newStep = $(this).parents('li').attr( 'data-step' ),
-        hashKey = $(this).parents('li').attr( 'data-hash' );
+        hashKey = $(this).parents('li').attr( 'data-hash' ),
+        previousStep = 0;
     if ( 'last' === newStep ) {
       return false;
     } else {
       newStep = Number( newStep );
     }
     $wizardSteps.find('.step_indicator').removeClass('selected');
-    $wizardSteps.each(function(){
+    $wizardSteps.each(function( i ){
       if ( newStep == Number( $(this).attr('data-step') ) ) {
         $(this).find('.step_indicator').addClass('selected');
+        previousStep = Number( $($wizardSteps[i - 1]).attr( 'data-step' ) ) || 0;
       }
     });
     $('#act-turn').val( newStep );
+    updatePrevAct( previousStep );
     if ( hashKey ) {
       // sessionStorageから対象ステップのフォームデータを取得する
       logger.debug( 'Selected Step: ', newStep, '; hash: ', hashKey );
       retriveStepData( hashKey );
     }
+  });
+  
+  /*
+   * Changed the Dependency (:> 依存関係の変更時
+   */
+  $(document).on('change', '#act-dependency', function(e){
+    // logger.debug( e.target, $(this).val(), gf.find('input[name="dependency"]').val() );
+    var newDependency = Number( $(this).val() );
+    if ( newDependency != Number( gf.find('input[name="dependency"]').val() ) ) {
+      gf.find('input[name="dependency"]').val( newDependency );
+      var stepDataKeys = getStoredKeys();
+      stepDataKeys.forEach(function( key ) {
+        if ( wss.hasOwnProperty( key ) ) {
+          var step_data = JSON.parse( wss.getItem( key ) );
+          if ( newDependency != step_data.dependency ) {
+            step_data.dependency = newDependency;
+            step_data.diff = true;
+            wSQL.update( key, step_data );
+          }
+        }
+      });
+    }
+  });
+  
+  /*
+   * Changed the Previous Act (:> Previous Act変更時
+   */
+  $(document).on('change', '#change-turn', function(e){
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps> li'),
+        nowStep      = null, // 順序を変更するSTEP（turn）
+        newPrevStep  = Number( $(this).val() ), // 新たな順序における直前STEP
+        currentSteps = [], // 現在の全STEP順
+        currentOrder = [], // 現在の全Order順
+        nowStepIndex = [],
+        afterIndex   = -1,
+        beforeIndex  = null;
+    $wizardSteps.each(function( i ){
+      if ( 'last' !== $(this).attr( 'data-step' ) ) {
+        var _step = Number( $(this).attr( 'data-step' ) );
+        currentSteps.push( _step );
+        currentOrder.push( Number( $(this).css( 'order' ) ) );
+        nowStepIndex.push( i );
+        if ( $(this).find('.step_indicator').hasClass('selected') ) {
+          nowStep = _step;
+          beforeIndex = i;
+        }
+        if ( newPrevStep == _step ) {
+          afterIndex = i;
+        }
+      }
+    });
+//console.log( currentSteps, currentOrder, nowStep, beforeIndex, afterIndex );
+    currentOrder[beforeIndex] = afterIndex < 0 ? 1 : currentOrder[afterIndex] + 1;
+    var sortOrder = currentOrder.slice();
+    sortOrder.sort(function( a, b ){ return a- b; });
+//console.log( sortOrder );
+    currentOrder.forEach(function( v, i ){
+      sortOrder.find(function( d, j ){ if ( d == v ) currentOrder[i] = nowStepIndex[j] });
+    });
+//console.log( currentSteps, currentOrder, sortOrder, nowStepIndex );
+    var newStepList = [];
+    $wizardSteps.each(function( i ){
+      var $tmpStep = $(this).clone();
+//console.log( $tmpStep, $tmpStep.attr('data-step') );
+      if ( 'last' !== $tmpStep.attr('data-step') ) {
+        //$tmpStep.attr( 'data-step', currentSteps[i] );
+        //$tmpStep.css( 'order', sortOrder[i] );
+        newStepList[currentOrder[i]] = $tmpStep;
+//console.log( i, currentOrder[i], $tmpStep.attr('data-hash'), currentSteps[i], $tmpStep.attr('data-step'), sortOrder[i], $tmpStep.css('order') );
+      } else {
+        newStepList[i]= $tmpStep;
+      }
+    });
+//console.log( newStepList );
+    $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps').html('');
+    newStepList.forEach(function( elm, i ){
+      $(elm[0]).attr( 'data-step', currentSteps[i] );
+      $(elm[0]).css( 'order', sortOrder[i] );
+      if ( i == 0 ) {
+        $(elm[0]).find('.btn-remove-act').addClass('hide');
+      } else {
+        $(elm[0]).find('.btn-remove-act').removeClass('hide');
+      }
+      $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps').append( elm[0].outerHTML );
+//console.log( elm,     elm[0].outerHTML);
+    });
+    reorderSteps();
+    updatePrevAct();
   });
   
   /*
@@ -319,6 +422,39 @@ $(document).ready(function() {
     }
   });
   
+  /*
+   *  (:> 画面内の各種キーイベントの制御
+   */
+  $(document).on( 'keydown', 'body', function(e){
+    var evt = e.originalEvent;
+    // Tabキーによるステップ変更
+    if ( evt.key === 'Tab' && evt.target.hash === '#act-form' ) {
+      // logger.debug( evt );
+      var currentStep = $(evt.target).parents('li'),
+          nextStep    = currentStep.next('li');
+      e.preventDefault();
+      if ( nextStep.attr('data-step') !== 'last' ) {
+        nextStep.find('a.step_no').trigger('click').trigger('focus');
+      } else {
+        $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps> li[data-step="1"]').find('a.step_no').trigger('click').trigger('focus');
+      }
+    }
+    // Enterキーによるフォーム変更
+    if ( ( evt.key === 'Enter' || evt.key === 'Tab' ) && $(evt.target).hasClass('form-control') ) {
+      // logger.debug( evt );
+      var availableFields = gf.find('.form-control'),
+          currentFieldId  = evt.target.id,
+          nextFieldIndex  = 0;
+      e.preventDefault();
+      availableFields.each(function( i ){
+        if ( $(this)[0].id === currentFieldId ) {
+          nextFieldIndex = i + 1 < availableFields.length ? i + 1 : 0;
+          return false;
+        }
+      });
+      $(availableFields[nextFieldIndex]).trigger('click').trigger('focus');
+    }
+  });
   
   
   // ----- 個別処理（関数）------------------------------------------------------------------------
@@ -343,37 +479,82 @@ $(document).ready(function() {
     }
   };
   
+  function defaultFocus() {
+    $('.step_indicator.selected> a').trigger( 'focus' );
+  }
+  
   /*
-   * reOrder Steps (:> STEPのorder番号をリナンバリング（正規化）する
+   * reOrder Steps (:> STEPのorder番号をリナンバリング（正規化）する（セッションストレージの対応データも更新する）
    */
   function reorderSteps() {
     var nowOrder     = [],
         optOrder     = [],
-        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
-    $wizardSteps.each(function(){
+        $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps> li');
+    $wizardSteps.each(function( i ){
       nowOrder.push( Number( $(this).css('order') ) );
-      optOrder.push( $(this).index() + 1 );
+      optOrder.push( i + 1 );
     });
     var sortOrder = nowOrder.slice();
     sortOrder.sort(function(a,b){ return a - b; });
-    nowOrder.forEach(function(v,i,m){
+    nowOrder.forEach(function(v,i){
       sortOrder.find(function(d,j){ if ( d == v ) nowOrder[i] = optOrder[j]; });
     });
-    $wizardSteps.each(function(){
+    $wizardSteps.each(function( i ){
       var hashKey      = $(this).data('hash'),
-          newStep      = nowOrder[$(this).index()],
-          newSortOrder = nowOrder[$(this).index()] * 10;
-      $(this).attr( 'data-step', newStep );
+          newStep      = nowOrder[i],
+          newSortOrder = nowOrder[i] * 10;
       $(this).css( 'order', newSortOrder );
       $(this).find('.step_indicator:not(.add_new) .step_no').text( newStep );
       if ( ! is_empty( hashKey ) ) {
+        $(this).attr( 'data-step', newStep );
         if ( wSQL.select( hashKey, 'turn' ) !== newStep ) {
-          wSQL.update( hashKey, { turn: newStep } );
+          wSQL.update( hashKey, { turn: newStep, diff: true } );
           //logger.debug( hashKey, wSQL.select( hashKey, 'turn' ), newStep );
         }
       }
     });
     //logger.debug( { 'newOrder': nowOrder, 'sortOrder': sortOrder } );
+  }
+  
+  /*
+   * Modify the select-box named "Previous Act" (:> Previous Actのセレクトボックスを更新する
+   */
+  function updatePrevAct( previousStep = null ) {
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps> li'),
+        $changeTurn  = $('#change-turn');
+    if ( ! previousStep ) {
+      // 現在のセレクトボックスを初期化
+      $changeTurn.children('option').each(function( i ){
+        var optValue = Number( $(this).val() );
+        if ( optValue == 0 ) {
+          return;
+        } else {
+          $(this).remove();
+        }
+      });
+      // セレクトボックスを再構築
+      $wizardSteps.each(function( i ){
+        var hashKey = $(this).attr( 'data-hash' );
+        if ( ! is_empty( hashKey ) ) {
+          var stepNum     = Number( $(this).attr( 'data-step' ) ),
+              newOption   = $('<option>', { value: stepNum }),
+              actName     = wSQL.select( hashKey, 'name' ) || $(this).find('.step_name').text(),
+              is_selected = $(this).find('.step_indicator').hasClass('selected');
+          newOption.text( actName );
+          $changeTurn.append( newOption[0].outerHTML );
+          if ( is_selected ) {
+            previousStep = Number( $($wizardSteps[i - 1]).attr( 'data-step' ) ) || 0;
+          }
+        }
+      });
+    }
+    // 選択状態を更新
+    $changeTurn.children('option').each(function(){
+      if ( previousStep == Number( $(this).val() ) ) {
+        $(this).prop('selected', true);
+        return false;
+      }
+    });
   }
   
   /*
@@ -430,12 +611,17 @@ $(document).ready(function() {
         .then( function( data, stat, self ){
           if ( 'success' === stat ) {
             data[0]['hash'] = hashKey;
-            // logger.debug( data[0] );
+            if ( Number( availableStep ) != data[0]['turn'] ) {
+              data[0]['turn'] = Number( availableStep );
+              data[0]['diff'] = true;
+            }
+            logger.debug( data[0] );
             saveStepData( data[0] );
             totalSteps--;
             if ( totalSteps < 1 && window.isLoading ) {
-              // PNotify.closeAll();
               hideLoading();
+              reorderSteps();
+              defaultFocus();
             }
           }
         });
@@ -452,6 +638,10 @@ $(document).ready(function() {
           'diff': true
         };
         saveStepData( data );
+        if ( $(this).index() == 0 && is_empty( gf.find('#act-hash').val() ) ) {
+          gf.find('#act-hash').val( hashKey );
+        }
+        defaultFocus();
       }
     });
   }
@@ -493,9 +683,10 @@ $(document).ready(function() {
     return diff;
   }
   
-  /*
+  /* 不要になった
+  / *
    *  (:> セッションストレージから指定ステップデータを削除
-   */
+   * /
   function removeStepData( hashKey ) {
     var rm_list = 'plt_rm_str';
     if ( wss.hasOwnProperty( hashKey ) ) {
@@ -515,9 +706,9 @@ $(document).ready(function() {
     }
   }
   
-  /*
+  / *
    *  (:> セッションストレージ内のキー名をリナンバリングする
-   */
+   * /
   function updateStepkeys( fromStep = 1 ) {
     var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
         stepDataSize = wss.length,
@@ -551,6 +742,7 @@ $(document).ready(function() {
       }
     });
   }
+  */
   
   /*
    *  (:> セッションストレージもしくはDBから指定ステップデータを取得してフォームにセット
@@ -625,8 +817,6 @@ $(document).ready(function() {
         'diff':         is_empty( data.diff ) ? false : data.diff,
       };
     }
-    // 'plt_str_' + step_data.turn
-    //wss.setItem( hashKey, JSON.stringify( step_data ) );
     wSQL.insert( hashKey, step_data );
   }
   
