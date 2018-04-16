@@ -131,11 +131,11 @@ if ( ! empty( $current_structures ) ) {
 
                       <div id="wizard-templates" class="hide">
                         <ul class="common-step-template">
-                          <li data-step="%N">
+                          <li data-step="%d">
                             <div class="step_indicator">
-                              <a href="javascript:;" class="step_no">%N</a>
+                              <a href="#act-form" class="step_no">%d</a>
                               <ul class="step_meta">
-                                <li class="step_name"><?php _e('Act', WPGENT_DOMAIN ); ?> %N</li>
+                                <li class="step_name"><?php _e('Act', WPGENT_DOMAIN ); ?> %d</li>
                               </ul>
                               <button type="button" class="btn btn-round btn-default btn-sm btn-remove-act hide" title="<?php _e('Remove Act', WPGENT_DOMAIN ); ?>">
                                 <i class="plt-cross2"></i>

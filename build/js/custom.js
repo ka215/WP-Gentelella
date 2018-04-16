@@ -823,6 +823,12 @@ var callbackAjax = {
           if ( is_empty( data.action ) ) {
             // 即時通知（レスポンスを受け取った直後に通知を表示）
             notify( data.title, data.text, data.type, data.code, data.addclass );
+            if ( window.isLoading ) {
+              hideLoading();
+            }
+            if ( typeof controlSubmission === 'function' ) {
+              controlSubmission( 'unlock' );
+            }
           } else
           if ( 'stack' === data.action ) {
             // セッションストレージに通知をスタック後、カレントページをリロードする

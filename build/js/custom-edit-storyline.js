@@ -12,6 +12,7 @@ $(document).ready(function() {
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
   clearSessionData();
+  resizeWizardSteps();
   
   // ----- Event handlers -------------------------------------------------------------------------
   
@@ -40,6 +41,10 @@ $(document).ready(function() {
         hashKey      = $(this).parents('li').attr('data-hash'),
         $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
         selectedStep;
+    if ( $wizardSteps.children('div.step_indicator.selected').length > 0 ) {
+      // 現在のフォームデータをsessionStorageに保存
+      saveStepData();
+    }
     $wizardSteps.each(function(){
       if ( $(this).find('.step_indicator').hasClass('selected') ) {
         selectedStep = Number( $(this).attr( 'data-step' ) );
@@ -51,7 +56,7 @@ $(document).ready(function() {
     });
     $wizardSteps.parent('ul').removeAttr('style');
     resizeWizardSteps();
-    logger.debug( 'Removed Step: ', targetStep, ' Hash: ', hashKey );
+    logger.debug( 'Removed Step: ', targetStep, '; Hash: ', hashKey );
     // セッションストレージのステップデータを更新／削除する
     if ( ! wSQL.select( hashKey, 'structure_id' ) ) {
       // structure_idを持たないデータは物理削除
@@ -62,9 +67,12 @@ $(document).ready(function() {
     }
     // リナンバリング処理
     reorderSteps();
-    // アクティブなSTEPがない場合はフォーカスを初期化
+    // STEPのフォーカス
     if ( targetStep == selectedStep ) {
-      $($wizardSteps[0]).find('a.step_no').trigger('click').trigger('focus');
+      // STEP削除後にアクティブなSTEPがなくなる場合はフォーカスを初期化
+      focusStep();
+    } else {
+      focusStep( hashKey );
     }
     // Previous Act のセレクトボックスを更新
     updatePrevAct();
@@ -75,20 +83,24 @@ $(document).ready(function() {
    */
   $(document).on('click', '.add_new a', function(e){
     e.preventDefault();
-    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
-        nowSteps     = $wizardSteps.length,
-        newHash      = makeHash( Date.now() ),
-        step_tmpl    = $('#wizard-templates ul.common-step-template li').clone();
+    var $wizardSteps  = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
+        nowSteps      = $wizardSteps.length,
+        newHash       = makeHash( Date.now() ),
+        step_tmpl     = $('#wizard-templates ul.common-step-template li').clone(),
+    　　last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
+    if ( $wizardSteps.children('div.step_indicator.selected').length > 0 ) {
+      // 現在のフォームデータをsessionStorageに保存
+      saveStepData();
+    }
     step_tmpl.find('button.btn-remove-act').removeClass('hide');
     step_tmpl.attr( 'data-hash', newHash );
     var newStep   = sprintf( step_tmpl[0].outerHTML, '', nowSteps, nowSteps * 10, nowSteps, nowSteps );
     $wizardSteps.filter(':last-child').remove();
     $wizardSteps.parent('.wizard_steps').append( $(newStep)[0].outerHTML );
-    var last_step_tmpl = $('#wizard-templates ul.last-step-template li').clone();
     last_step_tmpl = sprintf( $(last_step_tmpl)[0].outerHTML, (nowSteps + 1) * 10 );
     $wizardSteps.parent('.wizard_steps').append( $(last_step_tmpl)[0].outerHTML );
     logger.debug( 'Added Step: ', nowSteps, ' Hash: ', newHash );
-    resizeWizardSteps();
+    resizeWizardSteps( nowSteps );
     // 新規追加したステップデータをセッションストレージへ保存
     var newStepData = {
       'hash': newHash,
@@ -103,16 +115,16 @@ $(document).ready(function() {
     saveStepData( newStepData );
     // リナンバリング処理
     reorderSteps();
-    // 新規追加ステップをフォーカス
-    $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li[data-hash="'+ newHash +'"]').find('a.step_no').trigger('click');
     // Previous Act のセレクトボックスを更新
     updatePrevAct();
+    // 新規追加ステップをフォーカス（フォーカス前にフォームを更新しておかないとバグる！）
+    retriveStepData( newHash );
+    focusStep( newHash );
   });
   
   /*
    * Selected Step (:> Step選択時のイベント
    */
-  //$(document).on('click', '.step_indicator:not(.add_new) a', function(e){
   $(document).on('click', '.step_indicator a', function(e){
     e.preventDefault();
     var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
@@ -133,6 +145,7 @@ $(document).ready(function() {
       if ( newStep == Number( $(this).attr('data-step') ) ) {
         $(this).find('.step_indicator').addClass('selected');
         previousStep = Number( $($wizardSteps[i - 1]).attr( 'data-step' ) ) || 0;
+        return false;
       }
     });
     $('#act-turn').val( newStep );
@@ -142,6 +155,8 @@ $(document).ready(function() {
       logger.debug( 'Selected Step: ', newStep, '; hash: ', hashKey );
       retriveStepData( hashKey );
     }
+    // 表示位置調整
+    resizeWizardSteps( newStep );
   });
   
   /*
@@ -160,6 +175,7 @@ $(document).ready(function() {
             step_data.dependency = newDependency;
             step_data.diff = true;
             wSQL.update( key, step_data );
+            gf.find('#act-diff').val( 'true' );
           }
         }
       });
@@ -177,7 +193,8 @@ $(document).ready(function() {
         currentOrder = [], // 現在の全Order順
         nowStepIndex = [],
         afterIndex   = -1,
-        beforeIndex  = null;
+        beforeIndex  = null,
+        currentHash;
     $wizardSteps.each(function( i ){
       if ( 'last' !== $(this).attr( 'data-step' ) ) {
         var _step = Number( $(this).attr( 'data-step' ) );
@@ -187,6 +204,7 @@ $(document).ready(function() {
         if ( $(this).find('.step_indicator').hasClass('selected') ) {
           nowStep = _step;
           beforeIndex = i;
+          currentHash = $(this).attr('data-hash');
         }
         if ( newPrevStep == _step ) {
           afterIndex = i;
@@ -215,7 +233,7 @@ $(document).ready(function() {
         newStepList[i]= $tmpStep;
       }
     });
-//console.log( newStepList );
+    // STEP欄の再生成
     $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps').html('');
     newStepList.forEach(function( elm, i ){
       $(elm[0]).attr( 'data-step', currentSteps[i] );
@@ -226,10 +244,10 @@ $(document).ready(function() {
         $(elm[0]).find('.btn-remove-act').removeClass('hide');
       }
       $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps').append( elm[0].outerHTML );
-//console.log( elm,     elm[0].outerHTML);
     });
     reorderSteps();
     updatePrevAct();
+    retriveStepData( currentHash );
   });
   
   /*
@@ -269,7 +287,7 @@ $(document).ready(function() {
   });
   
   /*
-   * Clicked Remove (:> 削除ボタンクリック時のイベント
+   * Clicked Remove (:> 削除ボタンクリック時（dependency以下全削除）のイベント
    */
   // $(document).on('click', '#'+currentPermalink+'-btn-remove', function(e){
   $('#'+currentPermalink+'-btn-remove').on('click', function(e){
@@ -286,8 +304,9 @@ $(document).ready(function() {
       delete base_data.name;
       delete base_data.turn;
       delete base_data.diff;
+      // if ( ! debugPostData( base_data ) ) return false; /* ***** For debug, it shows summary on the console before posting data. ****** */
       var post_data = JSON.stringify( base_data );
-      logger.debug( value, base_data, post_data );
+      // logger.debug( value, base_data, post_data );
       controlSubmission();
       showLoading();
       callAjax(
@@ -340,6 +359,7 @@ $(document).ready(function() {
       });
       // ajaxでpost
       var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
+      if ( ! debugPostData( post_data ) ) return false; /* ***** For debug, it shows summary on the console before posting data. ****** */
       callAjax(
         '/'+currentPermalink+'/',
         'post',
@@ -380,7 +400,7 @@ $(document).ready(function() {
         }
       }
     });
-    // logger.debug( stepDataKeys, postData, postData.length );
+    if ( ! debugPostData( postData ) ) return false; /* ***** For debug, it shows summary on the console before posting data. ****** */
     if ( postData.length > 0 ) {
       showLoading();
       var addField = $('<input>', { type: 'hidden', name: 'step_data', value: JSON.stringify( postData ) });
@@ -427,25 +447,33 @@ $(document).ready(function() {
    */
   $(document).on( 'keydown', 'body', function(e){
     var evt = e.originalEvent;
-    // Tabキーによるステップ変更
-    if ( evt.key === 'Tab' && evt.target.hash === '#act-form' ) {
-      // logger.debug( evt );
-      var currentStep = $(evt.target).parents('li'),
-          nextStep    = currentStep.next('li');
+    // Tabキーによるステップのフォーカス変更(Shift+Tabで戻る)
+    if ( evt.key === 'Tab' ) {
       e.preventDefault();
-      if ( nextStep.attr('data-step') !== 'last' ) {
-        nextStep.find('a.step_no').trigger('click').trigger('focus');
+      var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps> li'),
+          allSteps     = $wizardSteps.length - 1, // 末尾STEPは除外
+          $currentStep, $prevStep, $nextStep;
+      $wizardSteps.each(function( i ){
+        if ( $(this).find('.step_indicator').hasClass('selected') ) {
+          $currentStep = $(this);
+          $prevStep    = i == 0 ? $($wizardSteps[(allSteps - 1)]) : $($wizardSteps[(i - 1)]);
+          $nextStep    = i < (allSteps - 1) ? $($wizardSteps[(i + 1)]) : $($wizardSteps[0]);
+        }
+      });
+      logger.debug( evt, $prevStep.attr('data-step'), $currentStep.attr('data-step'), $nextStep.attr('data-step') );
+      if ( evt.shiftKey ) {
+        $prevStep.find('a.step_no').trigger('click').trigger('focus');
       } else {
-        $('#wizard.wizard_horizontal> .wizard_steps_container> .wizard_steps> li[data-step="1"]').find('a.step_no').trigger('click').trigger('focus');
+        $nextStep.find('a.step_no').trigger('click').trigger('focus');
       }
     }
-    // Enterキーによるフォーム変更
-    if ( ( evt.key === 'Enter' || evt.key === 'Tab' ) && $(evt.target).hasClass('form-control') ) {
-      // logger.debug( evt );
+    // Enterキーによるフォームのフォーカス変更
+    if ( evt.key === 'Enter' ) {
+      e.preventDefault();
       var availableFields = gf.find('.form-control'),
           currentFieldId  = evt.target.id,
           nextFieldIndex  = 0;
-      e.preventDefault();
+      logger.debug( evt, availableFields, currentFieldId );
       availableFields.each(function( i ){
         if ( $(this)[0].id === currentFieldId ) {
           nextFieldIndex = i + 1 < availableFields.length ? i + 1 : 0;
@@ -454,6 +482,13 @@ $(document).ready(function() {
       });
       $(availableFields[nextFieldIndex]).trigger('click').trigger('focus');
     }
+  });
+  
+  /*
+   * Fire on resize window (:> ウィンドウリサイズ時のイベント
+   */
+  $(window).resize(function(){
+    resizeWizardSteps();
   });
   
   
@@ -479,12 +514,24 @@ $(document).ready(function() {
     }
   };
   
-  function defaultFocus() {
-    $('.step_indicator.selected> a').trigger( 'focus' );
+  /*
+   * On focus step (:> STEPのフォーカス
+   */
+  function focusStep( stepHash=null ) {
+    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li');
+    if ( is_empty( stepHash ) ) {
+      if ( $wizardSteps.find('.step_indicator.selected').length == 0 ) {
+        $($wizardSteps[0]).find('a.step_no').trigger('click');
+      } else {
+        $('.step_indicator.selected> a').trigger( 'focus' );
+      }
+    } else {
+      $wizardSteps.filter('[data-hash="'+ stepHash +'"]').find('a.step_no').trigger('click');
+    }
   }
   
   /*
-   * reOrder Steps (:> STEPのorder番号をリナンバリング（正規化）する（セッションストレージの対応データも更新する）
+   * reOrder Steps (:> STEPのorder番号をリナンバリング（正規化）する
    */
   function reorderSteps() {
     var nowOrder     = [],
@@ -500,20 +547,24 @@ $(document).ready(function() {
       sortOrder.find(function(d,j){ if ( d == v ) nowOrder[i] = optOrder[j]; });
     });
     $wizardSteps.each(function( i ){
-      var hashKey      = $(this).data('hash'),
+      var hashKey      = $(this).attr( 'data-hash' ),
+          currentStep  = $(this).attr( 'data-step' ),
           newStep      = nowOrder[i],
           newSortOrder = nowOrder[i] * 10;
       $(this).css( 'order', newSortOrder );
-      $(this).find('.step_indicator:not(.add_new) .step_no').text( newStep );
-      if ( ! is_empty( hashKey ) ) {
+      // $(this).find('.step_indicator:not(.add_new) .step_no').text( newStep );
+      if ( 'last' !== currentStep ) {
         $(this).attr( 'data-step', newStep );
-        if ( wSQL.select( hashKey, 'turn' ) !== newStep ) {
-          wSQL.update( hashKey, { turn: newStep, diff: true } );
-          //logger.debug( hashKey, wSQL.select( hashKey, 'turn' ), newStep );
+        $(this).find( '.step_no' ).text( newStep );
+        if ( wss.hasOwnProperty( hashKey ) ) {
+          var beforeTurn = wSQL.select( hashKey, 'turn' );
+          if ( beforeTurn != newStep ) {
+            wSQL.update( hashKey, { turn: newStep, diff: true } );
+          }
         }
       }
     });
-    //logger.debug( { 'newOrder': nowOrder, 'sortOrder': sortOrder } );
+    logger.debug( { 'newOrder': nowOrder, 'sortOrder': sortOrder } );
   }
   
   /*
@@ -558,28 +609,29 @@ $(document).ready(function() {
   }
   
   /*
-   * Resize Wizard Steps (:> 
+   * Resize Wizard Steps (:> STEP表示欄のリサイズと調整
    */
-  function resizeWizardSteps() {
-    var $wizardStep = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps'),
-        wizard_steps_container_width = $wizardStep.parent().width(),
-        wizard_steps_width = Math.ceil( $wizardStep.width() ),
-        error_width = Math.ceil( wizard_steps_width / ( (window.innerWidth) ? window.innerWidth : document.body.clientWidth ) * 2 ),
-        wizard_steps_scrollwidth = Math.ceil( $wizardStep[0].scrollWidth ),
-        nowSteps    = $wizardStep.children('li').length,
-        step_width  = $wizardStep.children('li').width(),
-        expected_width = Math.ceil( nowSteps * step_width );
-    //if ( wizard_steps_width + error_width < wizard_steps_scrollwidth || wizard_steps_width + error_width < expected_width ) {
-    if ( wizard_steps_container_width + error_width < wizard_steps_scrollwidth || wizard_steps_container_width + error_width < expected_width ) {
-      logger.debug( 'onScroll', wizard_steps_container_width, wizard_steps_width, wizard_steps_scrollwidth, expected_width, error_width );
-      $('#act-form').addClass('off-mask');
-      $wizardStep.width( expected_width );
+  function resizeWizardSteps( adjustStep=null ) {
+    var $wizardSteps       = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps'),
+        ws_containerWidth  = $wizardSteps.parent().outerWidth(), // STEP欄のコンテナ表示幅 (overflow-x指定)
+        gapWidth           = parseInt( $('#wizard').css('margin-left') ) + parseInt( $('#wizard').css('margin-right') ), // 許容する余白幅
+        steps              = $wizardSteps.children('li').length, // STEP欄のSTEP総数
+        stepWidth          = $wizardSteps.children('li').outerWidth(), // 単一STEPの横幅
+        ws_scrollWidth     = $wizardSteps[0].scrollWidth, // STEP欄の実際の横幅 (= step * stepWidth)
+        adjustStep         = is_empty( adjustStep ) ? 0 : adjustStep - 1,
+        adjustLeft         = 0;
+    // logger.debug( ws_containerWidth, gapWidth, ws_scrollWidth, steps, stepWidth, adjustStep );
+    if ( ws_containerWidth + gapWidth < ws_scrollWidth ) {
+      // STEP欄の実際の横幅 > STEP欄の表示幅 の場合:
+      $('#act-form').addClass('off-mask'); // スクロールバーを表示
+      if ( adjustStep < steps ) {
+        adjustLeft = stepWidth * adjustStep;
+      }
     } else {
-      logger.debug( 'offScroll', wizard_steps_container_width, wizard_steps_width, wizard_steps_scrollwidth, expected_width, error_width );
-      $('#act-form').removeClass('off-mask');
-      $wizardStep.width( '100%' );
+      // STEP欄の実際の横幅 <= STEP欄の表示幅 の場合:
+      $('#act-form').removeClass('off-mask'); // スクロールバーを非表示
     }
-    $wizardStep.parent().scrollLeft( expected_width - wizard_steps_container_width );
+    $wizardSteps.parent().scrollLeft( adjustLeft );
   }
   
   
@@ -621,7 +673,7 @@ $(document).ready(function() {
             if ( totalSteps < 1 && window.isLoading ) {
               hideLoading();
               reorderSteps();
-              defaultFocus();
+              focusStep();
             }
           }
         });
@@ -641,13 +693,13 @@ $(document).ready(function() {
         if ( $(this).index() == 0 && is_empty( gf.find('#act-hash').val() ) ) {
           gf.find('#act-hash').val( hashKey );
         }
-        defaultFocus();
+        focusStep();
       }
     });
   }
   
   /*
-   *   (:> セッションストレージ内の全データのキー名を配列として取得する
+   * Retrive all keys as array on session storage (:> セッションストレージ内の全データのキー名を配列として取得する
    */
   function getStoredKeys() {
     var keys = [];
@@ -682,67 +734,6 @@ $(document).ready(function() {
     }
     return diff;
   }
-  
-  /* 不要になった
-  / *
-   *  (:> セッションストレージから指定ステップデータを削除
-   * /
-  function removeStepData( hashKey ) {
-    var rm_list = 'plt_rm_str';
-    if ( wss.hasOwnProperty( hashKey ) ) {
-      var structureId = wSQL.select( hashKey, 'structure_id' );
-      if ( ! is_empty( structureId ) ) {
-        // StructureIdを持つステップデータの削除は、削除リストに追加する:
-        var remove_steps;
-        if ( wss.hasOwnProperty( rm_list ) ) {
-          remove_steps = JSON.parse( wss.getItem( rm_list ) );
-          remove_steps.push( structureId );
-        } else {
-          remove_steps = [ structureId ];
-        }
-        wss.setItem( rm_list, JSON.stringify( remove_steps ) );
-      }
-      wss.removeItem( hashKey );
-    }
-  }
-  
-  / *
-   *  (:> セッションストレージ内のキー名をリナンバリングする
-   * /
-  function updateStepkeys( fromStep = 1 ) {
-    var $wizardSteps = $('#wizard.wizard_horizontal> .wizard_steps_container> ul.wizard_steps> li'),
-        stepDataSize = wss.length,
-        stepDataKeys = [],
-        renumber     = fromStep;
-    for ( var i = 0; i < stepDataSize; i++ ) {
-      var key_str = wss.key( i );
-      if ( /^plt_str_\d{1,}/.test( key_str ) ) {
-        stepDataKeys.push( key_str );
-      }
-    }
-    $wizardSteps.each(function() {
-      var currentStep = Number( $(this).attr( 'data-step' ) ),
-          structureId = Number( $(this).data( 'structureId' ) ),
-          checkHash   = is_empty( $(this).data( 'hash' ) ) ? '' : $(this).data( 'hash' ),
-          checkKey    = 'plt_str_' + currentStep;
-      if ( currentStep >= fromStep ) {
-        logger.debug( currentStep, structureId, checkHash, checkKey );
-        if ( ! is_empty( checkHash ) ) {
-          $.each( stepDataKeys, function( _i, _key ) {
-            var stepData = JSON.parse( wss.getItem( _key ) );
-            if ( checkHash === stepData.hash ) {
-              if ( checkKey !== _key ) {
-                wss.setItem( checkKey, JSON.stringify( stepData ) );
-              }
-            }
-          });
-        } else {
-          wss.removeItem( checkKey );
-        }
-      }
-    });
-  }
-  */
   
   /*
    *  (:> セッションストレージもしくはDBから指定ステップデータを取得してフォームにセット
@@ -795,7 +786,11 @@ $(document).ready(function() {
     var step_data = {};
     if ( is_empty( data ) ) {
       var structureId = is_empty( gf.find('#act-structure-id').val() ) ? '' : Number( gf.find('#act-structure-id').val() ),
-          hashKey     = gf.find('#act-hash').val();
+          hashKey     = gf.find('#act-hash').val(),
+          diff        = gf.find('#act-diff').val() === 'false' ? checkDiffStep( hashKey ) : true;
+      if ( is_empty( structureId ) ) {
+        diff = true;
+      }
       step_data = {
         'structure_id': structureId,
         'dependency':   Number( gf.find('input[name="dependency"]').val() ),
@@ -803,7 +798,7 @@ $(document).ready(function() {
         'turn':         Number( gf.find('#act-turn').val() ),
         'name':         gf.find('#act-name').val(),
         'context':      gf.find('#act-context').val(),
-        'diff':         gf.find('#act-diff').val() === 'false' ? checkDiffStep( hashKey ) : true,
+        'diff':         diff,
       };
     } else {
       var hashKey = is_empty( data.hash ) ? makeHash( data.id ) : data.hash;
@@ -818,6 +813,29 @@ $(document).ready(function() {
       };
     }
     wSQL.insert( hashKey, step_data );
+  }
+  
+  
+  /*
+   * Code for debugging (:> デバッグ用コード
+   */
+  function debugPostData( postdata ) {
+    var is_thru_after = true; // その後の処理を止めたい場合はfalseを指定する
+    if ( Object.prototype.toString.call( postdata ) !== '[object Array]' ) {
+      return is_thru_after;
+    }
+    postdata.forEach(function( v, i ){
+      if ( is_empty( v.structure_id ) ) {
+        console.log( sprintf( 'STEP: %d "%s" will insert.', v.turn, v.name ) );
+      } else
+      if ( v.turn < 0 ) {
+        console.log( sprintf( 'STEP: %d "%s" (ID: %d) will remove.', v.turn, v.name, v.structure_id ) );
+      } else
+      if ( v.diff ) {
+        console.log( sprintf( 'STEP: %d "%s" (ID: %d) will update.', v.turn, v.name, v.structure_id ) );
+      }
+    });
+    return is_thru_after;
   }
   
   
