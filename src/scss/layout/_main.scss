@@ -11,3 +11,21 @@ body .container.body .right_col {
 .nav-md.full-span .container.body .right_col {
   margin-left: 0;
 }
+
+/* register, signin, profile etc. */
+.account-notice, .profile-notice {
+  display: none; /* for pnotify */
+}
+#pwd-strength-notice {
+  position: relative;
+  vertical-align: middle;
+}
+#pwd-strength-notice .label {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  top: .5em;
+  padding-top: .75em;
+  padding-bottom: .75em;
+}
+

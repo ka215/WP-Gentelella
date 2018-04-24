@@ -44,7 +44,7 @@ $current_user = wp_get_current_user();
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <?php echo get_avatar( $current_user->ID, 96, '', $current_user->display_name, [ 'extra_attr' => 'no-classes' ] ); ?>
+                    <?php echo get_avatar( $current_user->ID, 32, '', $current_user->display_name, [ 'extra_attr' => 'no-classes' ] ); ?>
                     <?= $current_user->display_name; ?>
                     <span class="plt-dots" _old="plt-circle-down"></span>
                   </a>

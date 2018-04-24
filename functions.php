@@ -218,13 +218,13 @@ add_action( 'wp_enqueue_scripts', function() {
   wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
   
   // PNotify:
-  wp_register_script( 'pnotify', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotify.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotify.js' ) ), true );
-  wp_register_script( 'pnotify-animate', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyAnimate.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyAnimate.js' ) ), true );
-  wp_register_script( 'pnotify-buttons', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyButtons.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyButtons.js' ) ), true );
-  wp_register_script( 'pnotify-confirm', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyConfirm.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyConfirm.js' ) ), true );
-  wp_register_script( 'pnotify-desktop', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyDesktop.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyDesktop.js' ) ), true );
-  wp_register_script( 'pnotify-history', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyHistory.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyHistory.js' ) ), true );
-  wp_register_script( 'pnotify-mobile', WPGENT_DIR . 'node_modules/pnotify/dist/iife/PNotifyMobile.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyMobile.js' ) ), true );
+  wp_register_script( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotify.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotify.js' ) ), true );
+  wp_register_script( 'pnotify-animate', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyAnimate.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyAnimate.js' ) ), true );
+  wp_register_script( 'pnotify-buttons', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyButtons.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyButtons.js' ) ), true );
+  wp_register_script( 'pnotify-confirm', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyConfirm.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyConfirm.js' ) ), true );
+  wp_register_script( 'pnotify-desktop', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyDesktop.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyDesktop.js' ) ), true );
+  wp_register_script( 'pnotify-history', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyHistory.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyHistory.js' ) ), true );
+  wp_register_script( 'pnotify-mobile', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyMobile.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyMobile.js' ) ), true );
   
   // vendoers scripts:
   $vendor_scripts = [
@@ -541,7 +541,7 @@ add_filter( 'tml_template_paths', function( $args ) {
 
 /**
  * Custom avatar html for plotter
- */
+ * /
 add_filter( 'get_avatar', function( $avatar, $id_or_email, $size, $default, $alt, $args ) {
   // var_dump( esc_html( $avatar ), $id_or_email, $size, $default, $alt, $args );
   if ( ! empty( $args['extra_attr'] ) && 'no-classes' === $args['extra_attr'] ) {
@@ -549,7 +549,7 @@ add_filter( 'get_avatar', function( $avatar, $id_or_email, $size, $default, $alt
   }
   return $avatar;
 }, PHP_INT_MAX, 6 );
-
+*/
 
 /**
  * debug_code

@@ -137,6 +137,7 @@
   display: inline-block;
   float: right;
   position: static;
+  height: 50px;
 }
 .top_nav .navbar-right a.info-number {
   margin-top: 5px;
@@ -145,7 +146,13 @@
   font-size: 18px;
 }
 .top_nav .navbar-right a.user-profile {
+  padding-top: 18px;
   padding-right: 18px;
+  height: 100%;
+  
+  img.avatar {
+    top: -6px;
+  }
 }
 .user-profile> span.plt-dots {
   position: absolute;

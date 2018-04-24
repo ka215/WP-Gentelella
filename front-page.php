@@ -19,7 +19,7 @@ get_header();
   
   <ul>
     <li><a href="<?= wp_login_url(); ?>" title="<?php _e( 'Sign In', WPGENT_DOMAIN ); ?>"><?php _e( 'Sign In', WPGENT_DOMAIN ); ?></a></li>
-    <li><a href="<?= wp_login_url(); /* wp_registration_url(); */ ?>#signup" title="<?php _e( 'Create Account', WPGENT_DOMAIN ); ?>"><?php _e( 'Create Account', WPGENT_DOMAIN ); ?></a></li>
+    <li><a href="<?= wp_registration_url(); ?>" title="<?php _e( 'Create Account', WPGENT_DOMAIN ); ?>"><?php _e( 'Create Account', WPGENT_DOMAIN ); ?></a></li>
   </ul>
 </div>
 
