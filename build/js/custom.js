@@ -96,7 +96,7 @@ var docCookies = {
     if (!sKey || !this.hasItem(sKey)) { return null; }
     return unescape(document.cookie.replace(new RegExp("(?:^|.*;\\s*)" + escape(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*((?:[^;](?!;))*[^;]?).*"), "$1"));
   },
-  setItem: function (sKey, sValue, vEnd, sPath, sDomain, bSecure) {
+  setItem: function (sKey, sValue, vEnd, sPath, sDomain="plotter.me", bSecure="1") {
     if (!sKey || /^(?:expires|max\-age|path|domain|secure)$/i.test(sKey)) { return; }
     var sExpires = "";
     if (vEnd) {
@@ -187,11 +187,11 @@ $(document).ready(function() {
         if ($BODY.hasClass('nav-md')) {
             $SIDEBAR_MENU.find('li.active ul').hide();
             $SIDEBAR_MENU.find('li.active').addClass('active-sm').removeClass('active');
-            docCookies.setItem('current_sidebar', 'small', 60*60*24*30, '/');
+            docCookies.setItem('current_sidebar', 'small', 60*60*24*30, '/', 'plotter.me', 1);
         } else {
             $SIDEBAR_MENU.find('li.active-sm ul').show();
             $SIDEBAR_MENU.find('li.active-sm').addClass('active').removeClass('active-sm');
-            docCookies.setItem('current_sidebar', 'large', 60*60*24*30, '/');
+            docCookies.setItem('current_sidebar', 'large', 60*60*24*30, '/', 'plotter.me', 1);
         }
 
         $BODY.toggleClass('nav-md nav-sm');
@@ -1012,7 +1012,7 @@ $(document).ready(function() {
               click: (notice, value) => {
                 notice.close();
                 // notice.fire('pnotify.confirm', {notice, value});
-                docCookies.setItem( 'lastSource', newSrcId, 60*60*24*30, '/' );
+                docCookies.setItem( 'lastSource', newSrcId, 60*60*24*30, '/', 'plotter.me', 1);
                 if ( docCookies.hasItem( 'dependency' ) ) {
                   docCookies.removeItem( 'dependency', '/' );
                 }
@@ -1050,7 +1050,22 @@ $(document).ready(function() {
       });
     }
   });
-  
+
+  /**
+   * Return as an object by parsing the query string of the current URL
+   */
+  $.QueryString = (function(queries) {
+    if ('' === queries) { return {}; }
+    var results = {};
+    for (var i=0; i<queries.length; ++i) {
+      var param = queries[i].split('=');
+      if (param.length !== 2) { continue; }
+      results[param[0]] = decodeURIComponent(param[1].replace(/\+/g, ' '));
+    }
+    return results;
+  })(window.location.search.substr(1).split('&'));
+
+
 });
 
 // Lock & Unlock the submission buttons (:> 送信ボタンをロックまたはロック解除する

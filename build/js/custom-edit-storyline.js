@@ -260,8 +260,8 @@ $(document).ready(function() {
     dialogOpts.text  = [ localize_messages.move_cross_dependency_msg, localize_messages.are_you_sure ].join('<br>');
     dialogOpts.modules.Confirm.buttons[0].click = (notice, value) => {
       notice.close();
-      docCookies.setItem( 'dependency', strAtts.dependency, 60*60*24*30, '/' );
-      docCookies.setItem( 'group_id', strAtts.groupId, 60*60*24*30, '/' );
+      docCookies.setItem( 'dependency', strAtts.dependency, 60*60*24*30, '/', 'plotter.me', 1 );
+      docCookies.setItem( 'group_id', strAtts.groupId, 60*60*24*30, '/', 'plotter.me', 1 );
       showLoading();
       location.reload(false);
     };
@@ -278,8 +278,8 @@ $(document).ready(function() {
     dialogOpts.text  = [ localize_messages.move_cross_dependency_msg, localize_messages.are_you_sure ].join('<br>');
     dialogOpts.modules.Confirm.buttons[0].click = (notice, value) => {
       notice.close();
-      docCookies.setItem( 'dependency', strAtts.parentStructureId, 60*60*24*30, '/' );
-      docCookies.setItem( 'group_id', '-1', 60*60*24*30, '/' );
+      docCookies.setItem( 'dependency', strAtts.parentStructureId, 60*60*24*30, '/', 'plotter.me', 1 );
+      docCookies.setItem( 'group_id', '-1', 60*60*24*30, '/', 'plotter.me', 1 );
       showLoading();
       location.reload(false);
     };

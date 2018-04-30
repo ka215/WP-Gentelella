@@ -10,25 +10,30 @@
 if ( ! is_active_sidebar( 'side-menu' ) ) {
   return;
 } else {
-  $_plotter = get_query_var( 'plotter' );
-  // $_datamodel = __ctl( 'model' );
+  $_plotter            = get_query_var( 'plotter' );
+  $now_page            = $_plotter['page_name'];
+  $current_user_id     = $_plotter['current_user_id'];
+  $user_sources        = $_plotter['user_sources'];
+  $current_source_id   = $_plotter['current_source_id'];
+  $current_source_name = $_plotter['current_source_name'];
+  $has_current_structures = $_plotter['has_current_structures'];
 }
 ?>
 
         <div class="col-md-3 left_col">
           <div class="left_col scroll-view">
             <div class="navbar nav_title" style="border: 0;">
-              <a href="/dashboard/" class="site_title"><i class="plt-quill3"></i> <span><?php _e('Plotter', WPGENT_DOMAIN) ?></span></a>
+              <a href="/dashboard/" class="site_title"><i class="plt-quill3"></i> <span><?= __( 'Plotter', WPGENT_DOMAIN ) ?></span></a>
             </div>
 
-<?php if ( SIDEBAR_SEARCH && ! empty( $_plotter['user_sources'] ) ) : ?>
+<?php if ( SIDEBAR_SEARCH && ! empty( $user_sources ) ) : ?>
             <div class="clearfix"></div>
 
             <div class="main_menu_side hidden-print hidden-small">
               <div id="search-section" class="menu_section">
                 <div class="form-group top_search">
                   <div class="input-group">
-                    <input type="text" class="form-control" placeholder="<?php _e('Search for...', WPGENT_DOMAIN) ?>">
+                    <input type="text" class="form-control" placeholder="<?= __( 'Search for...', WPGENT_DOMAIN ) ?>">
                     <span class="input-group-btn">
                       <button class="btn btn-default" type="button"><i class="plt-search3"></i></button>
                     </span>
@@ -42,23 +47,23 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
 
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div id="section-1" class="menu_section">
-                <h3><?php _e('Structures', WPGENT_DOMAIN) ?></h3>
+                <h3><?= __( 'Structures', WPGENT_DOMAIN ) ?></h3>
                 <ul class="nav side-menu">
                   <li><a href="/whole-story/">
-                    <i class="plt-earth3"></i> <?php _e('Whole Story', WPGENT_DOMAIN) ?>
+                    <i class="plt-earth3"></i> <?= __( 'Whole Story', WPGENT_DOMAIN ) ?>
                   </a></li>
-<?php if ( ! empty( $_plotter['user_sources'] ) ) : ?>
-                  <li><a href="/<?php if ( ! empty( $_plotter['current_structures'] ) ) : ?>edit-storyline<?php else : ?>create-new<?php endif; ?>/">
+<?php if ( ! empty( $user_sources ) ) : ?>
+                  <li><a href="/<?php if ( $has_current_structures ) : ?>edit-storyline<?php else : ?>create-new<?php endif; ?>/">
                     <i class="plt-tree7"></i> <?php _e('Storyline', WPGENT_DOMAIN) ?>
                   </a></li>
                   <li><a href="#">
                     <i class="plt-puzzle4"></i> <?php _e('Scene', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
-<?php     if ( ! empty( $_plotter['current_sequences'] ) ) : ?>
+<?php     if ( isset( $_plotter['current_sequences'] ) ) : ?>
                       <li><a href="/edit-sequence/"><?php _e('All Sequences', WPGENT_DOMAIN) ?></a></li>
 <?php     endif; ?>
                       <li><a href="/add-sequence/"><?php _e('Add Sequence', WPGENT_DOMAIN) ?></a></li>
-<?php     if ( ! empty( $_plotter['current_scenes'] ) ) : ?>
+<?php     if ( isset( $_plotter['current_scenes'] ) ) : ?>
                       <li><a href="/edit-scene/"><?php _e('All Scenes', WPGENT_DOMAIN) ?></a></li>
 <?php     endif; ?>
                       <li><a href="/add-scene/"><?php _e('Add Scene', WPGENT_DOMAIN) ?></a></li>
@@ -67,14 +72,14 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
 <?php endif; ?>
                 </ul>
               </div>
-<?php if ( ! empty( $_plotter['user_sources'] ) ) : ?>
+<?php if ( ! empty( $user_sources ) ) : ?>
               <!-- /#section-1 -->
               <div id="section-2" class="menu_section">
                 <h3><?php _e('Journals', WPGENT_DOMAIN) ?></h3>
                 <ul class="nav side-menu">
                   <li><a><i class="plt-stack-user"></i> <?php _e('Characters', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
-<?php     if ( ! empty( $_plotter['current_journals'] ) ) : ?>
+<?php     if ( isset( $_plotter['current_journals'] ) ) : ?>
                       <li><a href="/edit-char/"><?php _e('Character List', WPGENT_DOMAIN) ?></a></li>
 <?php     endif; ?>
                       <li><a href="/add-char/"><?php _e('Add Character', WPGENT_DOMAIN) ?></a></li>
@@ -83,7 +88,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                   </li>
                   <li><a><i class="plt-stack-text"></i> <?php _e('Terms', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
-<?php     if ( ! empty( $_plotter['current_journals'] ) ) : ?>
+<?php     if ( isset( $_plotter['current_journals'] ) ) : ?>
                       <li><a href="/edit-term/"><?php _e('Term List', WPGENT_DOMAIN) ?></a></li>
 <?php     endif; ?>
                       <li><a href="/add-term/"><?php _e('Add Term', WPGENT_DOMAIN) ?></a></li>
@@ -91,7 +96,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                   </li>
                   <li><a><i class="plt-stack-star"></i> <?php _e('Objects', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
-<?php     if ( ! empty( $_plotter['current_journals'] ) ) : ?>
+<?php     if ( isset( $_plotter['current_journals'] ) ) : ?>
                       <li><a href="/edit-object/"><?php _e('Object List', WPGENT_DOMAIN) ?></a></li>
 <?php     endif; ?>
                       <li><a href="/add-object/"><?php _e('Add Object', WPGENT_DOMAIN) ?></a></li>
@@ -99,7 +104,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
                   </li>
                   <li><a><i class="plt-stack-picture"></i> <?php _e('Image Gallery', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
-<?php     if ( ! empty( $_plotter['current_journals'] ) ) : ?>
+<?php     if ( isset( $_plotter['current_journals'] ) ) : ?>
                       <li><a href="/edit-image/"><?php _e('Image List', WPGENT_DOMAIN) ?></a></li>
 <?php     endif; ?>
                       <li><a href="/add-image/"><?php _e('Add Image', WPGENT_DOMAIN) ?></a></li>

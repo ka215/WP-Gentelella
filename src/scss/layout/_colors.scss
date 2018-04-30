@@ -1,0 +1,105 @@
+/* color styles definition */
+/* text color variations */
+.blue { 
+  color: $blue;
+}
+.purple {
+  color: $purple;
+}
+.green {
+  color: $green;
+}
+.aero {
+  color: $aero;
+}
+.red {
+  color: $red;
+}
+.orange {
+  color: $orange;
+}
+.dark {
+  color: $dark;
+}
+.gray {
+  color: $gray;
+}
+.white {
+  color: $white;
+}
+
+/* border color variations */
+.border-blue {
+  border-color: $blue !important;
+}
+.border-purple {
+  border-color: $purple !important;
+}
+.border-green {
+  border-color: $green !important;
+}
+.border-aero {
+  border-color: $aero !important;
+}
+.border-red {
+  border-color: $red !important;
+}
+.border-orange {
+  border-color: $orange !important;
+}
+.border-dark {
+  border-color: $dark !important;
+}
+.border-gray {
+  border-color: $gray !important;
+}
+.border-white {
+  border-color: $white !important;
+}
+
+/* background color variations */
+.bg-blue {
+  background-color: $blue !important;
+  /* border: 1px solid $blue !important; */
+  color: $text_on_blue;
+}
+.bg-purple {
+  background-color: $purple !important;
+  /* border: 1px solid $purple !important; */
+  color: $text_on_purple;
+}
+.bg-green {
+  background-color: $green !important;
+  /* border: 1px solid $green !important; */
+  color: $text_on_green;
+}
+.bg-aero {
+  background-color: $aero !important;
+  /* border: 1px solid $aero !important; */
+  color: $text_on_blue;
+}
+.bg-red {
+  background-color: $red !important;
+  /* border: 1px solid $red !important; */
+  color: $text_on_red;
+}
+.bg-orange {
+  background-color: $orange !important;
+  /* border: 1px solid $orange !important; */
+  color: $text_on_orange;
+}
+.bg-gray {
+  background-color: $gray !important;
+  /* border: 1px solid $gray !important; */
+  color: $text_on_white;
+}
+.bg-white {
+  background-color: $white !important;
+  /* border: 1px solid $white !important; */
+  color: $text_on_white;
+}
+.bg-blue-sky {
+  background-color: $blue_sky !important;
+  /* border: 1px solid $blue_sky !important; */
+  color: $text_on_bluesky;
+}

@@ -10,6 +10,7 @@ $(document).ready(function() {
   SUBMIT_BUTTONS       = [ 'signin' ];
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
+  initHistory();
   checkNotify();
   
   // ----- Event handlers -------------------------------------------------------------------------
@@ -32,6 +33,16 @@ $(document).ready(function() {
   
   
   // ----- 個別処理（関数）------------------------------------------------------------------------
+  
+  /*
+   * Replace a history state in browser after logged out (:> サインアウト後はブラウザ履歴ステータスを置き換える
+   * ※ ?redirect_to=~ クエリによるリロード時の再通知表示を抑止するため
+   */
+  function initHistory() {
+    if ( 'signed_out' === history.state || '1' === $.QueryString.reauth ) {
+      history.replaceState( 'signed_out', '', location.pathname );
+    }
+  }
   
   /*
    * Retrieve system notice, then show notify (:> システム通知を取得して表示する

@@ -30,7 +30,7 @@ if ( $show_password_fields ) : ?>
     <div class="form-group user-pass1-wrap" id="password">
       <label class="col-sm-2 control-label" for="pass1"><?= __( 'New Password', WPGENT_DOMAIN ); ?></label>
       <div class="col-sm-10">
-        <!-- input class="hidden" value=" " /><!-- #24364 workaround -->
+        <input class="hidden" value=" " /><!-- #24364 workaround -->
         <button type="button" id="generate-pw" class="btn btn-default"><?= __( 'Generate Password', WPGENT_DOMAIN ); ?></button>
         <div id="passwd-ctrl" class="hide">
           <div class="col-sm-5">

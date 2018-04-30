@@ -13,7 +13,8 @@ $current_user_id     = $_plotter['current_user_id'];
 $user_sources        = $_plotter['user_sources'];
 $current_source_id   = $_plotter['current_source_id'];
 $current_source_name = $_plotter['current_source_name'];
-$current_user = wp_get_current_user();
+$current_user        = wp_get_current_user();
+$user_avatar         = __ctl( 'lib' )::get_user_option( $current_user->ID, 'avatar' );
 ?>
 
         <!-- top navigation -->
@@ -44,8 +45,10 @@ $current_user = wp_get_current_user();
               <ul class="nav navbar-nav navbar-right">
                 <li class="">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                    <?php echo get_avatar( $current_user->ID, 32, '', $current_user->display_name, [ 'extra_attr' => 'no-classes' ] ); ?>
-                    <?= $current_user->display_name; ?>
+                    <figure class="avatar-mini">
+                      <span><?= get_avatar( $current_user->ID, 48, '', $current_user->display_name ) ?></span>
+                      <figcaption class="user-name"><?= $current_user->display_name; ?></figcaption>
+                    </figure>
                     <span class="plt-dots" _old="plt-circle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">

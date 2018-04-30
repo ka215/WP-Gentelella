@@ -1,74 +1,3 @@
-.blue {
-  color: $blue;
-}
-.purple {
-  color: $purple;
-}
-.green {
-  color: $green;
-}
-.aero {
-  color: $aero;
-}
-.red {
-  color: $red;
-}
-.dark {
-  color: $dark;
-}
-.border-blue {
-  border-color: $blue !important;
-}
-.border-purple {
-  border-color: $purple !important;
-}
-.border-green {
-  border-color: $green !important;
-}
-.border-aero {
-  border-color: $aero !important;
-}
-.border-red {
-  border-color: $red !important;
-}
-.border-dark {
-  border-color: $dark !important;
-}
-.bg-white {
-  background: #fff !important;
-  border: 1px solid #fff !important;
-  color: $text_on_white;
-}
-.bg-green {
-  background: $green !important;
-  border: 1px solid $green !important;
-  color: $text_on_green;
-}
-.bg-red {
-  background: $red !important;
-  border: 1px solid $red !important;
-  color: $text_on_red;
-}
-.bg-blue {
-  background: $blue !important;
-  border: 1px solid $blue !important;
-  color: $text_on_blue;
-}
-.bg-orange {
-  background: $orange !important;
-  border: 1px solid $orange !important;
-  color: $text_on_orange;
-}
-.bg-purple {
-  background: $purple !important;
-  border: 1px solid $purple !important;
-  color: $text_on_purple;
-}
-.bg-blue-sky {
-  background: $blue_sky !important;
-  border: 1px solid $blue_sky !important;
-  color: $text_on_bluesky;
-}
 /**  ------------------------------------------  **/
 body {
   color: $body_color;
@@ -1295,12 +1224,6 @@ span.right {
 }
 a.user-profile {
   color: #5E6974 !important;
-}
-.user-profile img {
-  width: 29px;
-  height: 29px;
-  border-radius: 50%;
-  margin-right: 10px;
 }
 ul.top_profiles {
   height: 330px;

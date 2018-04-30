@@ -10,10 +10,15 @@ $(document).ready(function() {
   SUBMIT_BUTTONS       = [ 'submit', 'assign_avatar', 'remove_avatar' ];
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
+  initHistory();
   checkNotify();
+  initFields();
   
   // ----- Event handlers -------------------------------------------------------------------------
   
+  /*
+   * Clicked Generate Password button (:> パスワード生成ボタン押下時
+   */
   $('#generate-pw').on('click', function(){
     $(this).addClass( 'hide' );
     $('#pass1').val( $('#pass1').attr( 'data-pw' ) );
@@ -23,6 +28,9 @@ $(document).ready(function() {
     $('#passwd-ctrl').removeClass( 'hide' );
   });
   
+  /*
+   * Toggled view of password field (:> パスワード入力欄の表示切替
+   */
   $('#toggle-passwd').on('click', function(){
     var shownPasswd = Number( $(this).attr( 'data-toggle' ) ) == 0;
     if ( shownPasswd ) {
@@ -42,13 +50,24 @@ $(document).ready(function() {
     }
   });
   
+  /*
+   * Clicked　Cancel button (:> （パスワード変更の）キャンセルボタン押下時
+   */
   $('#cancel-passwd').on('click', function(){
-    $('#pass1').val('').prop( 'disabled', true );
-    $('#pass1-text').val('').prop( 'disabled', true );
+    $('#pass1').val('').trigger( 'click' );
+    $('#pass1-text').val('').trigger( 'click' );
+    $('#pass1').prop( 'disabled', true );
+    $('#pass1-text').prop( 'disabled', true );
     $('#passwd-ctrl').addClass( 'hide' );
     $('#generate-pw').removeClass( 'hide' );
+    $('#pw_weak').prop( 'checked', false );
+    $('.pw-weak').addClass( 'hide' );
+    $('#pwd-strength-notice').children('.label').remove();
   });
   
+  /*
+   * Handling Password Strength Validation (:> パスワード強度検証処理のハンドリング
+   */
   $('#pass1, #pass1-text').on('click keypress keyup focus blur', function(){
     var pwdStrength = $('#pass-strength-result').text(),
         pwdStrClass = $('#pass-strength-result').attr( 'class' ),
@@ -82,6 +101,9 @@ $(document).ready(function() {
     }
   });
   
+  /*
+   * Choose avatar image to upload (:> アップロードするアバター画像を選択時の処理
+   */
   $(document).on('change', ':file', function() {
     var input    = $(this),
         numFiles = input.get(0).files ? input.get(0).files.length : 1,
@@ -97,13 +119,77 @@ $(document).ready(function() {
       var reader = new FileReader(); // instance of the FileReader
       reader.readAsDataURL( files[0] ); // read the local file
       reader.onloadend = function(){ // set image data as background of div
-        $('#preview-image').css( 'background-image', 'url('+ this.result +')' ).removeClass( 'hide' );
+        var $avatarViewer = $('#avatar-viewer'),
+            $originAvatar = $avatarViewer.find('img.avatar'),
+            avatarWidth   = $originAvatar[0].offsetWidth;
+        if ( $avatarViewer.width() > avatarWidth * 2 ) {
+          var $previewAvatar    = $( '<img>', { class: $originAvatar.attr('class'), src: this.result } ),
+              $previewContainer = $avatarViewer.find('.preview-container');
+          $previewContainer.empty().append( $previewAvatar[0].outerHTML ).removeClass( 'hide' );
+        }
       }
     }
   });
   
+  /*
+   * Adjust avatar preview container if window resized (:> ウィンドウリサイズ時にアバタープレビュー欄を調整
+   */
+  $(window).resize(function(){
+    var $avatarViewer     = $('#avatar-viewer'),
+        $originAvatar = $avatarViewer.find('img.avatar'),
+        $previewContainer = $avatarViewer.find('.preview-container'),
+        avatarWidth       = $originAvatar[0].offsetWidth;
+    if ( $avatarViewer.width() > avatarWidth * 2 ) {
+      if ( $previewContainer.hasClass( 'hide' ) ) {
+        $previewContainer.removeClass( 'hide' );
+      }
+    } else {
+      $previewContainer.addClass( 'hide' );
+    }
+  });
+  
+  /*
+   * Clicked Remove Avatar button (:> アバター削除ボタン押下時
+   */
+  $('#custom-avatar-remove').on('click', function(e){
+    e.preventDefault();
+    var $removeAction  = $('#remove-avatar-action'),
+        $currentAvatar = $('#avatar-viewer').find('img.avatar'),
+        noAvatarSrc    = '/assets/uploads/no-avatar.png';
+    if ( 'false' === $removeAction.val() ) {
+      // enable Remove
+      $removeAction.val( 'true' );
+      $(this).children('i').attr( 'class', 'plt-checkbox-checked2 green' );
+      $('#custom-avatar-assign').val('').prop( 'disabled', true );
+      $('#preview-upfile').val('');
+      $('#avatar-viewer').find('.preview-container').addClass('hide').empty();
+      var $noAvatar = $currentAvatar.clone();
+      $noAvatar.attr( 'src', noAvatarSrc ).addClass('no-avatar-image');
+      $currentAvatar.addClass( 'hide' );
+      $('#avatar-viewer').prepend( $noAvatar[0].outerHTML );
+    } else {
+      // disable Remove
+      $removeAction.val( 'false' );
+      $(this).children('i').attr( 'class', 'plt-checkbox-unchecked2 gray' );
+      $('#custom-avatar-assign').prop( 'disabled', false );
+      $('#avatar-viewer').find('.no-avatar-image').remove();
+      $currentAvatar.removeClass('hide');
+    }
+  });
+  
+  
   
   // ----- 個別処理（関数）------------------------------------------------------------------------
+  
+  /*
+   * Replace a history state in browser after profile is updated (:> プロフィール更新後はブラウザ履歴ステータスを置き換える
+   * ※ ?updated=true クエリによるリロード時の再通知表示を抑止するため
+   */
+  function initHistory() {
+    if ( 'updated_profile' === history.state || 'true' === $.QueryString.updated ) {
+      history.replaceState( 'updated_profile', '', location.pathname );
+    }
+  }
   
   /*
    * Retrieve system notice, then show notify (:> システム通知を取得して表示する
@@ -158,15 +244,27 @@ $(document).ready(function() {
             }
           }
         };
-        PNotify.alert( opts );
+        var notice = PNotify.alert( opts );
+        /*
+        notice.on('pnotify.confirm', function( notice, value ){
+          //
+        });
+        */
       }
       $notice.empty();
     }
   }
   
+  /*
+   * Initialize avatar preview (:> アバタープレビューを初期化
+   */
+  function initFields() {
+    $('#preview-upfile').val('');
+  }
+  
   
   // ----- WEBストレージ(ローカルストレージ)関連 ---------------------------------------------------------------
   
-  
+  // None on this page
   
 });
