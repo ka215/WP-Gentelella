@@ -10,13 +10,14 @@
 if ( ! is_active_sidebar( 'side-menu' ) ) {
   return;
 } else {
-  $_plotter            = get_query_var( 'plotter' );
-  $now_page            = $_plotter['page_name'];
-  $current_user_id     = $_plotter['current_user_id'];
-  $user_sources        = $_plotter['user_sources'];
-  $current_source_id   = $_plotter['current_source_id'];
-  $current_source_name = $_plotter['current_source_name'];
-  $has_current_structures = $_plotter['has_current_structures'];
+  $_plotter               = get_query_var( 'plotter' );
+  $now_page               = @$_plotter['page_name'] ?: '';
+  $current_user_id        = @$_plotter['current_user_id'] ?: null;
+  $user_sources           = @$_plotter['user_sources'] ?: [];
+  $current_source_id      = @$_plotter['current_source_id'] ?: null;
+  $current_source_name    = @$_plotter['current_source_name'] ?: '';
+  $has_current_structures = @$_plotter['has_current_structures'] ?: false;
+  $user_approval_state    = @$_plotter['approval_state'] ?: false;
 }
 ?>
 
@@ -47,12 +48,16 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
 
             <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
               <div id="section-1" class="menu_section">
+<?php if ( $user_approval_state ) : ?>
                 <h3><?= __( 'Structures', WPGENT_DOMAIN ) ?></h3>
+<?php endif; ?>
                 <ul class="nav side-menu">
+<?php if ( $user_approval_state ) : ?>
                   <li><a href="/whole-story/">
                     <i class="plt-earth3"></i> <?= __( 'Whole Story', WPGENT_DOMAIN ) ?>
                   </a></li>
-<?php if ( ! empty( $user_sources ) ) : ?>
+<?php endif;
+      if ( ! empty( $user_sources ) ) : ?>
                   <li><a href="/<?php if ( $has_current_structures ) : ?>edit-storyline<?php else : ?>create-new<?php endif; ?>/">
                     <i class="plt-tree7"></i> <?php _e('Storyline', WPGENT_DOMAIN) ?>
                   </a></li>
@@ -141,17 +146,17 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
             <!-- /#sidebar-menu -->
 
             <div id="menu-footer-buttons" class="sidebar-footer hidden-small">
-              <a data-toggle="tooltip" data-placement="top" title="<?php _e('Settings', WPGENT_DOMAIN); ?>" name="settings">
-                <span class="plt-cog3" aria-hidden="true"></span>
+              <a data-toggle="tooltip" data-placement="top" title="<?= __( 'Settings', WPGENT_DOMAIN ) ?>" href="/settings/" name="settings">
+                <i class="plt-cog3"></i>
               </a>
-              <a data-toggle="tooltip" data-placement="top" title="<?php _e('FullScreen', WPGENT_DOMAIN); ?>" name="fullscreen">
-                <span class="plt-enlarge2" aria-hidden="true"></span>
+              <a data-toggle="tooltip" data-placement="top" title="<?= __( 'FullScreen', WPGENT_DOMAIN ) ?>" name="fullscreen">
+                <i class="plt-enlarge2"></i>
               </a>
-              <a data-toggle="tooltip" data-placement="top" title="<?php _e('Lock', WPGENT_DOMAIN); ?>" name="lock">
-                <span class="plt-eye-blocked" aria-hidden="true"></span>
+              <a data-toggle="tooltip" data-placement="top" title="<?= __( 'Help', WPGENT_DOMAIN ) ?>" href="/help/" name="help">
+                <i class="plt-question3"></i>
               </a>
-              <a data-toggle="tooltip" data-placement="top" title="<?php _e('Sign Out', WPGENT_DOMAIN); ?>" href="<?= wp_logout_url(); ?>" name="signout">
-                <span class="plt-exit2" aria-hidden="true"></span>
+              <a data-toggle="tooltip" data-placement="top" title="<?= __( 'Sign Out', WPGENT_DOMAIN ) ?>" href="<?= wp_logout_url(); ?>" name="signout">
+                <i class="plt-exit2"></i>
               </a>
             </div>
             <!-- /#menu-footer-buttons -->

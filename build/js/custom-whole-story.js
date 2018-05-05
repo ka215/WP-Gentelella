@@ -12,6 +12,7 @@ $(document).ready(function() {
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
   //storedSrcCache( currentSrcId );
+  clearStorageData();
   
   // ----- Event handlers -------------------------------------------------------------------------
   
@@ -81,7 +82,6 @@ $(document).ready(function() {
         return false;
       }
       $('#'+currentPermalink+'-post-action').val( action );
-      // gf.submit();
       // ajaxでPOST
       var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
       callAjax(
@@ -134,6 +134,14 @@ $(document).ready(function() {
   // ----- WEBストレージ(ローカルストレージ)関連 ---------------------------------------------------------------
   
   /*
+   *  (:> ローカルストレージ初期化
+   */
+  function clearStorageData() {
+    logger.debug( 'Clear All LocalStorage, then set data of current steps' );
+    wls.clear();
+  }
+  
+  /*
    *  (:> 指定のソースデータ（source_id）をWEBストレージへ保存する
    */
   function storedSrcCache( sid ) {
@@ -158,6 +166,7 @@ $(document).ready(function() {
    */
   function restoreSrcCache( sid ) {
     var src_data = JSON.parse( wls.getItem( 'plt_cursrc' ) );
+console.log( src_data );
     if ( sid == Number( src_data.source_id ) ) {
       gf.find('[name="source_id"]').val( sid );
       gf.find('#source_name').val( src_data.source_name );

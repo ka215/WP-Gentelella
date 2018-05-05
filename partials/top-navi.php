@@ -8,11 +8,12 @@
  * @version 1.0
  */
 $_plotter = get_query_var( 'plotter', [] );
-$page_name           = $_plotter['page_name'];
-$current_user_id     = $_plotter['current_user_id'];
-$user_sources        = $_plotter['user_sources'];
-$current_source_id   = $_plotter['current_source_id'];
-$current_source_name = $_plotter['current_source_name'];
+$page_name           = @$_plotter['page_name'] ?: '';
+$current_user_id     = @$_plotter['current_user_id'] ?: null;
+$user_sources        = @$_plotter['user_sources'] ?: [];
+$current_source_id   = @$_plotter['current_source_id'] ?: null;
+$current_source_name = @$_plotter['current_source_name'] ?: '';
+$user_approval_state = @$_plotter['approval_state'] ?: false;
 $current_user        = wp_get_current_user();
 $user_avatar         = __ctl( 'lib' )::get_user_option( $current_user->ID, 'avatar' );
 ?>
@@ -43,7 +44,7 @@ $user_avatar         = __ctl( 'lib' )::get_user_option( $current_user->ID, 'avat
               </div>
 <?php endif; ?>
               <ul class="nav navbar-nav navbar-right">
-                <li class="">
+                <li role="navigation-menu">
                   <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
                     <figure class="avatar-mini">
                       <span><?= get_avatar( $current_user->ID, 48, '', $current_user->display_name ) ?></span>
@@ -52,18 +53,13 @@ $user_avatar         = __ctl( 'lib' )::get_user_option( $current_user->ID, 'avat
                     <span class="plt-dots" _old="plt-circle-down"></span>
                   </a>
                   <ul class="dropdown-menu dropdown-usermenu pull-right">
-                    <li><a href="/profile/"> <?php _e('Profile', WPGENT_DOMAIN); ?></a></li>
-                    <li>
-                      <a href="javascript:;">
-                        <span class="badge bg-red pull-right">50%</span>
-                        <span><?php _e('Settings', WPGENT_DOMAIN); ?></span>
-                      </a>
-                    </li>
-                    <li><a href="javascript:;"><?php _e('Help', WPGENT_DOMAIN); ?></a></li>
-                    <li><a href="<?= wp_logout_url(); ?>"><i class="plt-exit2 pull-right"></i> <?php _e('Sign Out', WPGENT_DOMAIN); ?></a></li>
+                    <li><a href="/profile/"><i class="plt-profile pull-right"></i> <?= __( 'Profile', WPGENT_DOMAIN ) ?></a></li>
+                    <li><a href="/settings/"><i class="plt-cog3 pull-right"></i> <?= __( 'Settings', WPGENT_DOMAIN ) ?></a></li>
+                    <li><a href="/help/"><i class="plt-question3 pull-right"></i> <?= __( 'Help', WPGENT_DOMAIN ) ?></a></li>
+                    <li><a href="<?= wp_logout_url(); ?>"><i class="plt-exit2 pull-right"></i> <?= __( 'Sign Out', WPGENT_DOMAIN ) ?></a></li>
                   </ul>
                 </li>
-
+<?php if ( $user_approval_state ) : ?>
                 <li role="presentation" class="dropdown">
                   <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
                     <i class="plt-bell"></i>
@@ -127,9 +123,9 @@ $user_avatar         = __ctl( 'lib' )::get_user_option( $current_user->ID, 'avat
                       </div>
                     </li>
                   </ul>
-                </li>
-              </ul>
+                </li><!-- /role:presentation -->
+<?php endif; ?>
+              </ul><!-- /.nav.navbar-nav -->
             </nav>
-          </div>
-        </div>
-        <!-- /.top_nav -->
+          </div><!-- /.nav_menu -->
+        </div><!-- /.top_nav -->

@@ -7,7 +7,7 @@
  * @since 1.0
  * @version 1.0
  */
-
+$enable_toolbox = false;
 ?>
 
         <!-- page content -->
@@ -18,21 +18,19 @@
                 <div class="x_panel">
                   <div class="x_title">
                     <h2><?php the_title(); ?></h2>
+<?php if ( $enable_toolbox ) : ?>
                     <ul class="nav navbar-right panel_toolbox">
-                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
-                      </li>
+                      <li><a class="collapse-link"><i class="fa fa-chevron-up"></i></a></li>
                       <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-wrench"></i></a>
                         <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">Settings 1</a>
-                          </li>
-                          <li><a href="#">Settings 2</a>
-                          </li>
+                          <li><a href="#"><?= __( 'Settings', WPGENT_DOMAIN ) ?> 1</a></li>
+                          <li><a href="#"><?= __( 'Settings', WPGENT_DOMAIN ) ?> 2</a></li>
                         </ul>
                       </li>
-                      <li><a class="close-link"><i class="fa fa-close"></i></a>
-                      </li>
+                      <li><a class="close-link"><i class="fa fa-close"></i></a></li>
                     </ul>
+<?php endif; ?>
                     <div class="clearfix"></div>
                   </div>
                   <div class="x_content">

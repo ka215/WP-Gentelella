@@ -1,6 +1,6 @@
 <?php
 /**
- * Template part for displaying copyright as inline-footer
+ * Template part for displaying copyright
  *
  * @package WordPress
  * @subpackage Plotter
@@ -8,20 +8,23 @@
  * @version 1.0
  */
 
-$page_type = __ctl( 'lib' )::get_pageinfo();
+$page_type = get_current_page_type();
+$is_large_footer_pages = [
+  // Page types that displays with a wide 2 lines
+  // 'home'
+  'login', 'logout', 'register', 'lostpassword', 'resetpass',
+];
 
-switch ( $page_type ) {
-  case 'login':
-  case 'register':
-  case 'lostpassword':
-    $headline_level = 'h2';
-    break;
-  default:
-    $headline_level = 'h4';
-    break;
+$headline = '<i class="plt-quill3"></i> '. get_bloginfo( 'name' );
+$bodyline = '<i class="fa fa-copyright"></i>'. date_i18n( 'Y' ) .' '. __( 'All Rights Reserved.', WPGENT_DOMAIN );
+if ( in_array( $page_type, $is_large_footer_pages ) ) {
+  $headline = '<h2>'. $headline .'</h2>';
+  $bodyline = '<p>'. $bodyline .'</p>';
+} else {
+  $headline = '<strong>'. $headline .'</strong>';
 }
 ?>
-<div>
-  <<?php echo $headline_level; ?>><i class="plt-quill3"></i> <?php bloginfo( 'name' ); ?></<?php echo $headline_level; ?>>
-  <p><i class="fa fa-copyright"></i><?php echo date_i18n( 'Y' ); ?> <?php _e( 'All Rights Reserved.', WPGENT_DOMAIN ); ?></p>
+<div class="copyright">
+  <?= $headline ?>
+  <?= $bodyline ?>
 </div>

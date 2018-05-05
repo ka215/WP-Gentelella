@@ -18,7 +18,7 @@
               <div class="form-group">
                 <div class="input-group">
                   <span class="input-group-addon" title="<?= __( 'Username', WPGENT_DOMAIN ) ?>"><i class="plt-user"></i></span>
-                  <input type="text" name="user_login" id="user_name<?php $template->the_instance(); ?>" class="form-control" placeholder="<?= __( 'Username', WPGENT_DOMAIN ) ?>" value="<?php $template->the_posted_value( 'user_login' ); ?>" required="" />
+                  <input type="text" name="user_login" id="user_name<?php $template->the_instance(); ?>" class="form-control" placeholder="<?= __( 'Username', WPGENT_DOMAIN ) ?>" value="<?php $template->the_posted_value( 'user_login' ); ?>" required="" minlength="3" />
                 </div>
               </div>
 <?php endif; ?>
@@ -31,7 +31,7 @@
 <?php /* do_action( 'register_form' ); */ ?>
               <div class="form-group">
                 <div class="input-group">
-                  <input type="password" name="pass1" id="pass1<?php $template->the_instance(); ?>" class="form-control" placeholder="<?= __( 'Password', WPGENT_DOMAIN ) ?>" value="" required="" autocomplete="off" />
+                  <input type="password" name="pass1" id="pass1<?php $template->the_instance(); ?>" class="form-control" placeholder="<?= __( 'Password', WPGENT_DOMAIN ) ?>" value="" required="" autocomplete="off" minlength="6" />
                   <span class="input-group-btn">
                     <button type="button" id="toggle-password" class="btn btn-default" title="<?= __( 'Show Password', WPGENT_DOMAIN ) ?>"><i class="plt-eye"></i></button>
                   </span>
@@ -63,7 +63,6 @@
                 <?php /* $template->the_action_links( array( 'register' => false ) ); */ ?>
                 <br />
 
-                <?php get_template_part( 'partials/copyright' ); ?>
               </div>
             </form>
           </section>

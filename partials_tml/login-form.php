@@ -55,7 +55,7 @@ if ( 'username' == $theme_my_login->get_option( 'login_type' ) ) {
                 <?php /* $template->the_action_links( array( 'login' => false ) ); */ ?>
                 <br />
 
-                <?php get_template_part( 'partials/copyright' ); ?>
+                <?php /* get_template_part( 'partials/copyright' ); */ ?>
               </div>
             </form>
           </section>

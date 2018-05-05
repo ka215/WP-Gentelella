@@ -49,7 +49,6 @@ if ( 'email' == $theme_my_login->get_option( 'login_type' ) ) {
                 <?php /* $template->the_action_links( array( 'lostpassword' => false ) ); */ ?>
                 <br />
 
-                <?php get_template_part( 'partials/copyright' ); ?>
               </div>
             </form>
           </section>

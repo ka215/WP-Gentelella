@@ -10,7 +10,7 @@ $avatar_ratings = [
 ];
 $show_rating = false;
 $max_upload_size = size_format( $this->max_upload_size );
-$current_user_options = __ctl( 'lib' )::get_user_option( $profileuser->ID );
+$current_user_options = __ctl( 'lib' )::get_user_option( @$profileuser->ID );
 if ( ! isset( $current_user_options['avatar_rating'] ) || empty( $current_user_options['avatar_rating'] ) ) {
   $selected_avatar_rating = 'G';
 } else {
@@ -24,7 +24,7 @@ if ( ! isset( $current_user_options['avatar_rating'] ) || empty( $current_user_o
       <div id="avatar-viewer" class="col-sm-4">
         <?php
 add_filter( 'pre_option_avatar_rating', '__return_null' ); // ignore ratings here
-echo get_avatar( $profileuser->ID, 144, '', $profileuser->data->display_name );
+echo get_avatar( @$profileuser->ID, 144, '', @$profileuser->data->display_name );
 remove_filter( 'pre_option_avatar_rating', '__return_null' );
 ?>
         <div class="preview-container hide"></div>
@@ -63,4 +63,3 @@ wp_nonce_field( 'plotter_custom_avatar_nonce', '_custom_avatar_nonce', false );
 <?php else : ?>
     <input type="hidden" name="custom_avatar_rating" value="<?= esc_attr( $selected_avatar_rating ) ?>" />
 <?php endif; ?>
-    <div class="ln_dotted ln_thin"></div>

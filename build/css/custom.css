@@ -232,6 +232,26 @@ a.btn-danger {
 /* 4000 */
 /* 1050 */
 /* Layout Grids */
+/* Base Container */
+body {
+  color: #504946;
+  background: #FAFDFF;
+  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3", Meiryo, "メイリオ", sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.471;
+}
+
+.container {
+  width: 100%;
+  max-width: 100% !important;
+  padding: 0;
+}
+
+.no-padding {
+  padding: 0 !important;
+}
+
 .left_col {
   background: #FAFDFF;
   -webkit-transition: width .14s linear;
@@ -1219,6 +1239,187 @@ body .container.body .right_col {
   padding-bottom: .75em;
 }
 
+/* user policies on modal */
+#user-policy {
+  height: 100%;
+}
+
+#user-policy .modal-dialog {
+  position: relative;
+}
+
+#user-policy .modal-dialog .modal-header {
+  position: relative;
+  height: 70px;
+}
+
+#user-policy .modal-dialog .modal-header h2 {
+  position: relative;
+  top: calc(50% - 15.5px);
+  margin: auto 0;
+  padding: 0;
+  font-size: 2.236em;
+  /* root 5 */
+}
+
+#user-policy .modal-dialog #user-policy-container {
+  left: auto;
+  top: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: calc(100% - 2px);
+  height: calc(100vh - 200px);
+  overflow-y: scroll;
+  font-size: 1.14em;
+}
+
+#user-policy .modal-dialog #user-policy-container h3 {
+  font-size: 1.38em;
+  margin-top: 1.414em;
+  /* Silver Ratio */
+  margin-bottom: 1.09868em;
+  /* Lengyel */
+  padding-top: .20787em;
+  /* ii */
+  padding-bottom: .20787em;
+  /* ii */
+  border-bottom: 1px dotted #D4D9DF;
+}
+
+#user-policy .modal-dialog #user-policy-container h3:first-child {
+  margin-top: 0;
+}
+
+#user-policy .modal-dialog #user-policy-container p {
+  margin-left: .618em;
+  /* 1/�� */
+  margin-bottom: 1.414em;
+  /* Silver Ratio */
+  line-height: 1.618;
+  /* Golden Ratio */
+}
+
+#user-policy .modal-dialog #user-policy-container a {
+  border-bottom: dashed 1px #5A4498;
+}
+
+#user-policy .modal-dialog #user-policy-container a:hover, #user-policy .modal-dialog #user-policy-container a:active {
+  border-bottom: dashed 1px #26499D;
+  background-color: #F7F6FB;
+}
+
+#user-policy .modal-dialog .modal-footer {
+  /* Order Buttons: not -> ok */
+  text-align: center;
+}
+
+/* common of service pages */
+.service h2 {
+  position: relative;
+  top: calc(50% - 15.5px);
+  margin: auto 0;
+  padding: 0;
+  font-size: 2.236em;
+  /* root 5 */
+}
+
+.service .body-content, .service .x_content {
+  left: auto;
+  top: 0px;
+  padding-left: 20px;
+  padding-right: 20px;
+  width: calc(100% - 2px);
+  font-size: 1.14em;
+}
+
+.service .body-content h3, .service .x_content h3 {
+  font-size: 1.38em;
+  margin-top: 1.414em;
+  /* Silver Ratio */
+  margin-bottom: 1.09868em;
+  /* Lengyel */
+  padding-top: .20787em;
+  /* ii */
+  padding-bottom: .20787em;
+  /* ii */
+  border-bottom: 1px dotted #D4D9DF;
+}
+
+.service .body-content h3:first-child, .service .x_content h3:first-child {
+  margin-top: 0;
+}
+
+.service .body-content p, .service .x_content p {
+  margin-left: .618em;
+  /* 1/�� */
+  margin-bottom: 1.414em;
+  /* Silver Ratio */
+  line-height: 1.618;
+  /* Golden Ratio */
+}
+
+.service .body-content a, .service .x_content a {
+  border-bottom: dashed 1px #5A4498;
+}
+
+.service .body-content a:hover, .service .body-content a:active, .service .x_content a:hover, .service .x_content a:active {
+  border-bottom: dashed 1px #26499D;
+  background-color: #F7F6FB;
+}
+
+.service .x_content {
+  padding-left: 10px;
+  padding-right: 20px;
+  height: calc(100vh - 160px);
+  overflow-y: scroll;
+}
+
+/* footer styles */
+footer {
+  background: #D5D5D5;
+  /*$footer_bg;*/
+  margin-bottom: 0;
+  padding-top: 17px;
+  padding-bottom: 15px;
+  display: block;
+  border-top: 1px solid #D4D9DF;
+}
+
+.full-span footer {
+  background-color: transparent;
+  margin-left: 0 auto;
+  text-align: center;
+}
+
+.nav-sm footer {
+  margin-left: 70px;
+  padding-right: 20px;
+}
+
+.nav-md footer {
+  margin-left: 230px;
+  padding-right: 20px;
+}
+
+.footer_fixed footer {
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  width: 100%;
+}
+
+@media (min-width: 768px) {
+  .footer_fixed footer {
+    margin-left: 0;
+  }
+}
+
+@media (min-width: 768px) {
+  .footer_fixed .nav-sm footer {
+    margin-left: 0;
+  }
+}
+
 /* image styles */
 /* avatar styles */
 .avatar {
@@ -1407,26 +1608,6 @@ body .container.body .right_col {
 .nav.navbar-nav .user-profile .avatar-mini .user-name {
   padding-left: .5em;
   padding-right: .5em;
-}
-
-/**  ------------------------------------------  **/
-body {
-  color: #504946;
-  background: #FAFDFF;
-  font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3", Meiryo, "メイリオ", sans-serif;
-  font-size: 13px;
-  font-weight: 400;
-  line-height: 1.471;
-}
-
-.container {
-  width: 100%;
-  max-width: 100% !important;
-  padding: 0;
-}
-
-.no-padding {
-  padding: 0 !important;
 }
 
 /**  - right column ---------------------------  **/
@@ -1710,43 +1891,6 @@ a:hover, a:focus {
   padding: 4px 6px;
 }
 
-/**  - footer ---------------------------  **/
-footer {
-  background: #D5D5D5;
-  /*$footer_bg;*/
-  margin-bottom: 0;
-  padding: 17px 20px 15px;
-  display: block;
-  border-top: 1px solid #D4D9DF;
-}
-
-.nav-sm footer {
-  margin-left: 70px;
-}
-
-.nav-md.full-span footer {
-  margin-left: 0;
-}
-
-.footer_fixed footer {
-  position: fixed;
-  left: 0px;
-  bottom: 0px;
-  width: 100%;
-}
-
-@media (min-width: 768px) {
-  .footer_fixed footer {
-    margin-left: 0;
-  }
-}
-
-@media (min-width: 768px) {
-  .footer_fixed .nav-sm footer {
-    margin-left: 0;
-  }
-}
-
 .tile-stats.sparkline {
   padding: 10px;
   text-align: center;
@@ -1922,7 +2066,8 @@ article.media {
   float: left;
   display: block;
   text-overflow: ellipsis;
-  overflow: hidden;
+  /* overflow-x: hidden;
+  overflow-y: visible; */
   white-space: nowrap;
 }
 
@@ -2721,12 +2866,6 @@ span.right {
   overflow: hidden;
   white-space: nowrap;
   position: relative;
-}
-
-@media (min-width: 992px) {
-  footer {
-    margin-left: 230px;
-  }
 }
 
 @media (min-width: 992px) {
@@ -5202,7 +5341,7 @@ a.hiddenanchor {
 .registration_form,
 .login_form,
 .lostpassword_form {
-  position: absolute;
+  /* position: absolute; */
   top: 0px;
   width: 100%;
 }

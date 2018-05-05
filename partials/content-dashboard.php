@@ -8,12 +8,12 @@
  * @version 1.0
  */
 $_plotter = get_query_var( 'plotter', [] );
-$page_name           = $_plotter['page_name'];
-$current_user_id     = $_plotter['current_user_id'];
-$user_sources        = $_plotter['user_sources'];
-$current_source_id   = $_plotter['current_source_id'];
-$current_source_name = $_plotter['current_source_name'];
-$user_approval_state = $_plotter['approval_state'];
+$page_name           = @$_plotter['page_name'] ?: '';
+$current_user_id     = @$_plotter['current_user_id'] ?: null;
+$user_sources        = @$_plotter['user_sources'] ?: [];
+$current_source_id   = @$_plotter['current_source_id'] ?: null;
+$current_source_name = @$_plotter['current_source_name'] ?: '';
+$user_approval_state = @$_plotter['approval_state'] ?: false;
 ?>
 
         <!-- page content -->
@@ -22,7 +22,7 @@ $user_approval_state = $_plotter['approval_state'];
 <?php if ( __ctl( 'lib' )::is_first_visit() ) : ?>
             <div class="page-title">
               <div class="title_left">
-                <h2><?= __( 'Welcome Plotter!', WPGENT_DOMAIN ) ?></h2>
+                <h2><?= __( 'Welcome to Plotter!', WPGENT_DOMAIN ) ?></h2>
               </div>
             </div>
             <div class="clearfix"></div>
@@ -42,8 +42,10 @@ $user_approval_state = $_plotter['approval_state'];
                   <div class="x_content">
                     <form id="initialSettings" class="form-horizontal form-label-left withValidator" method="post" novalidate>
                       <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
+                      <input type="hidden" name="post_action" value="">
                       <?php wp_nonce_field( $page_name . '-setting_' . $current_user_id, '_token', true, true ); ?>
-<?php if ( empty( $user_sources ) ) : ?>
+<?php if ( $user_approval_state ) {
+        if ( empty( $user_sources ) ) { ?>
                       <p><?php _e( 'Even an unsettled title is fine. This title of the story can be edited after registering.', WPGENT_DOMAIN ); ?></p>
                       <div class="item form-group">
                         <label class="control-label col-md-3 col-sm-3 col-xs-12" for="source_name"><?php _e( 'Title Of Story', WPGENT_DOMAIN ); ?> <span class="required"></span></label>
@@ -54,13 +56,15 @@ $user_approval_state = $_plotter['approval_state'];
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-6 col-md-offset-3">
-                          <button type="submit" class="btn btn-success" id="<?= esc_attr( $page_name ) ?>-submit"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
+                          <button type="button" class="btn btn-primary" id="<?= esc_attr( $page_name ) ?>-register"><?php _e( 'Register', WPGENT_DOMAIN ); ?></button>
                         </div>
                       </div>
-<?php else : the_content(); endif; ?>
-<?php if ( ! $user_approval_state ) : ?>
+<?php   } else {
+          the_content();
+        }
+      } else { ?>
                         <input type="hidden" name="approve_user_policy" value="true" />
-<?php endif; ?>
+<?php } ?>
                     </form>
                   </div>
                 </div>
@@ -74,10 +78,13 @@ $user_approval_state = $_plotter['approval_state'];
           <div class="modal-dialog modal-lg">
             <div class="modal-content">
               <div class="modal-header">
-                <h4><?= __( 'The User Policy', WPGENT_DOMAIN ); ?></h4>
+                <h2><?= __( 'User Policies', WPGENT_DOMAIN ); ?></h2>
               </div><!-- /.modal-header -->
               <div id="user-policy-container" class="modal-body">
-<?php var_dump( 'etc...' ); ?>
+<?php
+$page_data = get_current_page_data( 'user-policies' );
+echo $page_data['content'];
+?>
               </div><!-- /.modal-body -->
               <div class="modal-footer">
                 <button type="button" class="btn btn-dark" id="unapprove-user-policy" data-redirect-url="<?= wp_logout_url(); ?>"><?= __( 'Unapprove', WPGENT_DOMAIN ) ?></button>

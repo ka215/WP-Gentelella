@@ -31,6 +31,7 @@ $(document).ready(function() {
    */
   $(document).on('click', '#approve-user-policy', function(e){
     $('#user-policy').on('hidden.bs.modal', function(){
+      gf.find('input[name="post_action"]').val( 'approve' );
       var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
       // showLoading();
       // ajaxでpost
@@ -40,14 +41,40 @@ $(document).ready(function() {
         post_data,
         'script',
         'application/json; charset=utf-8',
-        'location.reload()',
+        null,
         true
       );
-      
     });
     $('#user-policy').modal('hide');
   });
 
+  /*
+   * Clicked link in body of User Policies (:> 利用規約本文中のリンクをクリック時
+   */
+  $('#user-policy-container a').on('click', function(e){
+    e.preventDefault();
+    var toURL = $(this).attr('href') + '?from=/dashboard/';
+    location.href = toURL;
+  });
+
+  /*
+   * Clicked Register button (:> 登録ボタン押下時
+   */
+  $('#dashboard-register').on('click', function(e){
+    gf.find('input[name="post_action"]').val( 'regist' );
+    var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
+    showLoading();
+    // ajaxでpost
+    callAjax(
+      '/'+currentPermalink+'/',
+      'post',
+      post_data,
+      'json',
+      'application/json; charset=utf-8',
+      'notify',
+      true
+    );
+  });
 
   /*
    * Fire on resize window (:> ウィンドウリサイズ時のイベント

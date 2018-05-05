@@ -8,11 +8,11 @@
  * @version 1.0
  */
 $_plotter = get_query_var( 'plotter', [] );
-$page_name           = $_plotter['page_name'];
-$current_user_id     = $_plotter['current_user_id'];
-$user_sources        = $_plotter['user_sources'];
-$current_source_id   = $_plotter['current_source_id'];
-$current_source_name = $_plotter['current_source_name'];
+$page_name           = @$_plotter['page_name'] ?: '';
+$current_user_id     = @$_plotter['current_user_id'] ?: null;
+$user_sources        = @$_plotter['user_sources'] ?: [];
+$current_source_id   = @$_plotter['current_source_id'] ?: null;
+$current_source_name = @$_plotter['current_source_name'] ?: '';
 if ( ! empty( $current_source_id ) ) {
     $current_source_atts = __ctl( 'model' )->get_sources( 
         [ 'who', 'what', 'where', 'when', 'why', 'extend', 'last_modified_by' ], 
@@ -25,6 +25,8 @@ if ( ! empty( $current_source_id ) ) {
             break;
         }
     }
+    // Provisional processing
+    $current_permission = 'owner';
 }
 ?>
 

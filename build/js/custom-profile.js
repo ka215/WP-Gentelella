@@ -7,7 +7,7 @@ $(document).ready(function() {
   var gf               = $("#your-profile"),
       wls              = window.localStorage,
       currentPermalink = 'profile';
-  SUBMIT_BUTTONS       = [ 'submit', 'assign_avatar', 'remove_avatar' ];
+  SUBMIT_BUTTONS       = [ 'submit', 'assign_avatar', 'remove_avatar', 'delete_account' ];
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
   initHistory();
@@ -177,6 +177,25 @@ $(document).ready(function() {
     }
   });
   
+  /*
+   * Clicked Delete Account button (:> アカウント削除ボタン押下時
+   */
+  $('#delete-account').on('click', function(e){
+    e.preventDefault();
+    dialogOpts.title = localize_messages.delete_account_ttl;
+    dialogOpts.text  = [ localize_messages.delete_account_msg, localize_messages.are_you_sure ].join('<br>');
+    dialogOpts.modules.Confirm.buttons[0].click = (notice, value) => {
+      notice.close();
+      // 確認ダイアログ承認後にユーザ削除処理を呼ぶ
+      var addField = $( '<input>', { type: 'hidden', name: '_delete_account_nonce', value: $(this).attr( 'data-nonce' ) } );
+      gf.append( addField[0].outerHTML );
+      controlSubmission();
+      showLoading();
+      gf.find('#submit').trigger( 'click' );
+    };
+    PNotify.alert( dialogOpts );
+    
+  });
   
   
   // ----- 個別処理（関数）------------------------------------------------------------------------
@@ -186,7 +205,7 @@ $(document).ready(function() {
    * ※ ?updated=true クエリによるリロード時の再通知表示を抑止するため
    */
   function initHistory() {
-    if ( 'updated_profile' === history.state || 'true' === $.QueryString.updated ) {
+    if ( 'updated_profile' === history.state || ( 'updated' in $.QueryString && 'true' === $.QueryString.updated ) ) {
       history.replaceState( 'updated_profile', '', location.pathname );
     }
   }

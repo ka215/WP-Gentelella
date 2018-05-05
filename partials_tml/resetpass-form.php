@@ -47,7 +47,6 @@
                 <?php $template->the_action_links( [ 'login' => false, 'register' => false, 'lostpassword' => false ] ); ?>
                 <br />
 
-                <?php get_template_part( 'partials/copyright' ); ?>
               </div>
             </form>
           </section>

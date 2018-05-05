@@ -7,6 +7,22 @@
  * @since 1.0
  * @version 1.0
  */
+$page_type = get_current_page_type();
+$add_classes = [];
+$prepend_contents = [];
+if ( ! is_user_logged_in() && in_array( $page_type, FULLSPAN_PAGES ) ) {
+  $add_classes[] = 'full-span';
+  if ( ! in_array( $page_type, [ 'home', 'error404', 'thanks' ] ) ) {
+    $add_classes[] = 'login';
+    // $prepend_contents[] = "\t<div>";
+    // $prepend_contents[] = "\t\t<a class=\"hiddenanchor\" id=\"signup\"></a>";
+    // $prepend_contents[] = "\t\t<a class=\"hiddenanchor\" id=\"signin\"></a>";
+  }
+} else {
+  $add_classes[] = isset( $_COOKIE['current_sidebar'] ) && trim( $_COOKIE['current_sidebar'] ) === 'small' ? 'nav-sm' : 'nav-md';
+  $prepend_contents[] = "\t<div class=\"container body\">";
+  $prepend_contents[] = "\t  <div class=\"main_container\">";
+}
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
@@ -20,26 +36,5 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <?php wp_head(); ?>
   </head>
-
-<?php
-$page_type = __ctl( 'lib' )::get_pageinfo();
-$prepend_contents = [];
-switch ( $page_type ) {
-  case 'login':
-  case 'register':
-  case 'lostpassword':
-    $add_class = 'login';
-    $prepend_contents[] = '    <div>';
-    $prepend_contents[] = '      <a class="hiddenanchor" id="signup"></a>';
-    $prepend_contents[] = '      <a class="hiddenanchor" id="signin"></a>';
-    break;
-  default:
-    $add_class = isset( $_COOKIE['current_sidebar'] ) && trim( $_COOKIE['current_sidebar'] ) === 'small' ? 'nav-sm' : 'nav-md';
-    $prepend_contents[] = '    <div class="container body">';
-    $prepend_contents[] = '      <div class="main_container">';
-    break;
-}
-?>
-  <body <?php body_class( $add_class ); ?>>
+  <body <?php body_class( implode( ' ', $add_classes ) ); ?>>
 <?php echo implode( PHP_EOL, $prepend_contents ); ?>
-

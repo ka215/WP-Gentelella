@@ -8,12 +8,12 @@
  * @version 1.0
  */
 $_plotter = get_query_var( 'plotter', [] );
-$page_name           = $_plotter['page_name'];
-$current_user_id     = $_plotter['current_user_id'];
-$user_sources        = $_plotter['user_sources'];
-$current_source_id   = $_plotter['current_source_id'];
-$current_source_name = $_plotter['current_source_name'];
-$current_structures  = isset( $_plotter['current_structures'] ) ? $_plotter['current_structures'] : [];
+$page_name           = @$_plotter['page_name'] ?: '';
+$current_user_id     = @$_plotter['current_user_id'] ?: null;
+$user_sources        = @$_plotter['user_sources'] ?: [];
+$current_source_id   = @$_plotter['current_source_id'] ?: null;
+$current_source_name = @$_plotter['current_source_name'] ?: '';
+$current_structures  = @$_plotter['current_structures'] ) ?: [];
 if ( ! empty( $current_structures ) ) {
   wp_safe_redirect( '/edit-storyline/' );
 }

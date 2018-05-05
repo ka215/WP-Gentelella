@@ -238,7 +238,8 @@ $(document).ready(function() {
         switch ( $(this).attr('name') ) {
             case 'settings':
                 // PNotify.info('Location to settings page.');
-                PNotify.alert({text: 'Location to settings page.', addClass: 'dark' });
+                // PNotify.alert({text: 'Location to settings page.', addClass: 'dark' });
+                location.href = '/settings/';
                 break;
             case 'fullscreen':
                 var requestFullscreen = ['requestFullscreen','webkitRequestFullScreen','mozRequestFullScreen','msRequestFullscreen'], 
@@ -263,8 +264,9 @@ $(document).ready(function() {
                     $(this).children('span').attr('class', 'plt-enlarge2');
                 }
                 break;
-            case 'lock':
-                PNotify.error('Undefined action, yet.');
+            case 'help':
+                //PNotify.error('Undefined action, yet.');
+                location.href = '/help/';
                 break;
             case 'signout':
                 location.href = ev.currentTarget.href;

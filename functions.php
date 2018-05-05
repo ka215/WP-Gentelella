@@ -41,6 +41,9 @@ if ( ! defined( 'WPGENT_PATH' ) )       define( 'WPGENT_PATH', get_template_dire
 if ( ! defined( 'WPGENT_DIR' ) )        define( 'WPGENT_DIR', get_template_directory_uri() . '/' );
 if ( ! defined( 'USE_CDN_RESOURCES' ) ) define( 'USE_CDN_RESOURCES', false );
 if ( ! defined( 'SIDEBAR_SEARCH' ) )    define( 'SIDEBAR_SEARCH', false );
+if ( ! defined( 'ENABLE_NOTIFICATION' ) ) define( 'ENABLE_NOTIFICATION', false ); // because use pNotify
+if ( ! defined( 'FULLSPAN_PAGES' ) )    define( 'FULLSPAN_PAGES', set_fullspan_pages() );
+
 
 /**
  * Utilities:
@@ -56,6 +59,35 @@ function __ctl( $class_snippet = 'model' ) {
         $_instance = class_exists( 'Plotter\Controllers\Plotter' ) ? new Plotter\Controllers\Plotter : null;
     }
     return ! empty( $_instance ) ? $_instance : new stdClass();
+}
+function get_current_page_type() {
+    $page_type = __ctl( 'lib' )::get_pageinfo();
+    if ( empty( $page_type ) && is_404() ) {
+        $page_type = 'error404';
+    }
+    return $page_type;
+}
+function get_current_page_data( $page_type ) {
+    $page_data = [];
+    $page_data['title'] = $page_type;
+    if ( $page_type === 'user-policies' ) {
+        $_posts = get_posts( [ 'category' => 0, 'tax_query' => [
+            [ 'taxonomy' => 'post_tag', 'field' => 'slug', 'terms' => 'english' ]
+        ] ] );
+        $page_data['content'] = $_posts[0]->post_content;
+    } else {
+        $page_data['content'] = get_the_content();
+    }
+    return $page_data;
+}
+function set_fullspan_pages() {
+    return [
+        // page types
+        'home', 'login', 'logout', 'signin', 'signout', 'register', 'lostpassword', 'resetpassword', 'resetpass', 
+        'error404', 'thanks', 
+        'service', 'user-policies', 'privacy-policy', 'cookie-policy', 
+        // etc.
+    ];
 }
 
 /**
@@ -139,7 +171,11 @@ add_action( 'wp_enqueue_scripts', function() {
   // $_pagename = __ctl( 'lib' )::get_pageinfo();
   $_plotter  = get_query_var( 'plotter' );
   $_pagename = $_plotter['page_name'];
-  // Stylesheets
+  if ( empty( $_pagename ) && is_front_page() ) {
+    $_pagename = 'front-page';
+  }
+  
+  // Stylesheets --------------------------------------------------------------
   // bootstrap:
   if ( USE_CDN_RESOURCES ) {
     wp_register_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', false, '3.3.7' );
@@ -195,7 +231,7 @@ add_action( 'wp_enqueue_scripts', function() {
   }
   
   
-  // JavaScripts
+  // JavaScripts --------------------------------------------------------------
   // jquery:
   wp_deregister_script( 'jquery' );
   if ( USE_CDN_RESOURCES ) {
@@ -244,7 +280,7 @@ add_action( 'wp_enqueue_scripts', function() {
   $_common_custom_scriptfile = sprintf( '%s/js/custom%s.js', ( WP_DEBUG ? 'src' : 'build' ), ( WP_DEBUG ? '' : '.min' ) );
   wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array( 'wp-api' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
   
-  wp_localize_script( WPGENT_HANDLE, 'localize_messages', __localize_messages() );
+  wp_localize_script( WPGENT_HANDLE, 'localize_messages', __localize_messages( $_pagename ) );
   
   // Single Page Custom Scripts
   $_paged_custom_scriptfile = sprintf( 'build/js/custom-%s%s.js', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
@@ -260,6 +296,9 @@ add_action( 'wp_enqueue_scripts', function() {
 add_action( 'wp_enqueue_scripts', function() {
   $_plotter  = get_query_var( 'plotter' );
   $_pagename = $_plotter['page_name'];
+  if ( empty( $_pagename ) && is_front_page() ) {
+    $_pagename = 'front-page';
+  }
   $registered_style_handles = [
     'common' => [
       'bootstrap', 'font-awesome', WPGENT_HANDLE . '-icon', 
@@ -492,9 +531,8 @@ add_action( 'wp_print_footer_scripts', function() {
   $inline_scripts = array();
   if ( is_user_logged_in() ) {
     if ( __ctl( 'lib' )::has_forms_in_page() ) {
-      $notify_empty_title = __( 'Please be sure to fill here', WPGENT_DOMAIN );
       $inline_scripts[] = <<<EOT
-validator.message['empty'] = "$notify_empty_title";
+validator.message['empty'] = localize_messages.notify_empty_title;
 
 $('form.withValidator')
   .on('blur', 'input[required], input.optional, select.required', validator.checkField)

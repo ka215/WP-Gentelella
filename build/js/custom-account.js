@@ -39,7 +39,7 @@ $(document).ready(function() {
    * ※ ?redirect_to=~ クエリによるリロード時の再通知表示を抑止するため
    */
   function initHistory() {
-    if ( 'signed_out' === history.state || '1' === $.QueryString.reauth ) {
+    if ( 'signed_out' === history.state || '1' === $.QueryString.reauth || 'true' === $.QueryString.loggedout ) {
       history.replaceState( 'signed_out', '', location.pathname );
     }
   }

@@ -1,22 +1,3 @@
-/**  ------------------------------------------  **/
-body {
-  color: $body_color;
-  background: $sidebar_bg;
-  font-family: $base_font;
-  font-size: $base_font_size;
-  font-weight: $base_font_weight;
-  line-height: 1.471;
-}
-.container {
-  width: 100%;
-  max-width: 100% !important;
-  padding: 0
-}
-.main_container {}
-.no-padding {
-  padding: 0 !important;
-}
-
 /**  - right column ---------------------------  **/
 
 .page-title {
@@ -239,36 +220,6 @@ a:hover, a:focus {
   padding: 4px 6px;
 }
 
-/**  - footer ---------------------------  **/
-footer {
-  background: $main_content_bg; /*$footer_bg;*/
-  margin-bottom: 0;
-  padding: 17px 20px 15px;
-  display: block;
-  border-top: 1px solid $footer_border;
-}
-.nav-sm footer {
-  margin-left: 70px;
-}
-.nav-md.full-span footer {
-  margin-left: 0;
-}
-.footer_fixed footer {
-  position: fixed;
-  left: 0px;
-  bottom: 0px;
-  width: 100%;
-}
-@media (min-width: 768px) {
-  .footer_fixed footer {
-    margin-left: 0;
-  }
-}
-@media (min-width: 768px) {
-  .footer_fixed .nav-sm footer {
-    margin-left: 0;
-  }
-}
 .tile-stats.sparkline {
   padding: 10px;
   text-align: center;
@@ -423,7 +374,8 @@ article.media {
   float: left;
   display: block;
   text-overflow: ellipsis;
-  overflow: hidden;
+  /* overflow-x: hidden;
+  overflow-y: visible; */
   white-space: nowrap;
 }
 .x_title h2 small {
@@ -1159,12 +1111,6 @@ span.right {
   overflow: hidden;
   white-space: nowrap;
   position: relative;
-}
-
-@media (min-width: 992px) {
-  footer {
-    margin-left: 230px;
-  }
 }
 
 @media (min-width: 992px) {
