@@ -60,6 +60,9 @@ function __ctl( $class_snippet = 'model' ) {
     }
     return ! empty( $_instance ) ? $_instance : new stdClass();
 }
+/**
+ * Retrieve current page type that is wrapper of common::get_pageinfo()
+ */
 function get_current_page_type() {
     $page_type = __ctl( 'lib' )::get_pageinfo();
     if ( empty( $page_type ) && is_404() ) {
@@ -67,19 +70,73 @@ function get_current_page_type() {
     }
     return $page_type;
 }
-function get_current_page_data( $page_type ) {
+/**
+ * Retrieve current page data with user accept language (default language is english)
+ */
+function get_current_page_data( $page_type, $category_name='service' ) {
     $page_data = [];
-    $page_data['title'] = $page_type;
-    if ( $page_type === 'user-policies' ) {
-        $_posts = get_posts( [ 'category' => 0, 'tax_query' => [
-            [ 'taxonomy' => 'post_tag', 'field' => 'slug', 'terms' => 'english' ]
-        ] ] );
-        $page_data['content'] = $_posts[0]->post_content;
+    $lang_tags = [ 
+        'en' => 'english',
+        'ja' => 'japanese',
+        // etc.
+    ];
+    $terms_array = [ $lang_tags['en'] ]; // Set default
+    $current_user_lang = preg_split( '/(-|_)/', get_user_locale() );
+    reset( $current_user_lang );
+    $current_user_lang = current( $current_user_lang );
+    if ( 'en' === $current_user_lang && array_key_exists( $current_user_lang, $lang_tags ) ) {
+        $terms_array[] = $lang_tags[$current_user_lang];
+    }
+    $args = [
+        'category_name' => $category_name,
+        'tax_query'     => [
+            'taxonomy'  => 'post_tag',
+            'field'     => 'slug',
+            'terms'     => $terms_array,
+            'operator'  => 'IN'
+        ]
+    ];
+    $_posts = get_posts( $args );
+    if ( empty( $_posts ) ) {
+        $page_data = [
+            'title' => '404.' . __( 'Content Not Found.', WPGENT_DOMAIN ),
+            'content' => __( "Something's wrong here...", WPGENT_DOMAIN ), // Entity of single quote ("'") is "&#039;",
+        ];
     } else {
-        $page_data['content'] = get_the_content();
+        $search_post_name = $page_type .'-'. $current_user_lang;
+        $post_exists = false;
+        foreach ( $_posts as $_post ) {
+            if ( $search_post_name === $_post->post_name ) {
+                $post_exists = true;
+                break;
+            }
+        }
+        if ( ! $post_exists ) {
+            $search_post_name = $page_type .'-en';
+        }
+        foreach ( $_posts as $_post ) {
+            if ( $search_post_name === $_post->post_name ) {
+                $page_data = [
+                    'ID' => $_post->ID,
+                    'title' => trim( preg_replace( '/\(.*\)/', '', $_post->post_title ) ),
+                    'content' => $_post->post_content,
+                    'modified' => $_post->post_modified,
+                ];
+                break;
+            }
+        }
+    }
+    if ( empty( $page_data ) ) {
+        $page_data = [
+            'title'   => get_the_title(),
+            'content' => get_the_content(),
+        ];
     }
     return $page_data;
 }
+/**
+ * Defines full-span pages to use FULLSPAN_PAGES (mixed pagename and pagetype)
+ */
 function set_fullspan_pages() {
     return [
         // page types

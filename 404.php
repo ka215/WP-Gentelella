@@ -43,7 +43,7 @@ if ( is_user_logged_in() && ! is_admin() ) :
       <div class="jumbotron">
         <div class="container">
           <h2 class="h2 text-center">404. <?= __( 'Content Not Found.', WPGENT_DOMAIN ) ?></h2>
-          <p class="text-center"><?= __( 'Something&#039;s wrong here...', WPGENT_DOMAIN ) ?></p>
+          <p class="text-center"><?= __( "Something'&#039;s wrong here...", WPGENT_DOMAIN ) ?></p>
         </div>
       </div>
       

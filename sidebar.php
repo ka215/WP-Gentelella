@@ -10,7 +10,7 @@
 if ( ! is_active_sidebar( 'side-menu' ) ) {
   return;
 } else {
-  $_plotter               = get_query_var( 'plotter' );
+  $_plotter               = get_query_var( 'plotter', [] );
   $now_page               = @$_plotter['page_name'] ?: '';
   $current_user_id        = @$_plotter['current_user_id'] ?: null;
   $user_sources           = @$_plotter['user_sources'] ?: [];

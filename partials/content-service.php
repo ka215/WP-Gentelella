@@ -18,6 +18,11 @@ if ( is_user_logged_in() ) :
       <div class="x_panel service" id="<?= $page_type ?>">
         <div class="x_title">
           <h2><?= $page_data['title'] ?></h2>
+<?php if ( isset( $page_data['modified'] ) ) : ?>
+          <div class="x_title_meta pull-right">
+            <span><?= date( 'jS M Y', strtotime( $page_data['modified'] ) ) ?></span>
+          </div>
+<?php endif; ?>
           <div class="clearfix"></div>
         </div>
         <div class="x_content">
@@ -31,10 +36,19 @@ if ( is_user_logged_in() ) :
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-12 service" id="<?= $page_type ?>">
-      <h2 class="h2 text-center"><?= $page_data['title'] ?></h2>
-      <div class="clearfix"></div>
+      <div class="header-container">
+        <h2 class="h2"><?= $page_data['title'] ?></h2>
+<?php if ( isset( $page_data['modified'] ) ) : ?>
+        <div class="header-meta pull-right">
+          <span><?= date( 'jS M Y', strtotime( $page_data['modified'] ) ) ?></span>
+        </div>
+<?php endif; ?>
+      </div>
       <div class="body-content">
         <?= $page_data['content'] ?>
+      </div>
+      <div class="footer-container">
+        
       </div>
       <div class="clearfix"></div>
       <div class="text-center">
