@@ -147,12 +147,12 @@ $(document).ready(function() {
         $RIGHT_COL.css('min-height', $(window).height());
 
         var bodyHeight = $BODY.outerHeight(),
-            footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.height(),
+            footerHeight = $BODY.hasClass('footer_fixed') ? -10 : $FOOTER.outerHeight(),
             leftColHeight = $LEFT_COL.eq(1).height() + $SIDEBAR_FOOTER.height(),
             contentHeight = bodyHeight < leftColHeight ? leftColHeight : bodyHeight;
 
         // normalize content
-        contentHeight -= $NAV_MENU.height() + footerHeight;
+        contentHeight -= $NAV_MENU.height() + footerHeight - 12;
 
         $RIGHT_COL.css('min-height', contentHeight);
     };
@@ -276,8 +276,13 @@ $(document).ready(function() {
     
     // all links as location.href
     $BODY.filter(function(){ return $(this).hasClass('logged-in'); }).find('a').on('click', function(ev) {
+        // ev.preventDefault();
+        if ( ! is_empty( $(this).attr( 'rel' ) ) && /external/.test( $(this).attr( 'rel' ) ) ) {
+            // When moving to external site
+            ev.target.target = '_blank';
+        } else
         if ( ! is_empty( $(this).attr('href') ) && ! /^(#.*|javascript\:.*)$/.test( $(this).attr('href') ) ) {
-            // ev.preventDefault();
+            // When moving within the site
             showLoading();
         }
     });
@@ -983,7 +988,8 @@ function dialog( data ) {
 $(document).ready(function() {
   
   var $TOPNAV_FORM = $('#topnav-form'),
-      CURRENT_SOURCE_ID = Number( $TOPNAV_FORM.find('input[name="source_id"]').val() );
+      CURRENT_SOURCE_ID = Number( $TOPNAV_FORM.find('input[name="source_id"]').val() ),
+      MESSENGER_EVENT_PROPAGATION = false;
   
   // Top Navigation
   $('#topnav-switch-source').on('change', function(){
@@ -1067,6 +1073,46 @@ $(document).ready(function() {
     return results;
   })(window.location.search.substr(1).split('&'));
 
+  /**
+   * Messenger Control
+   */
+  $('#topnav-messenger .msg_list').on('click focus', function(e){
+    if ( ! MESSENGER_EVENT_PROPAGATION ) {
+      e.stopPropagation();
+    } else {
+      MESSENGER_EVENT_PROPAGATION = false;
+    }
+  });
+
+  $('#msgctl-see-all').on('click', function(e){
+    location.href = '/messages/';
+  });
+
+  $('#msgctl-reload').on('click', function(e){
+    // reload via ajax
+    
+  });
+
+  $('#msgctl-reside').on('click', function(e){
+    MESSENGER_EVENT_PROPAGATION = true;
+    $('#topnav-messenger .msg_list').trigger( 'click' );
+    
+    var rightCol        = $('.right_col'),
+        primary_width   = rightCol.width() > 1008 ? '66%' : '100%',
+        secondary_width = rightCol.width() > 1008 ? '33%' : '100%',
+    $newPanel = $( '<div>', { class: 'x_panel secondary-panel' } ).css({ width: secondary_width, height: '100%' });
+    $newPanel.append( '<div class="x_title"><h3>New Messages</h3></div>' );
+    $newPanel.append( '<div class="x_content">' + "Sorry, it's not yet implemented because under development now." + '</div>' );
+    $newPanel.find('.x_content').append( '<div class="ln_solid"></div>' );
+    $newPanel.find('.x_content').append( '<button type="button" class="btn btn-default" id="close-msg-panel">Close</button>' );
+    $(document).on( 'click', '#close-msg-panel', function(){
+      $('.secondary-panel').remove();
+      rightCol.find('.panel-primary').removeAttr( 'style' );
+    });
+    
+    rightCol.find('.panel-primary').css( 'width', primary_width );
+    rightCol.find('.flex-container').append( $newPanel[0].outerHTML );
+  });
 
 });
 

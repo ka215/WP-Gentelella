@@ -1,5 +1,5 @@
 {
-  "name": "bootstrap-daterangepicker",
+  "name": "daterangepicker",
   "main": [
     "daterangepicker.js",
     "daterangepicker.css"
@@ -18,12 +18,12 @@
     "moment": ">=2.9.0"
   },
   "homepage": "https://github.com/dangrossman/bootstrap-daterangepicker",
-  "version": "2.1.27",
-  "_release": "2.1.27",
+  "version": "3.0.1",
+  "_release": "3.0.1",
   "_resolution": {
     "type": "version",
-    "tag": "v2.1.27",
-    "commit": "d4aabfbceaf57117e1af33f3f82e92162719eee9"
+    "tag": "v3.0.1",
+    "commit": "b17e061234bf80df062cd9f83ce2f422b15c3006"
   },
   "_source": "https://github.com/dangrossman/bootstrap-daterangepicker.git",
   "_target": "*",

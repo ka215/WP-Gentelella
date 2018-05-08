@@ -1,0 +1,160 @@
+/**
+ * messenger styles
+ */
+/* navi-messages */
+.navbar-nav .open .dropdown-menu.msg_list {
+  right: -80px;
+  width: 300px;
+  filter: drop-shadow( 2px 2px 3px rgba(51,51,51,.3) );
+}
+.top_nav .navbar-right a.info-number {
+  margin-top: 0;
+  padding-top: 18px;
+}
+.top_nav .navbar-right a.info-number> i[class^="plt-"] {
+  font-size: 17px;
+}
+.info-number .badge {
+  box-sizing: border-box;
+  font-size: 10px;
+  font-weight: normal;
+  line-height: 13px;
+  width: 21px;
+  padding: 4px 5px;
+  position: absolute;
+  right: 2px;
+  top: 4px;
+}
+ul.msg_list li.message-wrapper, 
+ul.msg_list li.messenger-control {
+  display: -webkit-flex;
+  display: flex;
+  position: relative;
+  background: transparent;
+  padding: 5px;
+  margin: 6px 6px 0;
+  width: calc( 100% - 14px );
+  height: 100%;
+  clear: botn;
+  border-bottom: dotted 1px $cloud;
+}
+ul.msg_list li.message-wrapper:hover, 
+ul.msg_list li.message-content:focus {
+  background: $lavender_ice; /*$navi_menu_dropdown_msg_list_bg;*/
+}
+ul.msg_list li.messenger-control {
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding: 5px;
+  border-bottom: 0;
+}
+ul.msg_list li.message-wrapper figure span {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  margin-left: 0;
+  margin-right: 10px;
+  background: $pearl_white;
+  border: 1px solid $frosty_white;
+  overflow: hidden;
+}
+ul.msg_list li.message-wrapper figure span img.avatar {
+  position: absolute;
+  left: calc(50% - 24px);
+  top: calc(50% - 24px);
+}
+ul.msg_list li.message-wrapper .message-body {
+  display: -webkit-flex;
+  display: flex;
+  flex-flow: column nowrap;
+  position: relative;
+  
+  .msg-from {
+  }
+  
+  .msg-send-time {
+    margin-left: 1em;
+    color: $moss_gray;
+  }
+  
+}
+
+/* messages */
+.static-value {
+  width: 33%;
+}
+.no-pointer {
+  cursor: default;
+  pointer-events: none;
+}
+.input-group-separation {
+  position: relative;
+  display: table-cell;
+  vertical-align: top;
+  font-size: 0;
+  white-space: nowrap;
+  width: 1%;
+  
+  .form-control {
+    border-right: 0;
+  }
+}
+#messengerForm .admin-item .input-group-btn {
+  width: inherit;
+}
+#sendto-id-finder {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  
+  .selected-container {
+    position: relative;
+    display: inline-block;
+    width: 300px;
+    
+    &:before {
+      content: "\edce";
+      font-family: 'plotter' !important;
+      position: absolute;
+      top: 6px;
+      left: -2em;
+      font-size: 1.2em;
+      color: $moss_gray;
+    }
+    
+    .tag:after {
+      content: '';
+      display: none;
+    }
+    
+    .bootstrap-tagsinput {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      width: 100%;
+      min-height: 2.6em;
+      
+      input[type="text"] {
+        display: none;
+      }
+    }
+  }
+}
+.remain-count {
+  font-weight: normal;
+  
+  &:before {
+    content: "(";
+    color: $gray;
+  }
+  
+  &:after {
+    content: ")";
+    color: $gray;
+  }
+}

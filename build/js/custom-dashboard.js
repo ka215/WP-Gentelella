@@ -77,6 +77,32 @@ $(document).ready(function() {
   });
 
   /*
+   *  (:> 画面内の各種キーイベントの制御
+   */
+  $(document).on( 'keydown', 'body', function(e){
+    var evt = e.originalEvent;
+    // Enterキーによるフォームのフォーカス変更
+    if ( evt.key === 'Enter' ) {
+      e.preventDefault();
+      var availableFields = gf.find('.form-control'),
+          currentFieldId  = evt.target.id,
+          nextFieldIndex  = 0;
+      logger.debug( evt, availableFields, currentFieldId );
+      if ( currentFieldId === 'dashboard-register' ) {
+        $('#dashboard-register').trigger('click');
+      } else {
+        availableFields.each(function( i ){
+          if ( $(this)[0].id === currentFieldId ) {
+            nextFieldIndex = i + 1 < availableFields.length ? i + 1 : 0;
+            return false;
+          }
+        });
+        $(availableFields[nextFieldIndex]).trigger('click').trigger('focus');
+      }
+    }
+  });
+
+  /*
    * Fire on resize window (:> ウィンドウリサイズ時のイベント
    */
   $(window).resize(function(){

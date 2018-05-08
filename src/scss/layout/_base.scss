@@ -1,0 +1,60 @@
+/* Base Styles */
+h1, .h1, h2, .h2, h3, .h3 {
+  margin-top: 4px;
+  margin-bottom: 10px;
+  font-weight: 400;
+}
+h1 {
+  font-size: 26px;
+  margin-bottom: 12px;
+}
+h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+h3 {
+  font-size: 18px;
+  margin-bottom: 8px;
+}
+a {
+  color: $alink_color;
+  text-decoration: none;
+}
+a[rel*="external"] {
+  position: relative;
+}
+a[rel*="external"]:after {
+  content: "\eeca";
+  font-family: 'plotter' !important;
+  position: absolute;
+  margin-left: .5em;
+}
+a, a:visited, a:focus, a:active, 
+:visited, :focus, :active, 
+.btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
+  outline: 0;
+}
+a:hover, a:focus {
+  color: $alink_color_hover;
+  text-decoration: none
+}
+.required {
+  position: relative;
+  display: inline-block;
+  color: $red;
+  width: .5rem;
+  height: 1rem;
+}
+.required:before {
+  position: absolute;
+  content: "\f069";
+  left: .35rem;
+  top: -.5rem;
+  font-family: FontAwesome;
+  font-style: normal;
+  font-weight: normal;
+  font-size: .5rem;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: $signal_red;
+}

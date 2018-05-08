@@ -1,39 +1,5 @@
 /**  - right column ---------------------------  **/
 
-.page-title {
-  width: 100%;
-  height: auto;
-  padding: 10px 0;
-}
-.page-title .title_left {
-  width: 45%;
-  float: left;
-  display: block;
-}
-.page-title .title_left h3 {
-  margin: 9px 0;
-}
-.page-title .title_right {
-  width: 55%;
-  float: left;
-  display: block;
-}
-.page-title .title_right .pull-right {
-  margin: 10px 0;
-}
-.fixed_height_320 {
-  height: 320px;
-}
-.fixed_height_390 {
-  height: 390px;
-}
-.fixed_height_200 {
-  height: 200px;
-}
-.overflow_hidden {
-  overflow: hidden
-}
-
 
 .progress-bar-dark {
   background-color: $dark !important;
@@ -141,54 +107,6 @@ table.no-margin .progress {
 }
 .grid_slider .col-md-6 {
   padding: 0 40px;
-}
-h1, .h1, h2, .h2, h3, .h3 {
-  margin-top: 4px;
-  margin-bottom: 10px;
-  font-weight: 400;
-}
-h1 {
-  font-size: 26px;
-  margin-bottom: 12px;
-}
-h2 {
-  font-size: 22px;
-  margin-bottom: 10px;
-}
-h3 {
-  font-size: 18px;
-  margin-bottom: 8px;
-}
-a {
-  color: $alink_color;
-  text-decoration: none;
-}
-a, a:visited, a:focus, a:active, :visited, :focus, :active, .btn:focus, .btn:active:focus, .btn.active:focus, .btn.focus, .btn:active.focus, .btn.active.focus {
-  outline: 0;
-}
-a:hover, a:focus {
-  color: $alink_color_hover;
-  text-decoration: none
-}
-.required {
-  position: relative;
-  display: inline-block;
-  color: $red;
-  width: .5rem;
-  height: 1rem;
-}
-.required:before {
-  position: absolute;
-  content: "\f069";
-  left: .35rem;
-  top: -.5rem;
-  font-family: FontAwesome;
-  font-style: normal;
-  font-weight: normal;
-  font-size: .5rem;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: $signal_red;
 }
 
 
@@ -875,48 +793,6 @@ div.box {
 
 /* *********  widgets  *************************************** */
 
-ul.msg_list li {
-  background: $navi_menu_dropdown_msg_list_bg;
-  padding: 5px;
-  display: flex;
-  margin: 6px 6px 0;
-  width: 96% !important;
-}
-ul.msg_list li:last-child {
-  margin-bottom: 6px;
-  padding: 10px;
-}
-ul.msg_list li a {
-  padding: 3px 5px !important;
-  color: $navi_menu_dropdown_msg_list !important;
-}
-ul.msg_list li a:hover {
-  background: $navi_menu_dropdown_msg_list_bg_hover !important;
-}
-ul.msg_list li a i {
-  color: inherit;
-}
-ul.msg_list li a .image img, ul.msg_list li a .image i {
-  border-radius: 2px 2px 2px 2px;
-  -webkit-border-radius: 2px 2px 2px 2px;
-  float: left;
-  margin-right: 10px;
-  width: 11%;
-}
-ul.msg_list li a .time {
-  font-size: 11px;
-  font-style: italic;
-  font-weight: bold;
-  position: absolute;
-  right: 35px;
-}
-ul.msg_list li a .message {
-  display: block !important;
-  font-size: 11px;
-}
-.dropdown-menu.msg_list span {
-  white-space: normal;
-}
 .dropdown-menu {
   border: medium none;
   box-shadow: none;
@@ -935,7 +811,7 @@ ul.msg_list li a .message {
   border-top-right-radius: 0;
 
 }
-.dropdown-menu>li>a {
+.dropdown-menu> li> a {
   color: $alink_color;
 }
 .navbar-nav .open .dropdown-menu {
@@ -948,18 +824,6 @@ ul.msg_list li a .message {
   right: 0;
   left: auto;
   width: 220px;
-}
-.navbar-nav .open .dropdown-menu.msg_list {
-  width: 300px;
-}
-.info-number .badge {
-  font-size: 10px;
-  font-weight: normal;
-  line-height: 13px;
-  padding: 2px 6px;
-  position: absolute;
-  right: 2px;
-  top: 8px;
 }
 ul.to_do {
   padding: 0;

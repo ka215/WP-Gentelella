@@ -14,10 +14,10 @@ if ( ! is_user_logged_in() && in_array( $page_type, FULLSPAN_PAGES ) ) {
   $add_classes[] = 'full-span';
   if ( ! in_array( $page_type, [ 'home', 'error404', 'thanks' ] ) ) {
     $add_classes[] = 'login';
-    // $prepend_contents[] = "\t<div>";
-    // $prepend_contents[] = "\t\t<a class=\"hiddenanchor\" id=\"signup\"></a>";
-    // $prepend_contents[] = "\t\t<a class=\"hiddenanchor\" id=\"signin\"></a>";
   }
+} else
+if ( 'home' === $page_type ) {
+  $add_classes[] = 'full-span';
 } else {
   $add_classes[] = isset( $_COOKIE['current_sidebar'] ) && trim( $_COOKIE['current_sidebar'] ) === 'small' ? 'nav-sm' : 'nav-md';
   $prepend_contents[] = "\t<div class=\"container body\">";

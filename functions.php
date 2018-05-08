@@ -262,9 +262,9 @@ add_action( 'wp_enqueue_scripts', function() {
   
   // vendoers styles:
   $vendor_styles = [
-    // 'pnotify'     => 'vendors/pnotify/dist/pnotify.css',
     'switchery'   => 'vendors/switchery/dist/switchery.min.css',
     'smartwizard' => 'vendors/jQuery-Smart-Wizard/styles/smart_wizard.css',
+    'tagsinput'   => 'vendors/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
     // etc.
   ];
   foreach ( $vendor_styles as $_handle => $_path ) {
@@ -322,11 +322,11 @@ add_action( 'wp_enqueue_scripts', function() {
   // vendoers scripts:
   $vendor_scripts = [
     'validator'   => 'vendors/validator/validator.js',
-    // 'pnotify'     => 'vendors/pnotify/dist/pnotify.js',
     'switchery'   => 'vendors/switchery/dist/switchery.min.js',
     'smartwizard' => 'vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js',
     // 'jssha'       => 'vendors/jsSHA/src/sha.js',
     'blueimp-md5' => 'vendors/blueimp-md5/js/md5.min.js',
+    'tagsinput'   => 'vendors/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js',
     // etc.
   ];
   foreach ( $vendor_scripts as $_handle => $_path ) {
@@ -440,6 +440,9 @@ add_action( 'wp_enqueue_scripts', function() {
         $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', ] ); // 'switchery', 'smartwizard' 
         $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'blueimp-md5' ] ); // 'switchery', 'smartwizard' 
         break;
+      case 'messages':
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'tagsinput' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'blueimp-md5', 'tagsinput' ] );
       default:
         
     }

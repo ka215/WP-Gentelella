@@ -1,5 +1,8 @@
 /* Layout Grids */
 /* Base Container */
+html, body {
+  height: 100%;
+}
 body {
   color: $body_color;
   background: $sidebar_bg;
@@ -14,7 +17,6 @@ body {
   padding: 0
 }
 .main_container {
-  
 }
 .no-padding {
   padding: 0 !important;
