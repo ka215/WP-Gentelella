@@ -1,0 +1,20 @@
+/**
+ * pNotify styles
+ */
+/* now loading */
+.plotter-loading {
+  .alert-info {
+    color: $white;
+    background-color: rgba( $blue, 0.75 );
+    border-color: rgba( $blue, 0.75 );
+    
+    .ui-pnotify-icon {
+      margin-right: 1em;
+    }
+    
+    .ui-pnotify-text {
+      line-height: 2em;
+      vertical-align: middle;
+    }
+  }
+}

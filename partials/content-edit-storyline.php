@@ -15,10 +15,8 @@ $user_sources        = @$_plotter['user_sources'] ?: [];
 $current_source_id   = @$_plotter['current_source_id'] ?: null;
 $current_source_name = @$_plotter['current_source_name'] ?: '';
 $current_structures  = @$_plotter['current_structures'] ?: [];
-if ( empty( $current_structures ) ) {
-  wp_safe_redirect( '/create-new/' );
-}
-$current_dependency  = $_plotter['current_dependency'];
+$has_structure       = @$_plotter['has_current_structures'] ?: false;
+$current_dependency  = @$_plotter['current_dependency'] ?: 0;
 $current_group_id    = isset( $_COOKIE['group_id'] ) ? (int) $_COOKIE['group_id'] : null;
 if ( empty( $current_group_id ) ) {
   foreach ( $current_structures as $_structure ) {
@@ -32,7 +30,7 @@ if ( $current_group_id != -1 ) {
     $first_view_context = __ctl( 'model' )->get_structures( 'context', 
         [ 'source_id' => $current_source_id, 'status' => 1, 'dependency' => $current_dependency, 'group_id' => $current_group_id ],
         'and', [ 'turn' => 'asc' ], 1 );
-    $first_view_context = __ctl( 'lib' )->array_flatten( $first_view_context )['context'];
+    $first_view_context = @__ctl( 'lib' )->array_flatten( $first_view_context )['context'] ?: '';
 } else {
     $first_view_context = '';
 }
@@ -41,7 +39,9 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
 // var_dump( __ctl( 'libs' )->get_dependent_structures( $current_source_id, $current_dependency, $current_group_id ) );
 
 ?>
-
+<?php if ( ! $has_structure ) : ?>
+<script>location.href = '/create-new/';</script>
+<?php endif; ?>
         <!-- page content -->
         <div class="right_col" role="main">
           <div <?php post_class( 'flex-container' ); ?>>
@@ -179,16 +179,16 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
 
                     <div id="act-form">
                       <div class="form-horizontal form-label-left" id="act-form-current">
-                        <input type="hidden" id="act-structure-id" name="structure_id" value="<?= esc_attr( $_first_view_structure['id'] ) ?>">
-                        <input type="hidden" id="act-group-id" name="group_id" value="<?= esc_attr( $_first_view_structure['group_id'] ) ?>">
-                        <input type="hidden" id="act-turn" name="turn" value="<?= esc_attr( $_first_view_structure['turn'] ) ?>">
+                        <input type="hidden" id="act-structure-id" name="structure_id" value="<?= esc_attr( @$_first_view_structure['id'] ?: '' ) ?>">
+                        <input type="hidden" id="act-group-id" name="group_id" value="<?= esc_attr( @$_first_view_structure['group_id'] ?: '' ) ?>">
+                        <input type="hidden" id="act-turn" name="turn" value="<?= esc_attr( @$_first_view_structure['turn'] ?: '' ) ?>">
                         <input type="hidden" id="act-diff" name="diff" value="false">
                         <input type="hidden" id="act-hash" name="hash" value="<?php if ( ! empty( $_first_view_structure['id'] ) ) { echo esc_attr( md5( $_first_view_structure['id'] ) ); } ?>">
                         <div class="form-group">
                           <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-name"><?php _e('Act Name', WPGENT_DOMAIN ); ?> <span class="required"></span>
                           </label>
                           <div class="col-md-9 col-sm-9 col-xs-12">
-                            <input type="text" id="act-name" name="name" required="required" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( $_first_view_structure['name'] ) ?>">
+                            <input type="text" id="act-name" name="name" required="required" class="form-control col-md-7 col-xs-12" placeholder="<?php _e('Act Name', WPGENT_DOMAIN ); ?>" value="<?= esc_attr( @$_first_view_structure['name'] ?: '' ) ?>">
                           </div>
                         </div>
                         <div class="form-group">
@@ -196,7 +196,7 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
                           </label>
                           <div class="col-md-6 col-sm-9 col-xs-12">
                             <select id="change-turn" name="turn" required="required" class="form-control col-md-7 col-xs-12">
-                              <option value="0" <?php selected( 1, $_first_view_structure['turn'] ); ?>><?php _e( 'None, the first act on dependency', WPGENT_DOMAIN ) ?></option>
+                              <option value="0" <?php selected( 1, @$_first_view_structure['turn'] ?: '' ); ?>><?php _e( 'None, the first act on dependency', WPGENT_DOMAIN ) ?></option>
 <?php foreach ( $current_structures as $_structure ) : 
           if ( $_structure['dependency'] == $current_dependency && $_structure['group_id'] == $current_group_id ) : ?>
                               <option value="<?= esc_attr( $_structure['turn'] ) ?>"><?= esc_html( $_structure['name'] ) ?><?php if ( WP_DEBUG ) : 
@@ -210,7 +210,7 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
                         <div class="form-group">
                           <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-context"><?php _e('Context', WPGENT_DOMAIN ); ?></label>
                           <div class="col-md-9 col-sm-9 col-xs-12">
-                            <textarea id="act-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= esc_html( $_first_view_structure['context'] ) ?></textarea>
+                            <textarea id="act-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= esc_html( @$_first_view_structure['context'] ?: '' ) ?></textarea>
                           </div>
                         </div>
                         <div class="form-group hide">

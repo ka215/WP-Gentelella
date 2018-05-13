@@ -505,7 +505,7 @@ function showLoading() {
     window.loading = PNotify.info({
       text: localize_messages.loading,
       textTrusted: true,
-      icon: 'fa fa-spinner fa-pulse',
+      icon: 'fa plt-spinner2 fa-pulse fa-2x fa-fw', // fa fa-spinner fa-pulse
       addClass: 'plotter-loading',
       hide: false,
       width: '200px',
@@ -816,6 +816,30 @@ var callbackAjax = {
             location.href = data.action;
           }
         }
+      },
+      msglist: function ( data ) {
+        var $infoNumber = $('#topnav-messenger a.info-number'),
+            $msgList    = $('.dropdown-menu.msg_list');
+        if ( $infoNumber.length > 0 ) {
+          if ( data.message_length == 0 ) {
+            $infoNumber.find('i.plt-bell').addClass('off-color');
+            $infoNumber.find('span.badge').remove();
+          } else {
+            $infoNumber.find('i.plt-bell').removeClass('off-color');
+            if ( $infoNumber.find('span.badge').length == 0 ) {
+              $infoNumber.append( '<span class="badge bg-red">' + data.message_length + '</span>' );
+            } else {
+              $infoNumber.find('span.badge').text( data.message_length );
+            }
+          }
+        }
+        if ( $msgList.length > 0 ) {
+          $msgList.find('.message-wrapper').fadeOut('slow').queue(function(){
+            this.remove();
+            $msgList.prepend( data.html );
+          });
+        }
+        $('#msgctl-reload').find('i').attr( 'class', 'plt-loop3' );
       }
     },
     callAjax = function() {
@@ -985,7 +1009,7 @@ $(document).ready(function() {
               click: (notice, value) => {
                 notice.close();
                 // notice.fire('pnotify.confirm', {notice, value});
-                docCookies.setItem( 'lastSource', newSrcId, 60*60*24*30, '/', 'plotter.me', 1);
+                docCookies.setItem( 'lastSource', newSrcId, 60*60*24*30, '/', 'plotter.me', 1 );
                 if ( docCookies.hasItem( 'dependency' ) ) {
                   docCookies.removeItem( 'dependency', '/' );
                 }
@@ -1050,12 +1074,31 @@ $(document).ready(function() {
   });
 
   $('#msgctl-see-all').on('click', function(e){
+    showLoading();
     location.href = '/messages/';
   });
 
   $('#msgctl-reload').on('click', function(e){
+    $(this).find('i').attr( 'class', 'fa plt-loop3 fa-spin' );
     // reload via ajax
-    
+    var postDataRaw = {
+          'from_page': 'messages',
+          'post_action': 'get_latest',
+          'from_user': $(this).closest('.messenger-control').attr( 'data-from-user'),
+          'seek_end': 5,
+          '_token': $(this).closest('.messenger-control').attr( 'data-msg-token'),
+        },
+        postData = JSON.stringify( postDataRaw );
+    // ajaxでpost
+    callAjax(
+      '',
+      'post',
+      postData,
+      'json',
+      'application/json; charset=utf-8',
+      'msglist',
+      true
+    );
   });
 
   $('#msgctl-reside').on('click', function(e){

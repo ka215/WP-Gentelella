@@ -14,11 +14,11 @@ $user_sources        = @$_plotter['user_sources'] ?: [];
 $current_source_id   = @$_plotter['current_source_id'] ?: null;
 $current_source_name = @$_plotter['current_source_name'] ?: '';
 $current_structures  = @$_plotter['current_structures'] ?: [];
-if ( ! empty( $current_structures ) ) {
-  wp_safe_redirect( '/edit-storyline/' );
-}
+$has_structure       = @$_plotter['has_current_structures'] ?: false;
 ?>
-
+<?php if ( $has_structure ) : ?>
+<script>location.href = '/edit-storyline/';</script>
+<?php endif; ?>
         <!-- page content -->
         <div class="right_col" role="main">
           <div <?php post_class( 'flex-container' ); ?>>

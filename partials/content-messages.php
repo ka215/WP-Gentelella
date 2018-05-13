@@ -12,6 +12,15 @@ $page_name           = @$_plotter['page_name'] ?: '';
 $current_user_id     = @$_plotter['current_user_id'] ?: null;
 
 $maxContentLength    = 2000; // =admin; user: 250?
+
+//__ctl( 'lib' )::replace_user_message( $current_user_id, '5d11134d' );
+
+$messages = __ctl( 'lib' )::load_user_notify_logs( $current_user_id, 'all' );
+foreach ( $messages as $_id => $_data ) {
+  $_usrdata = get_userdata( $_data['from_user'] );
+  $messages[$_id]['from_user_name']  = $_usrdata->display_name;
+  $messages[$_id]['human_time_diff'] = human_time_diff( strtotime( $_data['sent_at'] ), current_time( 'timestamp' ) );
+}
 ?>
         <!-- page content -->
         <div class="right_col" role="main">
@@ -30,9 +39,135 @@ $maxContentLength    = 2000; // =admin; user: 250?
                   <input type="hidden" id="message_to_user" name="to_user" value="0" />
                   <input type="hidden" id="message_to_team" name="to_team" value="" />
                   <?php wp_nonce_field( $page_name . '-form_' . $current_user_id, '_token', true, true ); ?>
-<?php var_dump( $_plotter ); ?>
-
-
+<?php if ( ! current_user_can( 'manage_options' ) ) : ?>
+                  <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                    <ul id="messageTab" class="nav nav-tabs bar_tabs" role="tablist">
+                      <li role="presentation">
+                        <a href="#tab-content1" role="tab" id="all-messages-tab" data-toggle="tab" aria-expanded="true"><?= __( 'All' ) ?></a>
+                      </li>
+                      <li role="presentation" class="active">
+                        <a href="#tab-content2" role="tab" id="unread-messages-tab" data-toggle="tab" aria-expanded="false"><?= __( 'Unread' ) ?></a>
+                      </li>
+                      <li role="presentation" class="">
+                        <a href="#tab-content3" role="tab" id="read-messages-tab" data-toggle="tab" aria-expanded="false"><?= __( 'Already Read' ) ?></a>
+                      </li>
+                      <button type="button" class="btn btn-default btn-to-reload pull-right"><i class="plt-loop3"></i> <?= __( 'Reload', WPGENT_DOMAIN ) ?></button>
+                    </ul>
+                    <div id="messageTabContent" class="tab-content">
+                      <div role="tabpanel" class="tab-pane fade" id="tab-content1" aria-labelledby="all-tab">
+                        <ul class="msg_list msg_list_lg">
+<?php foreach( $messages as $_msg_id => $_msg_data ) : ?>
+                          <li data-msg-id="<?= $_msg_id ?>" class="message-wrapper">
+                            <figure class="avatar-small">
+                              <span>
+                                <?= get_avatar( $_msg_data['from_user'], 64, '', $_msg_data['from_user_name'] ) ?>
+                              </span>
+                            </figure>
+                            <div class="message-body<?php if ( ! $_msg_data['unread'] ) : ?> already-read<?php endif; ?>">
+                              <div>
+                                <strong class="msg-from"><?= $_msg_data['from_user_name'] ?></strong>
+                                <span class="msg-send-time pull-right" title="<?= $_msg_data['sent_at'] ?>"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), $_msg_data['human_time_diff'] ); ?></span>
+                              </div>
+                              <h5 class="message-subject"><?= esc_html( $_msg_data['message_subject'] ) ?></h5>
+                              <div class="message">
+                                <?= nl2br( strip_tags( $_msg_data['message_content'], '<a><strong>' ) ) ?>
+                              </div>
+                              <div class="message-footer">
+<?php   if ( $_msg_data['unread'] ) : ?>
+                                <button type="button" class="btn btn-default btn-sm btn-to-read"><i class="plt-eye-plus"></i> <?= __( 'Mark as Read', WPGENT_DOMAIN ) ?></button>
+<?php   else : ?>
+                                <button type="button" class="btn btn-default btn-sm btn-to-unread"><i class="plt-eye-minus"></i> <?= __( 'Revert to Unread', WPGENT_DOMAIN ) ?></button>
+<?php   endif; ?>
+<?php   if ( $_msg_data['message_type'] == 1 ) : ?>
+                                <button type="button" class="btn btn-primary btn-sm btn-to-reply"><i class="plt-reply"></i> <?= __( 'Reply', WPGENT_DOMAIN ) ?></button>
+<?php   endif; ?>
+                              </div>
+                            </div>
+                          </li>
+<?php endforeach; ?>
+                        </ul><!-- /.msg_list -->
+                      </div><!-- /#tab-content1 -->
+                      <div role="tabpanel" class="tab-pane fade active in" id="tab-content2" aria-labelledby="unread-tab">
+                        <ul class="msg_list msg_list_lg">
+<?php $count = 0;
+      foreach( $messages as $_msg_id => $_msg_data ) : 
+        if ( $_msg_data['unread'] ) : ?>
+                          <li data-msg-id="<?= $_msg_id ?>" class="message-wrapper">
+                            <figure class="avatar-small">
+                              <span>
+                                <?= get_avatar( $_msg_data['from_user'], 64, '', $_msg_data['from_user_name'] ) ?>
+                              </span>
+                            </figure>
+                            <div class="message-body">
+                              <div>
+                                <strong class="msg-from"><?= $_msg_data['from_user_name'] ?></strong>
+                                <span class="msg-send-time pull-right" title="<?= $_msg_data['sent_at'] ?>"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), $_msg_data['human_time_diff'] ); ?></span>
+                              </div>
+                              <h5 class="message-subject"><?= esc_html( $_msg_data['message_subject'] ) ?></h5>
+                              <div class="message">
+                                <?= nl2br( strip_tags( $_msg_data['message_content'], '<a><strong>' ) ) ?>
+                              </div>
+                              <div class="message-footer">
+                                <button type="button" class="btn btn-default btn-sm btn-to-read"><i class="plt-eye-plus"></i> <?= __( 'Mark as Read', WPGENT_DOMAIN ) ?></button>
+<?php     if ( $_msg_data['message_type'] == 1 ) : ?>
+                                <button type="button" class="btn btn-primary btn-sm btn-to-reply"><i class="plt-reply"></i> <?= __( 'Reply', WPGENT_DOMAIN ) ?></button>
+<?php     endif; ?>
+                              </div>
+                            </div>
+                          </li>
+<?php   $count++;
+        endif;
+      endforeach;
+      if ( $count == 0 ) : ?>
+                          <li class="message-wrapper">
+                            <p class="no-list"><?= __( 'No Messages', WPGENT_DOMAIN ) ?></p>
+                          </li>
+<?php endif; ?>
+                        </ul><!-- /.msg_list -->
+                      </div><!-- /#tab-content2 -->
+                      <div role="tabpanel" class="tab-pane fade" id="tab-content3" aria-labelledby="already-read-tab">
+                        <ul class="msg_list msg_list_lg">
+<?php $count = 0;
+      foreach( $messages as $_msg_id => $_msg_data ) : 
+        if ( ! $_msg_data['unread'] ) : ?>
+                          <li data-msg-id="<?= $_msg_id ?>" class="message-wrapper">
+                            <figure class="avatar-small">
+                              <span>
+                                <?= get_avatar( $_msg_data['from_user'], 64, '', $_msg_data['from_user_name'] ) ?>
+                              </span>
+                            </figure>
+                            <div class="message-body">
+                              <div>
+                                <strong class="msg-from"><?= esc_html( $_msg_data['from_user_name'] ) ?></strong>
+                                <span class="msg-send-time pull-right" title="<?= $_msg_data['sent_at'] ?>"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), $_msg_data['human_time_diff'] ); ?></span>
+                              </div>
+                              <h5 class="message-subject"><?= esc_html( $_msg_data['message_subject'] ) ?></h5>
+                              <div class="message">
+                                <?= nl2br( strip_tags( $_msg_data['message_content'], '<a><strong>' ) ) ?>
+                              </div>
+                              <div class="message-footer">
+                                <button type="button" class="btn btn-default btn-sm btn-to-unread"><i class="plt-eye-minus"></i> <?= __( 'Revert to Unread', WPGENT_DOMAIN ) ?></button>
+<?php     if ( $_msg_data['message_type'] == 1 ) : ?>
+                                <button type="button" class="btn btn-primary btn-sm btn-to-reply"><i class="plt-reply"></i> <?= __( 'Reply', WPGENT_DOMAIN ) ?></button>
+<?php     endif; ?>
+                              </div>
+                            </div>
+                          </li>
+<?php   $count++;
+        endif;
+      endforeach;
+      if ( $count == 0 ) : ?>
+                          <li class="message-wrapper">
+                            <p class="no-list"><?= __( 'No Messages', WPGENT_DOMAIN ) ?></p>
+                          </li>
+<?php endif; ?>
+                        </ul><!-- /.msg_list -->
+                      </div><!-- /#tab-content3 -->
+                    </div><!-- /.tab-content -->
+                  </div><!-- /role:tabpanel -->
+                  <div class="clearfix"></div>
+<?php endif; ?>
+<?php if ( current_user_can( 'manage_options' ) ) : ?>
                   <h4><i class="plt-bubble-lock blue"></i> <?= __( 'Message creation console for administrator', WPGENT_DOMAIN ) ?></h4>
                   <div class="ln_dotted ln_thin"></div>
                   <div class="admin-item form-group">
@@ -81,7 +216,7 @@ $maxContentLength    = 2000; // =admin; user: 250?
                   <div class="admin-item form-group">
                     <label class="control-label col-md-2 col-sm-2 col-xs-12" for="message_subject"><?= __( 'Subject', WPGENT_DOMAIN ) ?></label>
                     <div class="col-md-9 col-sm-9 col-xs-12">
-                      <input type="text" id="message_subject" name="subject" class="form-control" placeholder="<?= __( 'Please enter the subject', WPGENT_DOMAIN ) ?>" value="<?= esc_attr( 'Broadcast Message TEST' ) ?>">
+                      <input type="text" id="message_subject" name="subject" class="form-control" placeholder="<?= __( 'Please enter the subject', WPGENT_DOMAIN ) ?>" value="<?= hash( 'sha512', date( DATE_RFC2822 ) ) ?>">
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-2">
                       <p class="help-block"><?= __( 'For message with subject specified, this subject is displayed in full text when the notification list is displayed.', WPGENT_DOMAIN ) ?></p>
@@ -91,7 +226,11 @@ $maxContentLength    = 2000; // =admin; user: 250?
                     <label class="control-label col-md-2 col-sm-2 col-xs-12" for="message_content"><?= __( 'Message', WPGENT_DOMAIN ) ?> <span class="required"></span>
                       <p class="help-block remain-count"><?= __( 'Remains', WPGENT_DOMAIN ) ?>: <span class="count-strings" data-max-length="<?= $maxContentLength ?>"></span></p></label>
                     <div class="col-md-9 col-sm-9 col-xs-12">
-                      <textarea id="message_content" name="content" class="form-control" rows="5" placeholder="<?= __( 'Please enter the message', WPGENT_DOMAIN ) ?>" required="required"><?= hash( 'sha512', date( DATE_RFC2822 ) ) ?></textarea>
+                      <textarea id="message_content" name="content" class="form-control" rows="5" placeholder="<?= __( 'Please enter the message', WPGENT_DOMAIN ) ?>" required="required">
+<?= hash( 'gost', date( DATE_RFC2822 ) ) . PHP_EOL ?>
+<?= hash( 'whirlpool', date( DATE_RFC2822 ) ) . PHP_EOL ?>
+<?= hash( 'haval128,4', date( DATE_RFC2822 ) ) . PHP_EOL ?>
+                      </textarea>
                       <i id="message_content_feedback" class="plt-warning form-control-feedback hide"></i>
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-2">
@@ -113,9 +252,7 @@ $maxContentLength    = 2000; // =admin; user: 250?
                       <button type="button" id="admin-send-message" class="btn btn-primary"><?= __( 'Send Message', WPGENT_DOMAIN ) ?></button>
                     </div>
                   </div>
-
-<?php echo '<div class="ln_solid"></div>'; ?>
-
+<?php elseif ( WP_DEBUG ) : ?>
                   <h4><i class="plt-bubble-smiley blue"></i> <?= __( 'Message creation console for user', WPGENT_DOMAIN ) ?></h4>
                   <div class="ln_dotted ln_thin"></div>
 
@@ -138,7 +275,7 @@ $maxContentLength    = 2000; // =admin; user: 250?
                       </span>
                     </div>
                   </div>
-
+<?php endif; ?>
                 </form>
               </div>
             </div>

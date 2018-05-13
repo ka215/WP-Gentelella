@@ -307,11 +307,13 @@ a:hover, a:focus {
 
 /* Layout Grids */
 /* Base Container */
-html, body {
-  height: 100%;
+html {
+  min-height: 100%;
+  position: relative;
 }
 
 body {
+  height: 100%;
   color: #504946;
   background: #FAFDFF;
   font-family: "Helvetica Neue", Roboto, Arial, "Droid Sans", "Hiragino Kaku Gothic ProN", "ヒラギノ角ゴ ProN W3", Meiryo, "メイリオ", sans-serif;
@@ -326,11 +328,18 @@ body {
   padding: 0;
 }
 
+.main_container {
+  background-color: #D5D5D5;
+  height: 100%;
+  min-height: 100vh;
+}
+
 .no-padding {
   padding: 0 !important;
 }
 
 .left_col {
+  height: 100%;
   background: #FAFDFF;
   -webkit-transition: width .14s linear;
   transition: width .14s linear;
@@ -5702,6 +5711,11 @@ header {
 
 .top_nav .navbar-right a.info-number > i[class^="plt-"] {
   font-size: 17px;
+  color: #3498DB;
+}
+
+.top_nav .navbar-right a.info-number > i[class^="plt-"].off-color {
+  color: #BDC3C7;
 }
 
 .info-number .badge {
@@ -5715,6 +5729,14 @@ header {
   position: absolute;
   right: 2px;
   top: 4px;
+}
+
+ul.msg_list {
+  padding: 0;
+}
+
+ul.msg_list.msg_list_lg {
+  margin-left: 5px;
 }
 
 ul.msg_list li.message-wrapper,
@@ -5760,10 +5782,37 @@ ul.msg_list li.message-wrapper figure span {
   overflow: hidden;
 }
 
-ul.msg_list li.message-wrapper figure span img.avatar {
+ul.msg_list li.message-wrapper figure.avatar-mini span {
+  width: 32px;
+  height: 32px;
+}
+
+ul.msg_list li.message-wrapper figure.avatar-small span {
+  width: 48px;
+  height: 48px;
+}
+
+ul.msg_list li.message-wrapper figure.avatar-midium span {
+  width: 64px;
+  height: 64px;
+}
+
+ul.msg_list li.message-wrapper figure.avatar-mini span img.avatar {
   position: absolute;
   left: calc(50% - 24px);
   top: calc(50% - 24px);
+}
+
+ul.msg_list li.message-wrapper figure.avatar-small span img.avatar {
+  position: absolute;
+  left: calc(50% - 32px);
+  top: calc(50% - 32px);
+}
+
+ul.msg_list li.message-wrapper figure.avatar-midium span img.avatar {
+  position: absolute;
+  left: calc(50% - 48px);
+  top: calc(50% - 48px);
 }
 
 ul.msg_list li.message-wrapper .message-body {
@@ -5777,12 +5826,78 @@ ul.msg_list li.message-wrapper .message-body {
   position: relative;
 }
 
+ul.msg_list li.message-wrapper .message-body.already-read {
+  color: #959595;
+}
+
 ul.msg_list li.message-wrapper .message-body .msg-send-time {
   margin-left: 1em;
   color: #7E837F;
 }
 
+ul.msg_list li.message-wrapper .message-body .message-subject {
+  width: 100%;
+  overflow: hidden;
+  word-wrap: break-word;
+  word-break: break-all;
+  word-wrap: break-word;
+  line-height: 1.414;
+  font-size: 1.2em;
+  font-weight: 500;
+}
+
+ul.msg_list li.message-wrapper .message-body .message {
+  display: -webkit-box;
+  display: -moz-box;
+  width: 100%;
+  max-height: 5em;
+  overflow: hidden;
+  word-wrap: break-word;
+  word-break: break-all;
+  word-wrap: break-word;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  -moz-line-clamp: 3;
+}
+
+ul.msg_list li.message-wrapper .message-body .message-footer {
+  margin-top: .5em;
+  border-top: dotted 1px #D4D9DF;
+  padding: 10px 5px 0;
+}
+
+ul.msg_list.msg_list_lg li.message-wrapper .message-body .message {
+  display: block;
+  max-height: initial;
+  max-height: auto;
+  overflow: visible;
+}
+
+ul.msg_list li.message-wrapper .no-list {
+  display: block;
+  width: 100%;
+  height: 174px;
+  line-height: 174px;
+  text-align: center;
+  vertical-align: middle;
+  font-size: 1.2em;
+  color: #BDC3C7;
+}
+
 /* messages */
+.btn-to-reload {
+  position: absolute;
+  top: -16px;
+  right: 10px;
+  margin: 0;
+}
+
+#messageTabContent {
+  overflow-y: scroll;
+  height: calc(100vh - 270px);
+  /* calc( 100vh - 330px  */
+}
+
 .static-value {
   width: 33%;
 }
@@ -5879,6 +5994,25 @@ ul.msg_list li.message-wrapper .message-body .msg-send-time {
 .remain-count:after {
   content: ")";
   color: #BDC3C7;
+}
+
+/**
+ * pNotify styles
+ */
+/* now loading */
+.plotter-loading .alert-info {
+  color: #FAFDFF;
+  background-color: rgba(52, 152, 219, .75);
+  border-color: rgba(52, 152, 219, .75);
+}
+
+.plotter-loading .alert-info .ui-pnotify-icon {
+  margin-right: 1em;
+}
+
+.plotter-loading .alert-info .ui-pnotify-text {
+  line-height: 2em;
+  vertical-align: middle;
 }
 
 .form_wizard {

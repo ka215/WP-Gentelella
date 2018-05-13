@@ -16,6 +16,7 @@ $current_source_name = @$_plotter['current_source_name'] ?: '';
 $user_approval_state = @$_plotter['approval_state'] ?: false;
 $current_user        = wp_get_current_user();
 $user_avatar         = __ctl( 'lib' )::get_user_option( $current_user->ID, 'avatar' );
+$unread_messages     = __ctl( 'lib' )::load_user_notify_logs( $current_user->ID, 'unread', 'asc', 0, true );
 ?>
 
         <!-- top navigation -->
@@ -62,8 +63,10 @@ $user_avatar         = __ctl( 'lib' )::get_user_option( $current_user->ID, 'avat
 <?php if ( $user_approval_state ) : ?>
                 <li id="topnav-messenger" role="presentation" class="dropdown">
                   <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
-                    <i class="plt-bell"></i>
-                    <span class="badge bg-red"><?= mt_rand( 1, 99 ) ?></span>
+                    <i class="plt-bell<?php if ( $unread_messages == 0 ) : ?> off-color<?php endif; ?>"></i>
+<?php     if ( $unread_messages > 0 ) : ?>
+                    <span class="badge bg-red"><?= $unread_messages ?></span>
+<?php     endif; ?>
                   </a>
                   <?= get_template_part( 'partials/navi', 'messages' ); ?>
                 </li><!-- /role:presentation -->

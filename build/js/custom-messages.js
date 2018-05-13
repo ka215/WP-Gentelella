@@ -12,8 +12,9 @@ $(document).ready(function() {
   SUBMIT_BUTTONS   = [ 'send-message' ];
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
-  initHistory();
   clearSessionData();
+  adjustMessagesList();
+  initHistory();
   initializeCounts();
   tagsinputElement.tagsinput({
     itemValue: 'id',
@@ -21,6 +22,56 @@ $(document).ready(function() {
   });
   
   // ----- Event handlers -------------------------------------------------------------------------
+  
+  /*
+   * Forcibly reload the message ignoring the default interval (:> 既定間隔を無視して強制的にメッセージをリロードする
+   */
+  $('.btn-to-reload').on( 'click', function() {
+    docCookies.setItem( 'latest_messages', '0', 60*60*24*30, '/', 'plotter.me', 1 );
+    location.reload();
+  });
+  
+  /*
+   * Fire just after changing a tab (:> タブ切り替え直後のイベント
+   */
+  $('#messageTab a').on( 'shown.bs.tab', function(e) {
+    adjustMessagesList();
+  });
+  
+  /*
+   *
+   */
+  $('.btn-to-read, .btn-to-unread').on( 'click', function() {
+    var targetMsgId = $(this).closest('li').attr( 'data-msg-id' ),
+        fromStatus  = $(this).hasClass('btn-to-read') ? 'unread' : 'read',
+        postDataRaw = conv_kv( gf.serializeArray() );
+    postDataRaw.post_action  = 'replace';
+    postDataRaw.msg_id       = targetMsgId;
+    postDataRaw.from         = fromStatus;
+    postDataRaw.selected_tab = $('#messageTab li.active').index();
+    delete postDataRaw.to_team;
+    delete postDataRaw.to_user;
+    delete postDataRaw.parent_id;
+    delete postDataRaw.subject;
+    delete postDataRaw.content;
+    delete postDataRaw.user_content;
+    var postData = JSON.stringify( postDataRaw );
+    $(this).closest('li').fadeOut('fast').queue(function(){
+        this.remove();
+        showLoading();
+    });
+    // ajaxでpost
+    callAjax(
+      '/'+currentPermalink+'/',
+      'post',
+      postData,
+      'script',
+      'application/json; charset=utf-8',
+      null,
+      true
+    );
+  });
+  
   
   /*
    * Clicked Send Message button (:> メッセージ送信ボタン押下時
@@ -108,7 +159,7 @@ $(document).ready(function() {
 
   /*
    *  (:> 画面内の各種キーイベントの制御
-   */
+   * /
   $(document).on( 'keydown', 'body', function(e){
     var evt = e.originalEvent;
     // Enterキーによるフォームのフォーカス変更
@@ -131,6 +182,7 @@ $(document).ready(function() {
       }
     }
   });
+  */
 
   /*
    * Fire on resize window (:> ウィンドウリサイズ時のイベント
@@ -146,7 +198,24 @@ $(document).ready(function() {
    * Replace a history state (:> 
    */
   function initHistory() {
-    
+    if ( 'default_tab' === history.state || ! is_empty( $.QueryString.tab ) ) {
+      history.replaceState( 'defautl_tab', '', location.pathname );
+      if ( $.QueryString.tab ) {
+        $('#messageTab li').eq( $.QueryString.tab ).children('a').trigger( 'click' );
+      }
+    }
+  }
+  
+  /*
+   * Adjust Messages List as auto scrolling (:> 
+   */
+  function adjustMessagesList() {
+    if ( $('#messageTabContent').length > 0 ) {
+      var msgList = $('#messageTabContent');
+      msgList.animate({
+        scrollTop: msgList[0].scrollHeight
+      }, 100 );
+    }
   }
   
   /*
@@ -177,8 +246,10 @@ $(document).ready(function() {
    * Initialize the remain number of characters inputable message (:> メッセージ残文字数表示の初期化
    */
   function initializeCounts() {
-    var currentLength = $('#message_content').val().length;
-    $('.count-strings').text( maxMessageLength - currentLength );
+    if ( $('#message_content').length > 0 ) {
+      var currentLength = $('#message_content').val().length;
+      $('.count-strings').text( maxMessageLength - currentLength );
+    }
   }
   
   

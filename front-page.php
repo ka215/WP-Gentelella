@@ -11,7 +11,8 @@
 get_header();
 
 if ( isset( $_REQUEST['error'] ) && (int) $_REQUEST['error'] == 404 ) {
-  include locate_template( '404.php' );
+  // include locate_template( '404.php' );
+  wp_redirect( home_url( '/404' ) );
 } else {
 ?>
 

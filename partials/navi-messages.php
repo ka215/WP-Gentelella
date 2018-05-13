@@ -7,38 +7,37 @@
  * @since 1.0
  * @version 1.0
  */
-
 $page_type = get_current_page_type();
+$_plotter = get_query_var( 'plotter', [] );
+$current_user_id = @$_plotter['current_user_id'] ?: null;
+
 $button_width = wp_is_mobile() ? 50 : 33;
 
-/*
-<li role="presentation" class="dropdown">
-  <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
-    <i class="plt-bell"></i>
-    <span class="badge bg-red">99</span>
-  </a>
-*/
+$messages = __ctl( 'lib' )->load_user_notify_logs( $current_user_id, 'unread', 'asc', 5 );
+$msg_nonce = wp_create_nonce( 'messages-form_'. $current_user_id );
 ?>
 <ul class="dropdown-menu msg_list" role="menu">
-<?php for($i=0;$i<5;$i++): ?>
+<?php foreach ( $messages as $_msg_data ) : 
+  $userdata = get_userdata( (int) $_msg_data['from_user'] );
+    ?>
   <li class="message-wrapper">
     <figure class="avatar-mini">
       <span>
-        <img alt="User Name" src="<?php echo WPGENT_DIR; ?>production/images/img.jpg" class="avatar avatar-48 photo" height="48" width="48" />
+        <?= get_avatar( $userdata->ID, 48, '', $userdata->display_name ) ?>
       </span>
     </figure>
     <div class="message-body">
       <div>
-        <strong class="msg-from">Plotter</strong>
-        <span class="msg-send-time">3 mins ago</span>
+        <strong class="msg-from"><?= $userdata->display_name ?></strong>
+        <span class="msg-send-time"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), human_time_diff( strtotime( $_msg_data['sent_at'] ), current_time( 'timestamp' ) ) ); ?></span>
       </div>
       <div class="message">
-        I'm the stack context where notices will be placed. I'm position: relative, so the notices will be positioned relative to me. My overflow is set to auto, so the notices won't show beyond my borders.
+        <?= esc_html( $_msg_data['message_content'] ) ?>
       </div>
     </div>
   </li>
-<?php endfor; ?>
-  <li class="messenger-control">
+<?php endforeach; ?>
+  <li class="messenger-control" data-msg-token="<?= esc_attr( $msg_nonce ) ?>" data-from-user="<?= esc_attr( $current_user_id ) ?>">
     <button type="button" id="msgctl-see-all" class="btn btn-default btn-sm" style="width: <?= $button_width ?>%"><i class="plt-bubble-check"></i> <?= __( 'See All', WPGENT_DOMAIN ) ?></button>
     <button type="button" id="msgctl-reload"  class="btn btn-default btn-sm" style="width: <?= $button_width ?>%"><i class="plt-loop3"></i> <?= __( 'Reload', WPGENT_DOMAIN ) ?></button>
 <?php if ( ! wp_is_mobile() ) : ?>

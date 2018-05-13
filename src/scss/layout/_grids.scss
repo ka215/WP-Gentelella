@@ -1,9 +1,11 @@
 /* Layout Grids */
 /* Base Container */
-html, body {
-  height: 100%;
+html {
+  min-height: 100%;
+  position: relative;
 }
 body {
+  height: 100%;
   color: $body_color;
   background: $sidebar_bg;
   font-family: $base_font;
@@ -17,14 +19,18 @@ body {
   padding: 0
 }
 .main_container {
+  background-color: $main_content_bg;
+  height: 100%;
+  min-height: 100vh;
 }
 .no-padding {
   padding: 0 !important;
 }
 
 .left_col {
+  height: 100%;
   background: $sidebar_bg;
-  transition: width .14s linear; 
+  transition: width .14s linear;
 }
 .nav-md .container.body .col-md-3.left_col, 
 .nav-md .container.body .col-md-3.left_col.menu_fixed {
