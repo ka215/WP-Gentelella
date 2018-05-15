@@ -81,10 +81,12 @@ if ( ! empty( $current_source_id ) ) {
                   <div class="item form-group">
                     <label class="control-label col-md-2 col-sm-2 col-xs-12" for="change_source"><?php _e( 'Switch or Add Story', WPGENT_DOMAIN ); ?></label>
                     <div class="col-md-6 col-sm-6 col-xs-12">
-                      <select class="form-control" id="change_source" name="change_source">
+                      <select class="form-control selectpicker" id="change_source" name="change_source" data-width="100%">
                         <option value=""><?php _e( 'Add New Story', WPGENT_DOMAIN ); ?></option>
+                        <option data-divider="true"></option>
                       <?php foreach ( $user_sources as $_src ) : ?>
-                        <option value="<?= esc_attr( $_src['id'] ) ?>" <?php selected( $_src['id'], $current_source_id ); ?>><?= esc_html( $_src['name'] ) ?><?php if ( $_src['id'] == $current_source_id ) echo ' - '. __( 'Currently', WPGENT_DOMAIN ) .' -'; ?></option>
+                        <option value="<?= esc_attr( $_src['id'] ) ?>" <?php selected( $_src['id'], $current_source_id ); ?><?php if ( $_src['id'] == $current_source_id ) : ?>
+                        data-content="<?= esc_html( $_src['name'] ) ?> <i class='plt-book blue' aria-label='<?= __( 'Currently', WPGENT_DOMAIN ) ?>'></i>"<?php endif; ?>><?= esc_html( $_src['name'] ) ?></option>
                       <?php endforeach; ?>
                       </select>
                     </div>

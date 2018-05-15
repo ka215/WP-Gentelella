@@ -68,9 +68,15 @@ foreach ( $messages as $_id => $_data ) {
                                 <strong class="msg-from"><?= $_msg_data['from_user_name'] ?></strong>
                                 <span class="msg-send-time pull-right" title="<?= $_msg_data['sent_at'] ?>"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), $_msg_data['human_time_diff'] ); ?></span>
                               </div>
-                              <h5 class="message-subject"><?= esc_html( $_msg_data['message_subject'] ) ?></h5>
+<?php if ( ! empty( $_msg_data['message_subject'] ) ) : ?>
+                              <h5 class="message-subject"><?= esc_html( strip_tags( $_msg_data['message_subject'] ) ) ?></h5>
+<?php endif; ?>
                               <div class="message">
+<?php     if ( $_msg_data['message_type'] !== 1 ) : ?>
+                                <?= nl2br( do_shortcode( $_msg_data['message_content'] ) ) ?>
+<?php     else : ?>
                                 <?= nl2br( strip_tags( $_msg_data['message_content'], '<a><strong>' ) ) ?>
+<?php     endif; ?>
                               </div>
                               <div class="message-footer">
 <?php   if ( $_msg_data['unread'] ) : ?>
@@ -103,9 +109,15 @@ foreach ( $messages as $_id => $_data ) {
                                 <strong class="msg-from"><?= $_msg_data['from_user_name'] ?></strong>
                                 <span class="msg-send-time pull-right" title="<?= $_msg_data['sent_at'] ?>"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), $_msg_data['human_time_diff'] ); ?></span>
                               </div>
-                              <h5 class="message-subject"><?= esc_html( $_msg_data['message_subject'] ) ?></h5>
+<?php     if ( ! empty( $_msg_data['message_subject'] ) ) : ?>
+                              <h5 class="message-subject"><?= esc_html( strip_tags( $_msg_data['message_subject'] ) ) ?></h5>
+<?php     endif; ?>
                               <div class="message">
+<?php     if ( $_msg_data['message_type'] !== 1 ) : ?>
+                                <?= nl2br( do_shortcode( $_msg_data['message_content'] ) ) ?>
+<?php     else : ?>
                                 <?= nl2br( strip_tags( $_msg_data['message_content'], '<a><strong>' ) ) ?>
+<?php     endif; ?>
                               </div>
                               <div class="message-footer">
                                 <button type="button" class="btn btn-default btn-sm btn-to-read"><i class="plt-eye-plus"></i> <?= __( 'Mark as Read', WPGENT_DOMAIN ) ?></button>
@@ -141,9 +153,15 @@ foreach ( $messages as $_id => $_data ) {
                                 <strong class="msg-from"><?= esc_html( $_msg_data['from_user_name'] ) ?></strong>
                                 <span class="msg-send-time pull-right" title="<?= $_msg_data['sent_at'] ?>"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), $_msg_data['human_time_diff'] ); ?></span>
                               </div>
-                              <h5 class="message-subject"><?= esc_html( $_msg_data['message_subject'] ) ?></h5>
+<?php if ( ! empty( $_msg_data['message_subject'] ) ) : ?>
+                              <h5 class="message-subject"><?= esc_html( strip_tags( $_msg_data['message_subject'] ) ) ?></h5>
+<?php endif; ?>
                               <div class="message">
+<?php     if ( $_msg_data['message_type'] !== 1 ) : ?>
+                                <?= nl2br( do_shortcode( $_msg_data['message_content'] ) ) ?>
+<?php     else : ?>
                                 <?= nl2br( strip_tags( $_msg_data['message_content'], '<a><strong>' ) ) ?>
+<?php     endif; ?>
                               </div>
                               <div class="message-footer">
                                 <button type="button" class="btn btn-default btn-sm btn-to-unread"><i class="plt-eye-minus"></i> <?= __( 'Revert to Unread', WPGENT_DOMAIN ) ?></button>
@@ -216,7 +234,7 @@ foreach ( $messages as $_id => $_data ) {
                   <div class="admin-item form-group">
                     <label class="control-label col-md-2 col-sm-2 col-xs-12" for="message_subject"><?= __( 'Subject', WPGENT_DOMAIN ) ?></label>
                     <div class="col-md-9 col-sm-9 col-xs-12">
-                      <input type="text" id="message_subject" name="subject" class="form-control" placeholder="<?= __( 'Please enter the subject', WPGENT_DOMAIN ) ?>" value="<?= hash( 'sha512', date( DATE_RFC2822 ) ) ?>">
+                      <input type="text" id="message_subject" name="subject" class="form-control" placeholder="<?= __( 'Please enter the subject', WPGENT_DOMAIN ) ?>" value="">
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-2">
                       <p class="help-block"><?= __( 'For message with subject specified, this subject is displayed in full text when the notification list is displayed.', WPGENT_DOMAIN ) ?></p>
@@ -226,11 +244,7 @@ foreach ( $messages as $_id => $_data ) {
                     <label class="control-label col-md-2 col-sm-2 col-xs-12" for="message_content"><?= __( 'Message', WPGENT_DOMAIN ) ?> <span class="required"></span>
                       <p class="help-block remain-count"><?= __( 'Remains', WPGENT_DOMAIN ) ?>: <span class="count-strings" data-max-length="<?= $maxContentLength ?>"></span></p></label>
                     <div class="col-md-9 col-sm-9 col-xs-12">
-                      <textarea id="message_content" name="content" class="form-control" rows="5" placeholder="<?= __( 'Please enter the message', WPGENT_DOMAIN ) ?>" required="required">
-<?= hash( 'gost', date( DATE_RFC2822 ) ) . PHP_EOL ?>
-<?= hash( 'whirlpool', date( DATE_RFC2822 ) ) . PHP_EOL ?>
-<?= hash( 'haval128,4', date( DATE_RFC2822 ) ) . PHP_EOL ?>
-                      </textarea>
+                      <textarea id="message_content" name="content" class="form-control" rows="5" placeholder="<?= __( 'Please enter the message', WPGENT_DOMAIN ) ?>" required="required"></textarea>
                       <i id="message_content_feedback" class="plt-warning form-control-feedback hide"></i>
                     </div>
                     <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-2">

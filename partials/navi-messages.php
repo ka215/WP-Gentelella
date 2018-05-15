@@ -32,7 +32,11 @@ $msg_nonce = wp_create_nonce( 'messages-form_'. $current_user_id );
         <span class="msg-send-time"><?php printf( _x( '%s ago', '%s = human-readable time difference', WPGENT_DOMAIN ), human_time_diff( strtotime( $_msg_data['sent_at'] ), current_time( 'timestamp' ) ) ); ?></span>
       </div>
       <div class="message">
-        <?= esc_html( $_msg_data['message_content'] ) ?>
+<?php if ( $_msg_data['message_type'] !== 1 ) : ?>
+        <?= strip_tags( $_msg_data['message_subject'] ) ?><br><?= strip_tags( do_shortcode( $_msg_data['message_content'] ) ) ?>
+<?php else : ?>
+        <?= nl2br( strip_tags( $_msg_data['message_content'] ) ) ?>
+<?php endif; ?>
       </div>
     </div>
   </li>

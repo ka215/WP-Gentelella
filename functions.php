@@ -265,6 +265,7 @@ add_action( 'wp_enqueue_scripts', function() {
     'switchery'   => 'vendors/switchery/dist/switchery.min.css',
     'smartwizard' => 'vendors/jQuery-Smart-Wizard/styles/smart_wizard.css',
     'tagsinput'   => 'vendors/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
+    'bs-select'   => 'vendors/bootstrap-select/dist/css/bootstrap-select.min.css',
     // etc.
   ];
   foreach ( $vendor_styles as $_handle => $_path ) {
@@ -321,12 +322,13 @@ add_action( 'wp_enqueue_scripts', function() {
   
   // vendoers scripts:
   $vendor_scripts = [
-    'validator'   => 'vendors/validator/validator.js',
+    //'validator'   => 'vendors/validator/validator.js',
     'switchery'   => 'vendors/switchery/dist/switchery.min.js',
     'smartwizard' => 'vendors/jQuery-Smart-Wizard/js/jquery.smartWizard.js',
     // 'jssha'       => 'vendors/jsSHA/src/sha.js',
     'blueimp-md5' => 'vendors/blueimp-md5/js/md5.min.js',
     'tagsinput'   => 'vendors/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js',
+    'bs-select'   => 'vendors/bootstrap-select/dist/js/bootstrap-select.min.js',
     // etc.
   ];
   foreach ( $vendor_scripts as $_handle => $_path ) {
@@ -383,7 +385,7 @@ add_action( 'wp_enqueue_scripts', function() {
       'pnotify', 'pnotify-animate', 'pnotify-buttons', 'pnotify-confirm', 'pnotify-desktop', 'pnotify-history', 'pnotify-mobile', 
     ],
     'vendoers' => [
-      'fastclick', 'nprogress', 'validator', 
+      'fastclick', 'nprogress', // 'validator', 
       'switchery', 'smartwizard', 'blueimp-md5', 
     ],
     'extend' => [
@@ -428,17 +430,17 @@ add_action( 'wp_enqueue_scripts', function() {
     switch ( $_pagename ) {
       case 'account':
         $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'switchery' ] );
-        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'switchery' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'switchery' ] );
         break;
       case 'dashboard':
       case 'whole-story':
-        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'switchery' ] );
-        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'switchery' ] );
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'switchery', 'bs-select' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'switchery', 'bs-select' ] );
         break;
       case 'create-new':
       case 'edit-storyline':
         $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', ] ); // 'switchery', 'smartwizard' 
-        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'validator', 'blueimp-md5' ] ); // 'switchery', 'smartwizard' 
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'blueimp-md5' ] ); // 'switchery', 'smartwizard' 
         break;
       case 'messages':
         $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'tagsinput' ] );
@@ -591,25 +593,10 @@ add_action( 'wp_print_footer_scripts', function() {
   $inline_scripts = array();
   if ( is_user_logged_in() ) {
     if ( __ctl( 'lib' )::has_forms_in_page() ) {
+/*
       $inline_scripts[] = <<<EOT
-validator.message['empty'] = localize_messages.notify_empty_title;
-
-$('form.withValidator')
-  .on('blur', 'input[required], input.optional, select.required', validator.checkField)
-  .on('change', 'select.required', validator.checkField)
-  .on('keypress', 'input[required][pattern]', validator.keypress);
-
-$('form').submit(function(e){
-  e.preventDefault();
-  var submit = true;
-  // Validate the form using generic validaing
-  if( !validator.checkAll( $(this) ) ){
-    submit = false;
-  }
-  if( submit ) this.submit();
-  return false;
-});
 EOT;
+*/
     }
   }
   if ( ! empty( $inline_scripts ) ) {

@@ -33,7 +33,7 @@ $user_approval_state = @$_plotter['approval_state'] ?: false;
                 <h3><?php if ( empty( $user_sources ) ) {
                     _e( "Let's weave a new story!", WPGENT_DOMAIN );
                 } else {
-                    _e( "Let's get started!", WPGENT_DOMAIN );
+                    _e( "Summary of your stories", WPGENT_DOMAIN ); // Let's get started!
                 } ?></h3>
                 <?php get_template_part( 'partials/toolbox' ); ?>
                 <div class="clearfix"></div>
@@ -60,11 +60,52 @@ $user_approval_state = @$_plotter['approval_state'] ?: false;
                     </div>
                   </div>
 <?php   } else {
-          the_content();
-        }
+          /* Normal Views */ ?>
+                  <div class="table-responsive">
+                    <p><?= __( 'The stories you can edit now is as follows. If you want to add a new story you can do from the "Whole Story" on the left menu.', WPGENT_DOMAIN ) ?></p>
+                    <table id="summary-stories" class="table">
+                      <thead>
+                        <tr>
+                          <th></th>
+                          <th><?= __( 'Story Title', WPGENT_DOMAIN ) ?></th>
+                          <th class="text-center"><?= __( 'Owner', WPGENT_DOMAIN ) ?></th>
+                          <th class="text-center"><?= __( 'Teamwork', WPGENT_DOMAIN ) ?></th>
+                          <th class="text-center"><?= __( 'Members', WPGENT_DOMAIN ) ?></th>
+                          <th class="text-center"><?= __( 'Last Modified', WPGENT_DOMAIN ) ?></th>
+                        </tr>
+                      </thead>
+                      <tbody>
+<?php     foreach ( $user_sources as $_src ) : 
+            if ( $current_user_id == $_src['team_data']['owner'] ) {
+              $owner_name = __( 'You', WPGENT_DOMAIN );
+            } else {
+              $_user = get_user_by( 'id', $_src['team_data']['owner'] );
+              $owner_name = $_user->display_name;
+            } ?>
+                        <tr data-src-id="<?= esc_attr( $_src['id'] ) ?>">
+                          <th class="text-center"><?php if ( $current_source_id === $_src['id'] ) : ?><i class="plt-book blue"></i><?php endif; ?></th>
+                          <td><?= esc_html( $_src['name'] ) ?></td>
+                          <td class="text-center"><?= esc_html( $owner_name ) ?></td>
+                          <td class="text-center"><i class="<?php if ( $_src['type'] === 1 ) : ?>plt-checkmark green<?php else : ?>plt-minus3 gray<?php endif; ?>"></i></td>
+                          <td class="text-center"><?= count( explode( ',', $_src['team_data']['members'] ) ) ?></td>
+                          <td class="text-center"><?= $_src['updated_at'] ?></td>
+                        </tr>
+<?php     endforeach; ?>
+                      </tbody>
+                    </table>
+                  </div>
+                  <?php if ( WP_DEBUG ) { the_content(); } ?>
+<?php   }
       } else { ?>
                   <input type="hidden" name="approve_user_policy" value="true" />
 <?php } ?>
+<?php if ( WP_DEBUG ) {
+var_dump( $_plotter );
+var_dump( __ctl( 'model' )->in_team_work( $current_user_id ) );
+var_dump( __ctl( 'model' )->have_sources( null, false ) );
+var_dump( __ctl( 'model' )->auth_user_source( 28 ) );
+var_dump( __ctl( 'model' )->get_editable_sources() );
+} ?>
                 </form>
               </div>
             </div>

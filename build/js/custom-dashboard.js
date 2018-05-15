@@ -62,7 +62,11 @@ $(document).ready(function() {
    */
   $('#dashboard-register').on('click', function(e){
     gf.find('input[name="post_action"]').val( 'regist' );
-    var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
+    var postDataRaw = conv_kv( gf.serializeArray() );
+    if ( ! validatePostData( postDataRaw ) ) {
+      return false;
+    }
+    var post_data = JSON.stringify( postDataRaw );
     showLoading();
     // ajaxでpost
     callAjax(
@@ -134,6 +138,30 @@ $(document).ready(function() {
       backdrop: 'static',
     });
   }
+  
+  /*
+   * Validate post data before sending (:> 送信前のデータ検証
+   */
+  function validatePostData( data ) {
+    var countError = 0;
+    for ( var _k in data ) {
+      var targetField = gf.find('[name="'+ _k +'"]');
+      if ( targetField.prop( 'required' ) ) {
+        if ( is_empty( data[_k] ) ) {
+          // empty error
+          targetField.parent().append( '<span class="plt-warning form-control-feedback"></span>' );
+          targetField.closest('.form-group').addClass('has-error has-feedback');
+          countError++;
+        } else {
+          // ok
+          targetField.parent().find('span.form-control-feedback').remove();
+          targetField.closest('.form-group').removeClass('has-error has-feedback');
+        }
+      }
+    }
+    return countError == 0;
+  }
+  
   
   // ----- セッションストレージ関連 ---------------------------------------------------------------
   

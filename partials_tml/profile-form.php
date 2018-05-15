@@ -56,7 +56,7 @@ if ( ! empty( $profileuser->first_name ) && ! empty( $profileuser->last_name ) )
   $public_display['display_lastfirst'] = $profileuser->last_name . ' ' . $profileuser->first_name;
 }
 
-if ( ! empty( $profileuser->display_name ) && ! in_array( $profileuser->display_name, $public_display ) ) // Only add this if it isn't duplicated elsewhere (:> 別の場所に複製されていない場合にのみ追加します
+if ( ! empty( $profileuser->display_name ) && ! in_array( $profileuser->display_name, $public_display, true ) ) // Only add this if it isn't duplicated elsewhere (:> 別の場所に複製されていない場合にのみ追加します
   $public_display = array( 'display_displayname' => $profileuser->display_name ) + $public_display;
 
 $public_display = array_map( 'trim', $public_display );

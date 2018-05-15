@@ -852,9 +852,9 @@ var callbackAjax = {
           }
         }
       },
-      msglist: function ( data ) {
+      reloadMsg: function ( data ) {
         var $infoNumber = $('#topnav-messenger a.info-number'),
-            $msgList    = $('.dropdown-menu.msg_list');
+            $msgList    = $('#topnav-messenger ul.dropdown-menu.msg_list');
         if ( $infoNumber.length > 0 ) {
           if ( data.message_length == 0 ) {
             $infoNumber.find('i.plt-bell').addClass('off-color');
@@ -869,12 +869,30 @@ var callbackAjax = {
           }
         }
         if ( $msgList.length > 0 ) {
-          $msgList.find('.message-wrapper').fadeOut('slow').queue(function(){
-            this.remove();
-            $msgList.prepend( data.html );
+          $msgList.find('.message-wrapper').fadeOut('slow', function(){
+            $(this).remove();
+            if ( $msgList.find('.message-wrapper').length == 0 ) {
+              $msgList.prepend( data.html );
+              $('#msgctl-reload').find('i').attr( 'class', 'plt-loop3' );
+            }
           });
         }
-        $('#msgctl-reload').find('i').attr( 'class', 'plt-loop3' );
+      },
+      resideMsg: function ( data ) {
+        var rightCol        = $('.right_col'),
+            primary_width   = rightCol.width() > 1008 ? '66%' : '100%',
+            secondary_width = rightCol.width() > 1008 ? '33%' : '100%',
+        $newPanel = $( '<div>', { class: 'x_panel secondary-panel' } ).css({ width: secondary_width, height: '100%' });
+        $newPanel.append( '<div class="x_title"><h3>New Messages</h3></div>' );
+        $newPanel.append( '<div class="x_content"><ul class="msg_list">' + data.html + '</ul></div>' );
+        // $newPanel.find('.x_content').append( '<div class="ln_solid"></div>' );
+        $newPanel.find('.x_content').append( '<button type="button" class="btn btn-default" id="close-msg-panel">Close</button>' );
+        $(document).on( 'click', '#close-msg-panel', function(){
+          $('.secondary-panel').remove();
+          rightCol.find('.panel-primary').removeAttr( 'style' );
+        });
+        rightCol.find('.panel-primary').css( 'width', primary_width );
+        rightCol.find('.flex-container').append( $newPanel[0].outerHTML );
       }
     },
     callAjax = function() {
@@ -1131,7 +1149,7 @@ $(document).ready(function() {
       postData,
       'json',
       'application/json; charset=utf-8',
-      'msglist',
+      'reloadMsg',
       true
     );
   });
@@ -1139,22 +1157,29 @@ $(document).ready(function() {
   $('#msgctl-reside').on('click', function(e){
     MESSENGER_EVENT_PROPAGATION = true;
     $('#topnav-messenger .msg_list').trigger( 'click' );
+    if ( $('.right_col .secondary-panel .msg_list').length > 0 ) {
+      return;
+    }
     
-    var rightCol        = $('.right_col'),
-        primary_width   = rightCol.width() > 1008 ? '66%' : '100%',
-        secondary_width = rightCol.width() > 1008 ? '33%' : '100%',
-    $newPanel = $( '<div>', { class: 'x_panel secondary-panel' } ).css({ width: secondary_width, height: '100%' });
-    $newPanel.append( '<div class="x_title"><h3>New Messages</h3></div>' );
-    $newPanel.append( '<div class="x_content">' + "Sorry, it's not yet implemented because under development now." + '</div>' );
-    $newPanel.find('.x_content').append( '<div class="ln_solid"></div>' );
-    $newPanel.find('.x_content').append( '<button type="button" class="btn btn-default" id="close-msg-panel">Close</button>' );
-    $(document).on( 'click', '#close-msg-panel', function(){
-      $('.secondary-panel').remove();
-      rightCol.find('.panel-primary').removeAttr( 'style' );
-    });
-    
-    rightCol.find('.panel-primary').css( 'width', primary_width );
-    rightCol.find('.flex-container').append( $newPanel[0].outerHTML );
+    // get messages via ajax
+    var postDataRaw = {
+          'from_page': 'messages',
+          'post_action': 'get_latest',
+          'from_user': $(this).closest('.messenger-control').attr( 'data-from-user'),
+          'seek_end': 5,
+          '_token': $(this).closest('.messenger-control').attr( 'data-msg-token'),
+        },
+        postData = JSON.stringify( postDataRaw );
+    // ajaxでpost
+    callAjax(
+      '',
+      'post',
+      postData,
+      'json',
+      'application/json; charset=utf-8',
+      'resideMsg',
+      true
+    );
   });
 
 });

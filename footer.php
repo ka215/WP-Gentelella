@@ -10,10 +10,10 @@
 $page_type = get_current_page_type();
 
 $append_html = [];
-if ( ! is_user_logged_in() && in_array( $page_type, FULLSPAN_PAGES ) ) {
+if ( ! is_user_logged_in() && in_array( $page_type, FULLSPAN_PAGES, true ) ) {
   $add_class   = '';
 } else
-if ( in_array( $page_type, FULLSPAN_PAGES ) ) {
+if ( in_array( $page_type, FULLSPAN_PAGES, true ) ) {
   $add_class   = '';
 } else {
   $add_class   = 'pull-right';

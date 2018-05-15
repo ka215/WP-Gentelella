@@ -17,7 +17,7 @@ $is_large_footer_pages = [
 
 $headline = '<i class="plt-quill3"></i> '. get_bloginfo( 'name' );
 $bodyline = '<i class="fa fa-copyright"></i>'. date_i18n( 'Y' ) .' '. __( 'All Rights Reserved.', WPGENT_DOMAIN );
-if ( in_array( $page_type, $is_large_footer_pages ) ) {
+if ( in_array( $page_type, $is_large_footer_pages, true ) ) {
   $headline = '<h2>'. $headline .'</h2>';
   $bodyline = '<p>'. $bodyline .'</p>';
 } else {

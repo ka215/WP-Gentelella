@@ -712,7 +712,8 @@ body {
 
 .top_nav .navbar-right {
   margin: 0;
-  width: 70%;
+  width: auto;
+  /* 70% */
   float: right;
 }
 

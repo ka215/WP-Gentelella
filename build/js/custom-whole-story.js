@@ -78,12 +78,15 @@ $(document).ready(function() {
     if ( 'cancel' === action ) {
       return location.href = '/dashboard/';
     } else {
-      if ( !validator.checkAll( gf ) ) {
+      $('#'+currentPermalink+'-post-action').val( action );
+      var postDataRaw = conv_kv( gf.serializeArray() );
+      if ( ! validatePostData( postDataRaw ) ) {
         return false;
       }
-      $('#'+currentPermalink+'-post-action').val( action );
+      showLoading();
+      controlSubmission();
+      var post_data = JSON.stringify( postDataRaw );
       // ajaxでPOST
-      var post_data = JSON.stringify( conv_kv( gf.serializeArray() ) );
       callAjax(
         '/'+currentPermalink+'/',
         'post',
@@ -131,6 +134,29 @@ $(document).ready(function() {
     });
   }
   
+  /*
+   * Validate post data before sending (:> 送信前のデータ検証
+   */
+  function validatePostData( data ) {
+    var countError = 0;
+    for ( var _k in data ) {
+      var targetField = gf.find('[name="'+ _k +'"]');
+      if ( targetField.prop( 'required' ) ) {
+        if ( is_empty( data[_k] ) ) {
+          // empty error
+          targetField.parent().append( '<span class="plt-warning form-control-feedback"></span>' );
+          targetField.closest('.form-group').addClass('has-error has-feedback');
+          countError++;
+        } else {
+          // ok
+          targetField.parent().find('span.form-control-feedback').remove();
+          targetField.closest('.form-group').removeClass('has-error has-feedback');
+        }
+      }
+    }
+    return countError == 0;
+  }
+  
   // ----- WEBストレージ(ローカルストレージ)関連 ---------------------------------------------------------------
   
   /*
@@ -166,7 +192,6 @@ $(document).ready(function() {
    */
   function restoreSrcCache( sid ) {
     var src_data = JSON.parse( wls.getItem( 'plt_cursrc' ) );
-console.log( src_data );
     if ( sid == Number( src_data.source_id ) ) {
       gf.find('[name="source_id"]').val( sid );
       gf.find('#source_name').val( src_data.source_name );

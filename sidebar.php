@@ -13,6 +13,7 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
   $_plotter               = get_query_var( 'plotter', [] );
   $now_page               = @$_plotter['page_name'] ?: '';
   $current_user_id        = @$_plotter['current_user_id'] ?: null;
+  $in_team_work           = @$_plotter['in_team_work'] ?: false;
   $user_sources           = @$_plotter['user_sources'] ?: [];
   $current_source_id      = @$_plotter['current_source_id'] ?: null;
   $current_source_name    = @$_plotter['current_source_name'] ?: '';
@@ -121,21 +122,27 @@ if ( ! is_active_sidebar( 'side-menu' ) ) {
               <div id="section-3" class="menu_section">
                 <h3><?php _e('Utility', WPGENT_DOMAIN) ?></h3>
                 <ul class="nav side-menu">
-                  <li><a><i class="plt-lamp8"></i> <?php _e('Ideas', WPGENT_DOMAIN) ?></a></li>
+                  <li><a href="/idea-note/"><i class="plt-lamp8"></i> <?php _e('Ideas', WPGENT_DOMAIN) ?></a></li>
+<?php /* No release yet to under development
                   <li><a><i class="plt-book"></i> <?php _e('Treatments', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/edit-treat/"><?php _e('All Treatments', WPGENT_DOMAIN) ?></a></li>
                       <li><a href="/add-treat/"><?php _e('Add Treatment', WPGENT_DOMAIN) ?></a></li>
                     </ul>
                   </li>
-                  <li><a><i class="plt-collaboration"></i> <?php _e('Collaboration', WPGENT_DOMAIN) ?></a></li>
+*/ ?>
+<?php     if ( $in_team_work ) : ?>
+                  <li><a href="/collaboration/"><i class="plt-collaboration"></i> <?php _e('Collaboration', WPGENT_DOMAIN) ?></a></li>
+<?php     endif; ?>
+<?php /* No release yet to under development
                   <li><a><i class="plt-archive"></i> <?php _e('Extensions', WPGENT_DOMAIN) ?> <span class="plt-circle-down"></span></a>
                     <ul class="nav child_menu">
                       <li><a href="/export/"><?php _e('Export', WPGENT_DOMAIN) ?></a></li>
                       <li><a href="/import/"><?php _e('Import', WPGENT_DOMAIN) ?></a></li>
                     </ul>
                   </li>
-<?php /*
+*/ ?>
+<?php /* menu for extended
                   <li><a href="javascript:void(0)"><i class="fa fa-heart-o"></i> <?php _e('New Function', WPGENT_DOMAIN) ?> <span class="label label-success pull-right"><?php _e('Coming Soon', WPGENT_DOMAIN) ?></span></a></li>
 */ ?>
                 </ul>

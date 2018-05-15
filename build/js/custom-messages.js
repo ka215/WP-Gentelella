@@ -27,8 +27,10 @@ $(document).ready(function() {
    * Forcibly reload the message ignoring the default interval (:> 既定間隔を無視して強制的にメッセージをリロードする
    */
   $('.btn-to-reload').on( 'click', function() {
+    $(this).find('i.plt-loop3').attr( 'class', 'fa plt-loop3 fa-spin' );
     docCookies.setItem( 'latest_messages', '0', 60*60*24*30, '/', 'plotter.me', 1 );
-    location.reload();
+    showLoading();
+    location.reload( true );
   });
   
   /*

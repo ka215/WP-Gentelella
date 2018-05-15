@@ -10,9 +10,9 @@
 $page_type = get_current_page_type();
 $add_classes = [];
 $prepend_contents = [];
-if ( ! is_user_logged_in() && in_array( $page_type, FULLSPAN_PAGES ) ) {
+if ( ! is_user_logged_in() && in_array( $page_type, FULLSPAN_PAGES, true ) ) {
   $add_classes[] = 'full-span';
-  if ( ! in_array( $page_type, [ 'home', 'error404', 'thanks' ] ) ) {
+  if ( ! in_array( $page_type, [ 'home', 'error404', 'thanks' ], true ) ) {
     $add_classes[] = 'login';
   }
 } else

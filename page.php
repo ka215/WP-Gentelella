@@ -11,11 +11,11 @@ $page_type = get_current_page_type();
 $is_fullwidth = in_array( $page_type, [
   // full-span only pages
   'login', 'lostpassword', 'register', 'resetpass', 'thanks', 
-] );
+], true );
 $is_both_width = in_array( $page_type, [
   'service', 'user-policies', 'privacy-policy', 'cookie-policy', 
   // 'help',
-] );
+], true );
 
 get_header();
 
