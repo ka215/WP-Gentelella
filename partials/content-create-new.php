@@ -27,7 +27,7 @@ $has_structure       = @$_plotter['has_current_structures'] ?: false;
               <div class="col-md-12 col-sm-12 col-xs-12"> */ ?>
             <div class="x_panel panel-primary">
               <div class="x_title">
-                <h3><?php _e( 'Create New Storyline', WPGENT_DOMAIN ) ?></h3>
+                <h3><i class="plt-tree7 blue"></i> <?php _e( 'Create New Storyline', WPGENT_DOMAIN ) ?></h3>
                 <?php get_template_part( 'partials/toolbox' ); ?>
                 <div class="clearfix"></div>
               </div>

@@ -3667,85 +3667,7 @@ textarea:focus {
   outline-width: 2px;
 }
 
-.btn_ {
-  display: inline-block;
-  padding: 3px 9px;
-  margin-bottom: 0;
-  font-size: 14px;
-  line-height: 20px;
-  text-align: center;
-  vertical-align: middle;
-  cursor: pointer;
-  color: #333333;
-  text-shadow: 0 1px 1px rgba(255, 255, 255, .75);
-  background-color: #f5f5f5;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ffffff), to(#e6e6e6));
-  background-image: linear-gradient(to bottom, #ffffff, #e6e6e6);
-  background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='rgb(255, 255, 255)', endColorstr='rgba(255, 230, 230, 0.90196)', GradientType=0);
-  border-color: #e6e6e6 #e6e6e6 #bfbfbf;
-  border-color: rgba(0, 0, 0, .1) rgba(0, 0, 0, .1) rgba(0, 0, 0, .25);
-  filter: progid:DXImageTransform.Microsoft.gradient(enabled=false);
-  border: 1px solid #cccccc;
-  border-bottom-color: #b3b3b3;
-  border-radius: 4px;
-  -webkit-box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 2px rgba(0, 0, 0, .05);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .2), 0 1px 2px rgba(0, 0, 0, .05);
-}
-
 /* *********  /form textarea  **************************** */
-/* *********  glyphicons  **************************** */
-.bs-glyphicons {
-  margin: 0 -10px 20px;
-  overflow: hidden;
-}
-
-.bs-glyphicons-list {
-  padding-left: 0;
-  list-style: none;
-}
-
-.bs-glyphicons li {
-  float: left;
-  width: 25%;
-  height: 115px;
-  padding: 10px;
-  font-size: 10px;
-  line-height: 1.4;
-  text-align: center;
-  background-color: #f9f9f9;
-  border: 1px solid #fff;
-}
-
-.bs-glyphicons .glyphicon {
-  margin-top: 5px;
-  margin-bottom: 10px;
-  font-size: 24px;
-}
-
-.bs-glyphicons .glyphicon-class {
-  display: block;
-  text-align: center;
-  word-wrap: break-word;
-}
-
-.bs-glyphicons li:hover {
-  color: #fff;
-  background-color: #1ABB9C;
-}
-
-@media (min-width: 768px) {
-  .bs-glyphicons {
-    margin-right: 0;
-    margin-left: 0;
-  }
-  .bs-glyphicons li {
-    width: 12.5%;
-    font-size: 12px;
-  }
-}
-
-/* *********  /glyphicons  **************************** */
 /* *********  form tags input  **************************** */
 .tagsinput {
   border: 1px solid #CCC;
@@ -3810,63 +3732,6 @@ span.tag a {
 }
 
 /* *********  /form tags input  **************************** */
-/** Tabs **/
-ul.bar_tabs {
-  overflow: visible;
-  background: #F5F7FA;
-  height: 25px;
-  margin: 21px 0 14px;
-  padding-left: 14px;
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  border-bottom: 1px solid #E6E9ED;
-}
-
-ul.bar_tabs > li {
-  border: 1px solid #E6E9ED;
-  color: #333 !important;
-  margin-top: -17px;
-  margin-left: 8px;
-  background: #fff;
-  border-bottom: none;
-  border-radius: 4px 4px 0 0;
-}
-
-ul.bar_tabs > li.active {
-  border-right: 6px solid #D3D6DA;
-  border-top: 0;
-  margin-top: -15px;
-}
-
-ul.bar_tabs > li a {
-  padding: 10px 17px;
-  background: #F5F7FA;
-  margin: 0;
-  border-top-right-radius: 0;
-}
-
-ul.bar_tabs > li a:hover {
-  border: 1px solid transparent;
-}
-
-ul.bar_tabs > li.active a {
-  border-bottom: none;
-}
-
-ul.bar_tabs.right {
-  padding-right: 14px;
-}
-
-ul.bar_tabs.right li {
-  float: right;
-}
-
-a:focus {
-  outline: none;
-}
-
-/** /Tabs **/
 /* *********  timeline  **************************** */
 ul.timeline li {
   position: relative;
@@ -5694,6 +5559,102 @@ header {
 }
 */
 /**
+ * ideas styles
+ */
+/* list table */
+#idea-list thead th {
+  font-weight: bold;
+  color: #BDC3C7;
+}
+
+#idea-list tbody {
+  position: relative;
+}
+
+#idea-list .list-check-cell {
+  vertical-align: top;
+  text-align: center;
+  width: 30px;
+}
+
+#idea-list .list-idea-cell {
+  vertical-align: top;
+  text-align: left;
+}
+
+#idea-list .list-date-cell {
+  vertical-align: middle;
+  text-align: center;
+  width: 120px;
+}
+
+#idea-list .list-ctrl-cell {
+  vertical-align: middle;
+  text-align: center;
+  max-width: 60px;
+}
+
+#idea-list .list-more-cell {
+  vertical-align: bottom;
+  text-align: center;
+  font-size: 1.25em;
+  color: #7E837F;
+}
+
+#idea-list #list-template {
+  display: none;
+  position: absolute;
+  left: -9999px;
+  top: -9999px;
+  visibility: hidden;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  z-index: 0;
+}
+
+#idea-list .dummy-list {
+  position: relative;
+  height: 128px;
+}
+
+#idea-list .loading-list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-flow: row nowrap;
+          flex-flow: row nowrap;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  position: absolute;
+  bottom: 128px;
+  left: calc(50% - 100px);
+  line-height: 28px;
+  vertical-align: middle;
+}
+
+#idea-list .loading-list i {
+  margin-right: .5em;
+  opacity: .7;
+}
+
+.describe-finding span {
+  margin-left: 1em;
+  color: #3498DB;
+}
+
+#no-idea {
+  margin: 10px auto;
+  text-align: center;
+}
+
+/**
  * messenger styles
  */
 /* navi-messages */
@@ -5887,10 +5848,7 @@ ul.msg_list li.message-wrapper .no-list {
 
 /* messages */
 .btn-to-reload {
-  position: absolute;
-  top: -16px;
-  right: 10px;
-  margin: 0;
+  margin: 4px 0;
 }
 
 #messageTabContent {
@@ -6014,6 +5972,151 @@ ul.msg_list li.message-wrapper .no-list {
 .plotter-loading .alert-info .ui-pnotify-text {
   line-height: 2em;
   vertical-align: middle;
+}
+
+/** Tabs **/
+*[role="tabpanel"] .nav:before, *[role="tabpanel"] .navbar:before {
+  display: block !important;
+  content: "";
+}
+
+*[role="tabpanel"] .nav-tabs {
+  border-bottom: unset;
+}
+
+*[role="tabpanel"] .nav-tabs > li.active > a, *[role="tabpanel"] .nav-tabs > li.active > a:focus, *[role="tabpanel"] .nav-tabs > li.active > a:hover {
+  color: unset;
+  background-color: unset;
+  border: unset;
+}
+
+*[role="tabpanel"] ul.bar_tabs {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-derection: row;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: stretch;
+      -ms-flex-align: stretch;
+          align-items: stretch;
+  -ms-flex-line-pack: end;
+      align-content: flex-end;
+  overflow: visible;
+  width: 100%;
+  height: 100%;
+  margin: 0 0 25px;
+  position: relative;
+  z-index: 1;
+}
+
+*[role="tabpanel"] ul.bar_tabs li {
+  position: relative;
+  border: 1px solid #D4D9DF;
+  border-right: 0;
+  color: #504946 !important;
+  margin: 0;
+  background: #FAFDFF;
+}
+
+*[role="tabpanel"] ul.bar_tabs li:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+*[role="tabpanel"] ul.bar_tabs li:last-child {
+  border-right: 1px solid #D4D9DF;
+  border-radius: 0 4px 4px 0;
+}
+
+*[role="tabpanel"] ul.bar_tabs li.active {
+  border-color: #3498DB !important;
+  background-color: #3498DB !important;
+  color: #FAFDFF !important;
+}
+
+*[role="tabpanel"] ul.bar_tabs li.active a {
+  /*
+          font-weight: 600;
+          
+          &:hover {
+            opacity: 1;
+          }
+          */
+}
+
+*[role="tabpanel"] ul.bar_tabs li.active a:before {
+  content: "\ede9";
+  font-family: 'plotter';
+  margin-right: .5em;
+}
+
+*[role="tabpanel"] ul.bar_tabs li.active:before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 0;
+  height: 0px;
+  left: calc(50% - 10px);
+  bottom: -10px;
+  border-top: 10px solid #3498DB;
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
+}
+
+*[role="tabpanel"] ul.bar_tabs li.no-tab {
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  vertical-align: middle;
+  border: 0px;
+}
+
+*[role="tabpanel"] ul.bar_tabs li a {
+  padding: 10px 15px;
+  margin: 0;
+  text-align: center;
+}
+
+*[role="tabpanel"] ul.bar_tabs li a:before {
+  content: "\ede4";
+  font-family: 'plotter';
+  margin-right: .5em;
+}
+
+*[role="tabpanel"] ul.bar_tabs li a:hover {
+  /*
+          font-weight: 600;
+          opacity: .65;
+          */
+}
+
+*[role="tabpanel"] ul.bar_tabs.right {
+  padding-right: 14px;
+}
+
+*[role="tabpanel"] ul.bar_tabs.right li {
+  float: right;
+}
+
+#messageTab li {
+  width: calc(33.33333% - 33.33333px);
+}
+
+#messageTab li:nth-child(3) {
+  border-right: 1px solid #D4D9DF;
+  border-radius: 0 4px 4px 0;
+}
+
+#messageTab li:last-child {
+  /* for the "Reload" button */
+  width: 100px;
+}
+
+#ideasTab li {
+  width: 50%;
 }
 
 .form_wizard {

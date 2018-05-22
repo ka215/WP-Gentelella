@@ -50,7 +50,7 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
               <div class="col-md-12 col-sm-12 col-xs-12"> */ ?>
             <div class="x_panel panel-primary">
               <div class="x_title">
-                <h3><?php _e( 'Edit Storyline', WPGENT_DOMAIN ) ?></h3>
+                <h3><i class="plt-tree7 blue"></i> <?php _e( 'Edit Storyline', WPGENT_DOMAIN ) ?></h3>
                 <?php get_template_part( 'partials/toolbox' ); ?>
                 <div class="clearfix"></div>
               </div>
@@ -210,7 +210,7 @@ $disp_group_id = WP_DEBUG ? ' <span style="font-size:.75em;">(CurrentGroupId: '.
                         <div class="form-group">
                           <label class="control-label col-md-2 col-sm-3 col-xs-12" for="act-context"><?php _e('Context', WPGENT_DOMAIN ); ?></label>
                           <div class="col-md-9 col-sm-9 col-xs-12">
-                            <textarea id="act-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= esc_html( @$_first_view_structure['context'] ?: '' ) ?></textarea>
+                            <textarea id="act-context" name="context" class="form-control col-md-7 col-xs-12" rows="8" placeholder="<?php _e('Explanation of this act etc.', WPGENT_DOMAIN ); ?>"><?= nl2br( esc_textarea( @$_first_view_structure['context'] ?: '' ) ) ?></textarea>
                           </div>
                         </div>
                         <div class="form-group hide">

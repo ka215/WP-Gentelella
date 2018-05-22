@@ -13,21 +13,13 @@ $current_user_id     = @$_plotter['current_user_id'] ?: null;
 $user_sources        = @$_plotter['user_sources'] ?: [];
 $current_source_id   = @$_plotter['current_source_id'] ?: null;
 $current_source_name = @$_plotter['current_source_name'] ?: '';
-if ( ! empty( $current_source_id ) ) {
-    $current_source_atts = __ctl( 'model' )->get_sources( 
-        [ 'who', 'what', 'where', 'when', 'why', 'extend', 'last_modified_by' ], 
-        [ 'id' => $current_source_id ]
-    );
-    $current_source_data = __ctl( 'lib' )::array_flatten( $current_source_atts );
-    foreach( $user_sources as $_src ) {
-        if ( $_src['id'] == $current_source_id ) {
-            $current_source_data['type'] = $_src['type'];
-            break;
-        }
-    }
-    // Provisional processing
-    $current_permission = 'owner';
-}
+$current_source_data = @$_plotter['current_source_data'] ?: [];
+$current_user_role   = @$_plotter['current_user_role'] ?: 'undefined';
+$display_role = [
+  'owner'     => __( 'Owner', WPGENT_DOMAIN ), 
+  'member'    => __( 'Member', WPGENT_DOMAIN ), 
+  'undefined' => ''
+];
 ?>
 
         <!-- page content -->
@@ -44,11 +36,11 @@ if ( ! empty( $current_source_id ) ) {
               <div class="col-md-12 col-sm-12 col-xs-12"> */ ?>
             <div class="x_panel panel-primary">
               <div class="x_title">
-                <h3><?php if ( empty( $user_sources ) ) {
-                    _e( "Let's weave a new story!", WPGENT_DOMAIN );
-                } else {
-                    _e( "Whole Story", WPGENT_DOMAIN );
-                } ?></h3>
+                <h3><?php if ( empty( $user_sources ) ) : 
+                ?><i class="plt-quill3 blue"></i> <?= __( "Let's weave a new story!", WPGENT_DOMAIN ) ?><?php 
+                else : 
+                ?><i class="plt-earth3 blue"></i> <?= __( "Whole Story", WPGENT_DOMAIN ) ?><?php 
+                endif; ?></h3>
                 <?php get_template_part( 'partials/toolbox' ); ?>
                 <div class="clearfix"></div>
               </div>
@@ -143,8 +135,10 @@ if ( ! empty( $current_source_id ) ) {
                     </div>
                   </div>
                   <div class="item form-group">
-                    <label class="control-label col-md-2 col-sm-2 col-xs-12" for="permission"><?php _e( 'Permission', WPGENT_DOMAIN ); ?></label>
+                    <label class="control-label col-md-2 col-sm-2 col-xs-12" for="permission"><?php _e( 'Role', WPGENT_DOMAIN ); ?></label>
                     <div class="col-md-3 col-sm-6 col-xs-12">
+                      <p class="form-control" readonly><?= $display_role[$current_user_role] ?></p>
+<?php /*
                       <select class="form-control hide" id="permission-select" name="permission" readonly="readonly" disabled="disabled">
                         <option value="owner" <?php selected( $current_permission, 'owner' ); ?>><?php _e( 'Owner', WPGENT_DOMAIN ); ?></option>
                         <option value="editor" <?php selected( $current_permission, 'editor' ); ?>><?php _e( 'Editor', WPGENT_DOMAIN ); ?></option>
@@ -152,7 +146,13 @@ if ( ! empty( $current_source_id ) ) {
                         <option value="writer" <?php selected( $current_permission, 'writer' ); ?>><?php _e( 'Writer', WPGENT_DOMAIN ); ?></option>
                         <option value="reader" <?php selected( $current_permission, 'reader' ); ?>><?php _e( 'Reader', WPGENT_DOMAIN ); ?></option>
                       </select>
-                      <input type="text" id="permission" name="permission" class="form-control col-md-6 col-xs-12" readonly="readonly" disabled="disabled" value="<?php _e( 'Owner', WPGENT_DOMAIN ); ?>">
+                      <input type="text" id="permission" name="permission" class="form-control col-md-6 col-xs-12 hide" readonly="readonly" disabled="disabled" value="<?php _e( 'Owner', WPGENT_DOMAIN ); ?>">
+*/ ?>
+                    </div>
+                  </div>
+                  <div class="item form-group">
+                    <div class="col-md-6 col-sm-6 col-xs-12 col-md-offset-2">
+                      <p class="help-block"><?= __( 'Notes: if you want to save changes, you need to commit.', WPGENT_DOMAIN ) ?></p>
                     </div>
                   </div>
                   <div class="ln_solid"></div>

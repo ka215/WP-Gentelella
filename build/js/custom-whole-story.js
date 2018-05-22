@@ -163,7 +163,7 @@ $(document).ready(function() {
    *  (:> ローカルストレージ初期化
    */
   function clearStorageData() {
-    logger.debug( 'Clear All LocalStorage, then set data of current steps' );
+    logger.debug( 'Clear All LocalStorage' );
     wls.clear();
   }
   

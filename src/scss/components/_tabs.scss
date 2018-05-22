@@ -1,0 +1,140 @@
+/** Tabs **/
+*[role="tabpanel"] {
+  
+  .nav:before, .navbar:before {
+    display: block !important;
+    content: "";
+  }
+  
+  .nav-tabs {
+    border-bottom: unset;
+  }
+  
+  .nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    color: unset;
+    background-color: unset;
+    border: unset;
+  }
+  
+  ul.bar_tabs {
+    display: flex;
+    flex-derection: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+    align-content: flex-end;
+    overflow: visible;
+    width: 100%;
+    height: 100%;
+    margin: 0 0 25px;
+    position: relative;
+    z-index: $zi_content_default;
+    
+    li {
+      position: relative;
+      border: 1px solid $border_color;
+      border-right: 0;
+      color: $text_color !important;
+      margin: 0;
+      background: $white;
+      
+      &:first-child {
+        border-radius: 4px 0 0 4px;
+      }
+      &:last-child {
+        border-right: 1px solid $border_color;
+        border-radius: 0 4px 4px 0;
+      }
+      
+      &.active {
+        border-color: $global_info !important;
+        background-color: $global_info !important;
+        color: $text_on_blue !important;
+        
+        a {
+          /*
+          font-weight: 600;
+          
+          &:hover {
+            opacity: 1;
+          }
+          */
+          &:before {
+            content: "\ede9";
+            font-family: 'plotter';
+            margin-right: .5em;
+          }
+        }
+        
+        &:before {
+          content: "";
+          position: absolute;
+          display: block;
+          width: 0;
+          height: 0px;
+          left: calc( 50% - 10px );
+          bottom: -10px;
+          border-top: 10px solid $global_info;
+          border-right: 10px solid transparent;
+          border-left: 10px solid transparent;
+        }
+      }
+      
+      &.no-tab {
+        display: inline-block;
+        height: 40px;
+        line-height: 40px;
+        vertical-align: middle;
+        border: 0px;
+      }
+      
+      a {
+        padding: 10px 15px;
+        margin: 0;
+        text-align: center;
+        
+        &:before {
+          content: "\ede4";
+          font-family: 'plotter';
+          margin-right: .5em;
+        }
+        
+        &:hover {
+          /*
+          font-weight: 600;
+          opacity: .65;
+          */
+        }
+      }
+    }
+    
+    &.right {
+      padding-right: 14px;
+      
+      li {
+        float: right
+      }
+    }
+  }
+  
+}
+#messageTab {
+  li {
+    width: calc( ( 100% - 100px ) / 3 );
+  }
+  
+  li:nth-child(3) {
+    border-right: 1px solid $border_color;
+    border-radius: 0 4px 4px 0;
+  }
+  
+  li:last-child {
+    /* for the "Reload" button */
+    width: 100px;
+  }
+}
+#ideasTab {
+  li {
+    width: 50%;
+  }
+}

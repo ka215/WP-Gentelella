@@ -668,7 +668,7 @@ add_action( 'wp_footer', function() {
     // $_hash = __ctl( 'lib' )::custom_hash( date("Y-m-d H:i:s") );
     // $debug_logs[] = "logger.debug('Current hash: %c{$_hash}', {$log_style[1]});";
     if ( session_status() == PHP_SESSION_ACTIVE ) {
-      $debug_logs[] = "logger.debug( JSON.parse('". json_encode( $_plotter ) ."') );";
+      $debug_logs[] = "logger.debug( JSON.parse('". __ctl( 'lib' )::plt_json_encode( $_plotter ) ."') );";
     }
   } else {
     if ( session_status() == PHP_SESSION_ACTIVE && ! is_front_page() ) {

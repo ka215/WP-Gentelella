@@ -21,27 +21,27 @@ function __localize_messages( $page_name=null ) {
     ];
     $partial_messages = [
         // Key: regex
-        '/^profile$/' => [
+        '/\Aprofile\z/' => [
             'show' => __( 'Show', 'plotter' ), // custom-profile.js
             'hide' => __( 'Hide', 'plotter' ), // custom-profile.js
             'delete_account_ttl' => __( 'Your Account Deletion', 'plotter' ), // custom-profile.js : 185
             'delete_account_msg' => __( "If you delete the account, withdrawal from the Plotter's membership. And it will be removed all data you saved, then you can not restore them.", 'plotter' ), // custom-profile.js : 186
             
         ],
-        '/^(account|register)$/' => [
+        '/\A(account|register)\z/' => [
             'show_passwd' => __( 'Show Password', 'plotter' ), // custom-account.js, custom-register.js
             'hide_passwd' => __( 'Hide Password', 'plotter' ), // custom-account.js, custom-register.js
             'shorter_username' => __( 'Your username must be at least 3 characters in length.', 'plotter' ), // custom-register.js
             'shorter_passwd' => __( 'Your password must be at least 6 characters in length.', 'plotter' ), // custom-register.js
             
         ],
-        '/^dashboard$/' => [
+        '/\Adashboard\z/' => [
             
         ],
-        '/^whole\-story$/' => [
+        '/\Awhole\-story\z/' => [
             
         ],
-        '/^(create\-new|edit-storyline)$/' => [
+        '/\A(create\-new|edit-storyline)\z/' => [
             'act_num' => __( 'Act %d', 'plotter' ), // custom-create-new.js, custom-edit-storyline.js : 369,427,435
             'move_cross_dependency_ttl' => __( 'Move To Storyline', 'plotter' ), // custom-edit-storyline.js: 110
             'move_cross_dependency_msg' => __( 'If you move to a storyline with the different dependency, unsaved data will be lost. Your changes are saved by commit.', 'plotter' ), // custom-edit-storyline.js: 111,129
@@ -49,6 +49,11 @@ function __localize_messages( $page_name=null ) {
             'remove_dependent_storylines_ttl' => __( 'Remove Dependent Storylines', 'plotter' ), // custom-edit-storyline.js: 146
             'remove_dependent_storylines_msg' => __( 'All acts and sub storylines subordinate to this dependency storylines are removed (cannot restore after done).', 'plotter' ), // custom-edit-storyline.js: 147
             
+        ],
+        '/\Aidea\-note\z/' => [
+            'loading_list' => __( 'Now Retrieving the Ideas...', 'plotter' ), // custom-idea-note.js: 348
+            'remove_idea_ttl' => __( 'Remove the Idea', 'plotter' ), // custom-idea-note.js: 194
+            'remove_idea_msg' => __( 'This idea are removed (cannot restore after done).', 'plotter' ), // custom-idea-note.js: 195
         ],
         // etc...
     ];

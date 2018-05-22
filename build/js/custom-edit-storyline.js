@@ -469,6 +469,9 @@ $(document).ready(function() {
     }
     // Enterキーによるフォームのフォーカス変更
     if ( evt.key === 'Enter' ) {
+      if ( evt.target.tagName === 'TEXTAREA' ) {
+        return;
+      }
       e.preventDefault();
       var availableFields = gf.find('.form-control'),
           currentFieldId  = evt.target.id,

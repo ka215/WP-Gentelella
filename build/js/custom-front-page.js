@@ -39,7 +39,7 @@ $(document).ready(function() {
    *  (:> セッションストレージ初期化
    */
   function clearSessionData() {
-    logger.debug( 'Clear All SessionStorage, then set data of current steps' );
+    logger.debug( 'Clear All SessionStorage' );
     wss.clear();
   }
   

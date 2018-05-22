@@ -30,11 +30,11 @@ $user_approval_state = @$_plotter['approval_state'] ?: false;
               <div _class="col-md-12 col-sm-12 col-xs-12"> */ ?>
             <div class="x_panel panel-primary">
               <div class="x_title">
-                <h3><?php if ( empty( $user_sources ) ) {
-                    _e( "Let's weave a new story!", WPGENT_DOMAIN );
-                } else {
-                    _e( "Summary of your stories", WPGENT_DOMAIN ); // Let's get started!
-                } ?></h3>
+                <h3><?php if ( empty( $user_sources ) ) : 
+                ?><i class="plt-quill3 blue"></i> <?= __( "Let's weave a new story!", WPGENT_DOMAIN ) ?><?php 
+                else : 
+                ?><i class="plt-meter3 blue"></i> <?= __( "Summary of your stories", WPGENT_DOMAIN ) ?><?php 
+                endif; ?></h3>
                 <?php get_template_part( 'partials/toolbox' ); ?>
                 <div class="clearfix"></div>
               </div>

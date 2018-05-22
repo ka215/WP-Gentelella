@@ -1,0 +1,93 @@
+/**
+ * ideas styles
+ */
+/* list table */
+#idea-list {
+  
+  thead {
+    th {
+      font-weight: bold;
+      color: $gray;
+    }
+  }
+  
+  tbody {
+    position: relative;
+  }
+  
+  .list-check-cell {
+    vertical-align: top;
+    text-align: center;
+    width: 30px;
+  }
+  
+  .list-idea-cell {
+    vertical-align: top;
+    text-align: left;
+  }
+  
+  .list-date-cell {
+    vertical-align: middle;
+    text-align: center;
+    width: 120px;
+  }
+  
+  .list-ctrl-cell {
+    vertical-align: middle;
+    text-align: center;
+    max-width: 60px;
+  }
+  
+  .list-more-cell {
+    vertical-align: bottom;
+    text-align: center;
+    font-size: 1.25em;
+    color: $moss_gray;
+  }
+  
+  #list-template {
+    display: none;
+    position: absolute;
+    left: -9999px;
+    top: -9999px;
+    visibility: hidden;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    z-index: 0;
+  }
+  
+  .dummy-list {
+    position: relative;
+    height: 128px;
+  }
+  
+  .loading-list {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: center;
+    align-items: stretch;
+    position: absolute;
+    bottom: 128px;
+    left: calc( 50% - 100px );
+    line-height: 28px;
+    vertical-align: middle;
+    
+    i {
+      margin-right: .5em;
+      opacity: .7;
+    }
+  }
+}
+.describe-finding {
+  
+  span {
+    margin-left: 1em;
+    color: $blue;
+  }
+}
+#no-idea {
+  margin: 10px auto;
+  text-align: center;
+  
+}

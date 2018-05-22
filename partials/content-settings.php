@@ -20,7 +20,7 @@ $current_user_id = @$_plotter['current_user_id'] ?: null;
               <div class="col-md-12 col-sm-12 col-xs-12"> */ ?>
             <div class="x_panel panel-primary">
               <div class="x_title">
-                <h2><?= __( 'Plotter Settings', WPGENT_DOMAIN ) ?></h2>
+                <h3><i class="plt-cog3 blue"></i> <?= __( 'Plotter Settings', WPGENT_DOMAIN ) ?></h3>
                 <?php get_template_part( 'partials/toolbox' ); ?>
                 <div class="clearfix"></div>
               </div>

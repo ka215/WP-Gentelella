@@ -27,7 +27,7 @@ foreach ( $messages as $_id => $_data ) {
           <div <?php post_class( 'flex-container' ); ?>>
             <div class="x_panel panel-primary">
               <div class="x_title">
-                <h3><?= __( 'All Messages', WPGENT_DOMAIN ) ?></h3>
+                <h3><i class="plt-bubble-check blue"></i> <?= __( 'All Messages', WPGENT_DOMAIN ) ?></h3>
                 <div class="clearfix"></div>
               </div>
               <div class="x_content">
@@ -40,18 +40,20 @@ foreach ( $messages as $_id => $_data ) {
                   <input type="hidden" id="message_to_team" name="to_team" value="" />
                   <?php wp_nonce_field( $page_name . '-form_' . $current_user_id, '_token', true, true ); ?>
 <?php if ( ! current_user_can( 'manage_options' ) ) : ?>
-                  <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                  <div class="messages-tabs" role="tabpanel" data-example-id="togglable-tabs">
                     <ul id="messageTab" class="nav nav-tabs bar_tabs" role="tablist">
                       <li role="presentation">
-                        <a href="#tab-content1" role="tab" id="all-messages-tab" data-toggle="tab" aria-expanded="true"><?= __( 'All' ) ?></a>
+                        <a href="#tab-content1" role="tab" id="all-messages-tab" data-toggle="tab" aria-expanded="false"><?= __( 'All', WPGENT_DOMAIN ) ?></a>
                       </li>
                       <li role="presentation" class="active">
-                        <a href="#tab-content2" role="tab" id="unread-messages-tab" data-toggle="tab" aria-expanded="false"><?= __( 'Unread' ) ?></a>
+                        <a href="#tab-content2" role="tab" id="unread-messages-tab" data-toggle="tab" aria-expanded="true"><?= __( 'Unread', WPGENT_DOMAIN ) ?></a>
                       </li>
                       <li role="presentation" class="">
-                        <a href="#tab-content3" role="tab" id="read-messages-tab" data-toggle="tab" aria-expanded="false"><?= __( 'Already Read' ) ?></a>
+                        <a href="#tab-content3" role="tab" id="read-messages-tab" data-toggle="tab" aria-expanded="false"><?= __( 'Already Read', WPGENT_DOMAIN ) ?></a>
                       </li>
-                      <button type="button" class="btn btn-default btn-to-reload pull-right"><i class="plt-loop3"></i> <?= __( 'Reload', WPGENT_DOMAIN ) ?></button>
+                      <li role="presentation" class="no-tab">
+                        <button type="button" class="btn btn-default btn-to-reload pull-right"><i class="plt-loop3"></i> <?= __( 'Reload', WPGENT_DOMAIN ) ?></button>
+                      </li>
                     </ul>
                     <div id="messageTabContent" class="tab-content">
                       <div role="tabpanel" class="tab-pane fade" id="tab-content1" aria-labelledby="all-tab">
