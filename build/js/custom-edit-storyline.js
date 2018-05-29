@@ -11,6 +11,7 @@ $(document).ready(function() {
   SUBMIT_BUTTONS   = [ 'add', 'update', 'remove' ];
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
+  initializeString();
   clearSessionData();
   resizeWizardSteps();
   
@@ -637,7 +638,13 @@ $(document).ready(function() {
     $wizardSteps.parent().scrollLeft( adjustLeft );
   }
   
-  
+  function initializeString(){
+    gf.find('#act-name').val( rasterize_str( gf.find('#act-name').val() ) );
+    gf.find('#act-context').val( rasterize_str( gf.find('#act-context').val() ) );
+    $('.step_name').each(function(){
+      $(this).text( rasterize_str( $(this).text() ) );
+    });
+  }
   
   // ----- セッションストレージ関連 ---------------------------------------------------------------
   
@@ -670,6 +677,8 @@ $(document).ready(function() {
               data[0]['turn'] = Number( availableStep );
               data[0]['diff'] = true;
             }
+            data[0]['name'] = rasterize_str( data[0]['name'] );
+            data[0]['context'] = rasterize_str( data[0]['context'] );
             logger.debug( data[0] );
             saveStepData( data[0] );
             totalSteps--;
@@ -752,7 +761,7 @@ $(document).ready(function() {
       gf.find('#act-dependency').val( gf.find('input[name="dependency"]').val() );
       gf.find('#act-group-id').val( groupId );
       gf.find('#act-turn').val( stepNumber );
-      gf.find('#act-name').val( is_empty( step_name ) ? sprintf( localize_messages.act_num, stepNumber ) : step_name );
+      gf.find('#act-name').val( is_empty( step_name ) ? sprintf( localize_messages.act_num, stepNumber ) : rasterize_str( step_name ) );
       gf.find('#act-diff').val( 'false' );
       gf.find('#act-hash').val( hashKey );
       if ( ! is_empty( structureId ) ) {
@@ -761,7 +770,7 @@ $(document).ready(function() {
         .then( function( data, stat, self ){
           if ( 'success' === stat ) {
             logger.debug( data[0] );
-            gf.find('#act-context').val( data[0].context );
+            gf.find('#act-context').val( rasterize_str( data[0].context ) );
             controlSubmission( 'unlock' );
           }
         });
@@ -774,8 +783,8 @@ $(document).ready(function() {
       gf.find('#act-dependency').val( step_data['dependency'] );
       gf.find('#act-group-id').val( step_data['group_id'] );
       gf.find('#act-turn').val( step_data['turn'] );
-      gf.find('#act-name').val( is_empty( step_data['name'] ) ? sprintf( localize_messages.act_num, step_data['turn'] ) : step_data['name'] );
-      gf.find('#act-context').val( step_data['context'] );
+      gf.find('#act-name').val( is_empty( step_data['name'] ) ? sprintf( localize_messages.act_num, step_data['turn'] ) : rasterize_str( step_data['name'] ) );
+      gf.find('#act-context').val( rasterize_str( step_data['context'] ) );
       gf.find('#act-diff').val( step_data['diff'] );
       gf.find('#act-hash').val( hashKey );
     }

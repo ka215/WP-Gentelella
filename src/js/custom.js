@@ -1168,3 +1168,11 @@ function strip_tags( str, allowed ) {
     return allowed.indexOf('<' + $1.toLowerCase() + '>') > -1 ? $0 : '';
   });
 }
+
+/**
+ * Rasterize to an editable characters string (:> 編集可能な文字列にラスタライズする
+ */
+function rasterize_str( str ) {
+  return $('<div />').html( strip_tags( str ) ).text();
+}
+ 

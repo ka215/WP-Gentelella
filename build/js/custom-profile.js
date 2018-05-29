@@ -275,10 +275,15 @@ $(document).ready(function() {
   }
   
   /*
-   * Initialize avatar preview (:> アバタープレビューを初期化
+   * Initialize some fields on form (:> フォーム項目の初期化
    */
   function initFields() {
+    // Initialize avatar preview
     $('#preview-upfile').val('');
+    
+    // Disabled reload and reside button of the message control on top navigator
+    $('#msgctl-reload, #msgctl-reside').prop( 'disabled', true );
+    
   }
   
   

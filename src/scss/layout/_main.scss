@@ -242,3 +242,114 @@ body .container.body .right_col:after {
     text-align: center;
   }
 }
+/* x_panel */
+.x_panel {
+  position: relative;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px 17px;
+  display: inline-block;
+  background: $panel_bg;
+  border: 1px solid $panel_border;
+  -webkit-column-break-inside: avoid;
+  -moz-column-break-inside: avoid;
+  column-break-inside: avoid;
+  opacity: 1;
+  -moz-transition: all .2s ease;
+  -o-transition: all .2s ease;
+  -webkit-transition: all .2s ease;
+  -ms-transition: all .2s ease;
+  transition: all .2s ease;
+}
+.x_title {
+  border-bottom: 2px solid $panel_border;
+  padding: 1px 5px 6px;
+  margin-bottom: 10px;
+  color: $panel_title_color;
+  
+  h2, h3 {
+    margin: 5px 0 6px;
+    float: left;
+    display: block;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    
+    small {
+      margin-left: 10px;
+    }
+    
+    span {
+      color: $panel_title_icon_color;
+    }
+  }
+  
+  .filter {
+    width: 40%;
+    float: right;
+  }
+  
+  &.with-toolbox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: stretch;
+    
+    h2, h3 {
+      width: 100%;
+      clear: both;
+    }
+    
+    .panel_toolbox {
+      list-style-type: none;
+      display: table;
+      margin-top: 5px;
+      margin-bottom: 0;
+      padding: 0;
+      color: $toolbox_text;
+    }
+    .panel_toolbox> li {
+      display: table-cell;
+      cursor: pointer;
+      height: 100%;
+      vertical-align: middle;
+      
+      a {
+        padding: 5px 7px;
+        color: $toolbox_text;
+        font-size: 14px;
+        
+        &:hover {
+          background: $toolbox_hover_bg;
+          color: $alink_color_hover;
+        }
+      }
+      
+      &.active {
+        cursor: default;
+        
+        a {
+          cursor: default;
+          color: $dark_gray;
+          
+          &:hover {
+            background: transparent;
+            color: $dark_gray;
+          }
+        }
+      }
+    }
+  }
+}
+.x_content {
+  padding: 0 5px 6px;
+  position: relative;
+  width: 100%;
+  float: left;
+  clear: both;
+  margin-top: 5px;
+}
+.x_content h4 {
+  font-size: 16px;
+  font-weight: 500;
+}

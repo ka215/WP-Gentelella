@@ -80,7 +80,7 @@ $(document).ready(function() {
   });
 
   /*
-   * Clicked Update Idea button (:> アイデア更新ボタン押下時
+   * Clicked Cancel button (:> アイデア編集キャンセルボタン押下時
    */
   $('#cancel').on('click', function(e){
     $('#'+ currentPermalink +'-post-action').val( '' );
@@ -90,6 +90,7 @@ $(document).ready(function() {
     $('#save-idea').removeClass('hide');
     $('#update-idea, #cancel').addClass('hide');
   });
+
   /*
    * Clicked find idea button (:> アイデア検索ボタン押下時
    */
@@ -165,7 +166,10 @@ $(document).ready(function() {
     }
     $('#idea_title').val( ideaTitle );
     if ( $ideaElm.find('.list-idea-cell p').length > 0 ) {
-      ideaContent = strip_tags( $ideaElm.find('.list-idea-cell p').html() );
+      //ideaContent = strip_tags( $ideaElm.find('.list-idea-cell p').html() );
+      // decode html entities
+      //ideaContent = $('<div/>').html( ideaContent ).text();
+      ideaContent = rasterize_str( $ideaElm.find('.list-idea-cell p').html() );
     }
     $('#idea_content').val( ideaContent );
     $('#save-idea').addClass('hide');

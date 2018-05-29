@@ -39,21 +39,23 @@ a:hover, a:focus {
   text-decoration: none
 }
 .required {
-  position: relative;
+  position: absolute;
   display: inline-block;
   color: $red;
-  width: .5rem;
-  height: 1rem;
+  width: 1px;
+  height: 100%;
+  right: -3px;
+  top: 2px;
 }
 .required:before {
   position: absolute;
   content: "\f069";
-  left: .35rem;
-  top: -.5rem;
+  right: 0;
+  top: 0;
   font-family: FontAwesome;
   font-style: normal;
   font-weight: normal;
-  font-size: .5rem;
+  font-size: 6px; /* .5rem; */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: $signal_red;

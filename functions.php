@@ -146,6 +146,20 @@ function set_fullspan_pages() {
         // etc.
     ];
 }
+/**
+ * Create cache hash for static resources
+ */
+function cache_hash( $resource_path ) {
+    if ( strpos( $resource_path, WPGENT_PATH ) === false ) {
+        $resource_path = WPGENT_PATH . trim( $resource_path, '/' );
+    }
+    if ( file_exists( $resource_path ) ) {
+        return __ctl( 'lib' )::custom_hash( filemtime( $resource_path ) );
+    } else {
+        return '';
+    }
+}
+
 
 /**
  * Import the defined localize messages
@@ -237,7 +251,7 @@ add_action( 'wp_enqueue_scripts', function() {
   if ( USE_CDN_RESOURCES ) {
     wp_register_style( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css', false, '3.3.7' );
   } else {
-    wp_register_style( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/css/bootstrap.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/bootstrap/dist/css/bootstrap.min.css' ) ) );
+    wp_register_style( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/css/bootstrap.min.css', false, cache_hash( 'vendors/bootstrap/dist/css/bootstrap.min.css' ) );
   }
   
   // font-awesome
@@ -245,20 +259,20 @@ add_action( 'wp_enqueue_scripts', function() {
   if ( USE_CDN_RESOURCES ) {
     wp_register_style( 'font-awesome', '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', false, '4.7.0' );
   } else {
-    wp_register_style( 'font-awesome', WPGENT_DIR . 'vendors/font-awesome/css/font-awesome.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/font-awesome/css/font-awesome.min.css' ) ) );
+    wp_register_style( 'font-awesome', WPGENT_DIR . 'vendors/font-awesome/css/font-awesome.min.css', false, cache_hash( 'vendors/font-awesome/css/font-awesome.min.css' ) );
   }
   
   // icons:
-  wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/icons.min.css' ) ) );
+  wp_register_style( WPGENT_HANDLE . '-icon', WPGENT_DIR . 'build/css/icons.min.css', false, cache_hash( 'build/css/icons.min.css' ) );
   
   // noprogress:
-  wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.css' ) ) );
+  wp_register_style( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.css', false, cache_hash( 'vendors/nprogress/nprogress.css' ) );
   
   // animate:
-  wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/animate.css/animate.min.css' ) ) );
+  wp_register_style( 'animate', WPGENT_DIR . 'vendors/animate.css/animate.min.css', false, cache_hash( 'vendors/animate.css/animate.min.css' ) );
   
   // PNotify (BrightTheme): no used
-  wp_register_style( 'pnotify', WPGENT_DIR . 'node_modules/pnotify/dist/PNotifyBrightTheme.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/PNotifyBrightTheme.css' ) ) );
+  wp_register_style( 'pnotify', WPGENT_DIR . 'node_modules/pnotify/dist/PNotifyBrightTheme.css', false, cache_hash( 'node_modules/pnotify/dist/PNotifyBrightTheme.css' ) );
   
   // vendoers styles:
   $vendor_styles = [
@@ -266,26 +280,27 @@ add_action( 'wp_enqueue_scripts', function() {
     'smartwizard' => 'vendors/jQuery-Smart-Wizard/styles/smart_wizard.css',
     'tagsinput'   => 'vendors/bootstrap-tagsinput/dist/bootstrap-tagsinput.css',
     'bs-select'   => 'vendors/bootstrap-select/dist/css/bootstrap-select.min.css',
+    'editable-select' => 'vendors/jquery-editable-select/dist/jquery-editable-select.min.css',
     // etc.
   ];
   foreach ( $vendor_styles as $_handle => $_path ) {
-    wp_register_style( $_handle, WPGENT_DIR . $_path, false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_path ) ) );
+    wp_register_style( $_handle, WPGENT_DIR . $_path, false, cache_hash( $_path ) );
   }
   
   // Common Custom Styles
-  wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/custom.min.css' ) ) );
+  wp_register_style( WPGENT_HANDLE, WPGENT_DIR . 'build/css/custom.min.css', false, cache_hash( 'build/css/custom.min.css' ) );
   
   $font_params = [
     get_bloginfo( 'language' ), // Current Language
     0, // is serif: 1 = true | 0 = false
     400, // base weight
   ];
-  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'build/css/fonts.php' ) ) );
+  wp_register_style( WPGENT_HANDLE . '-font', WPGENT_DIR . 'build/css/fonts.php?l=' . implode( ';', $font_params ), array( WPGENT_HANDLE ), cache_hash( 'build/css/fonts.php' ) );
   
   // Single Page Custom Styles
   $_paged_custom_stylesheet = sprintf( 'build/css/custom-%s%s.css', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
   if ( file_exists( WPGENT_PATH . $_paged_custom_stylesheet ) ) {
-    wp_register_style( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_stylesheet, [], __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_stylesheet ) ) );
+    wp_register_style( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_stylesheet, [], cache_hash( $_paged_custom_stylesheet ) );
   }
   
   
@@ -295,30 +310,30 @@ add_action( 'wp_enqueue_scripts', function() {
   if ( USE_CDN_RESOURCES ) {
     wp_register_script( 'jquery', '//code.jquery.com/jquery-3.2.1.min.js', array(), '3.2.1' );
   } else {
-    wp_register_script( 'jquery', WPGENT_DIR . 'vendors/jquery/dist/jquery.min.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/jquery/dist/jquery.min.js' ) ) );
+    wp_register_script( 'jquery', WPGENT_DIR . 'vendors/jquery/dist/jquery.min.js', array(), cache_hash( 'vendors/jquery/dist/jquery.min.js' ) );
   }
   
   // bootstrap:
   if ( USE_CDN_RESOURCES ) {
     wp_register_script( 'bootstrap', '//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js', array( 'jquery' ), '3.3.7', true );
   } else {
-    wp_register_script( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/js/bootstrap.min.js', array( 'jquery' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/bootstrap/dist/js/bootstrap.min.js' ) ), true );
+    wp_register_script( 'bootstrap', WPGENT_DIR . 'vendors/bootstrap/dist/js/bootstrap.min.js', array( 'jquery' ), cache_hash( 'vendors/bootstrap/dist/js/bootstrap.min.js' ), true );
   }
   
   // fastclick:
-  wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/fastclick/lib/fastclick.js' ) ), true );
+  wp_register_script( 'fastclick', WPGENT_DIR . 'vendors/fastclick/lib/fastclick.js', array(), cache_hash( 'vendors/fastclick/lib/fastclick.js' ), true );
   
   // nprogress:
-  wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'vendors/nprogress/nprogress.js' ) ), true );
+  wp_register_script( 'nprogress', WPGENT_DIR . 'vendors/nprogress/nprogress.js', array(), cache_hash( 'vendors/nprogress/nprogress.js' ), true );
   
   // PNotify:
-  wp_register_script( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotify.js', array(), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotify.js' ) ), true );
-  wp_register_script( 'pnotify-animate', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyAnimate.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyAnimate.js' ) ), true );
-  wp_register_script( 'pnotify-buttons', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyButtons.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyButtons.js' ) ), true );
-  wp_register_script( 'pnotify-confirm', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyConfirm.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyConfirm.js' ) ), true );
-  wp_register_script( 'pnotify-desktop', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyDesktop.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyDesktop.js' ) ), true );
-  wp_register_script( 'pnotify-history', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyHistory.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyHistory.js' ) ), true );
-  wp_register_script( 'pnotify-mobile', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyMobile.js', array( 'pnotify' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . 'node_modules/pnotify/dist/iife/PNotifyMobile.js' ) ), true );
+  wp_register_script( 'pnotify', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotify.js', array(), cache_hash( 'node_modules/pnotify/dist/iife/PNotify.js' ), true );
+  wp_register_script( 'pnotify-animate', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyAnimate.js', array( 'pnotify' ), cache_hash( 'node_modules/pnotify/dist/iife/PNotifyAnimate.js' ), true );
+  wp_register_script( 'pnotify-buttons', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyButtons.js', array( 'pnotify' ), cache_hash( 'node_modules/pnotify/dist/iife/PNotifyButtons.js' ), true );
+  wp_register_script( 'pnotify-confirm', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyConfirm.js', array( 'pnotify' ), cache_hash( 'node_modules/pnotify/dist/iife/PNotifyConfirm.js' ), true );
+  wp_register_script( 'pnotify-desktop', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyDesktop.js', array( 'pnotify' ), cache_hash( 'node_modules/pnotify/dist/iife/PNotifyDesktop.js' ), true );
+  wp_register_script( 'pnotify-history', WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyHistory.js', array( 'pnotify' ), cache_hash( 'node_modules/pnotify/dist/iife/PNotifyHistory.js' ), true );
+  wp_register_script( 'pnotify-mobile',  WPGENT_DIR . 'vendors/pnotify/dist/iife/PNotifyMobile.js',  array( 'pnotify' ), cache_hash( 'node_modules/pnotify/dist/iife/PNotifyMobile.js'  ), true );
   
   // vendoers scripts:
   $vendor_scripts = [
@@ -329,22 +344,24 @@ add_action( 'wp_enqueue_scripts', function() {
     'blueimp-md5' => 'vendors/blueimp-md5/js/md5.min.js',
     'tagsinput'   => 'vendors/bootstrap-tagsinput/dist/bootstrap-tagsinput.min.js',
     'bs-select'   => 'vendors/bootstrap-select/dist/js/bootstrap-select.min.js',
+    'editable-select' => 'vendors/jquery-editable-select/dist/jquery-editable-select.min.js',
+    'inputmask'   => 'vendors/jquery.inputmask/dist/min/jquery.inputmask.bundle.min.js',
     // etc.
   ];
   foreach ( $vendor_scripts as $_handle => $_path ) {
-    wp_register_script( $_handle, WPGENT_DIR . $_path, [], __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_path ) ), true );
+    wp_register_script( $_handle, WPGENT_DIR . $_path, [], cache_hash( $_path ), true );
   }
   
   // Common Custom Scripts
   $_common_custom_scriptfile = sprintf( '%s/js/custom%s.js', ( WP_DEBUG ? 'src' : 'build' ), ( WP_DEBUG ? '' : '.min' ) );
-  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array( 'wp-api' ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_common_custom_scriptfile ) ), true );
+  wp_register_script( WPGENT_HANDLE, WPGENT_DIR . $_common_custom_scriptfile, array( 'wp-api' ), cache_hash( $_common_custom_scriptfile ), true );
   
   wp_localize_script( WPGENT_HANDLE, 'localize_messages', __localize_messages( $_pagename ) );
   
   // Single Page Custom Scripts
   $_paged_custom_scriptfile = sprintf( 'build/js/custom-%s%s.js', $_pagename, ( WP_DEBUG ? '' : '.min' ) );
   if ( file_exists( WPGENT_PATH . $_paged_custom_scriptfile ) ) {
-    wp_register_script( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_scriptfile, array( WPGENT_HANDLE ), __ctl( 'lib' )::custom_hash( filemtime( WPGENT_PATH . $_paged_custom_scriptfile ) ), true );
+    wp_register_script( WPGENT_HANDLE .'-'. $_pagename, WPGENT_DIR . $_paged_custom_scriptfile, array( WPGENT_HANDLE ), cache_hash( $_paged_custom_scriptfile ), true );
   }
   
 }, 2 );
@@ -441,6 +458,10 @@ add_action( 'wp_enqueue_scripts', function() {
       case 'edit-storyline':
         $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', ] ); // 'switchery', 'smartwizard' 
         $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'fastclick', 'nprogress', 'blueimp-md5' ] ); // 'switchery', 'smartwizard' 
+        break;
+      case 'add-char':
+        $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'switchery', 'bs-select', 'editable-select', 'tagsinput' ] );
+        $enqueue_script_handles = array_merge( $enqueue_script_handles, [ 'jquery-ui-sortable', 'fastclick', 'nprogress', 'switchery', 'bs-select', 'editable-select', 'inputmask', 'tagsinput' ] );
         break;
       case 'messages':
         $enqueue_style_handles = array_merge( $enqueue_style_handles, [ 'nprogress', 'tagsinput' ] );

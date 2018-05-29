@@ -43,12 +43,12 @@ $(document).ready(function() {
         .then( function( data, stat, self ){
           if ( 'success' === stat ) {
             logger.debug( data[0] );
-            gf.find('#source_name').val( data[0].name );
-            gf.find('input#who').val( data[0].who );
-            gf.find('input#what').val( data[0].what );
-            gf.find('input#where').val( data[0].where );
-            gf.find('input#when').val( data[0].when );
-            gf.find('input#why').val( data[0].why );
+            gf.find('#source_name').val( rasterize_str( data[0].name ) );
+            gf.find('input#who').val( rasterize_str( data[0].who ) );
+            gf.find('input#what').val( rasterize_str( data[0].what ) );
+            gf.find('input#where').val( rasterize_str( data[0].where ) );
+            gf.find('input#when').val( rasterize_str( data[0].when ) );
+            gf.find('input#why').val( rasterize_str( data[0].why ) );
             gf.find('#team_writing').prop( 'checked', ( data[0].type == 1 ) );
             rebuildSwitchery( '#team_writing' );
             controlSubmission( 'unlock' );
