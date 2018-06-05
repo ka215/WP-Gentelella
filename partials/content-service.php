@@ -22,7 +22,7 @@ if ( is_user_logged_in() ) :
         <h2><?= $page_data['title'] ?></h2>
 <?php if ( isset( $page_data['modified'] ) ) : ?>
         <div class="x_title_meta pull-right">
-          <span><?= date( 'jS M Y', strtotime( $page_data['modified'] ) ) ?></span>
+          <span><?= date( 'M jS, Y', strtotime( $page_data['modified'] ) ) ?></span>
         </div>
 <?php endif; ?>
         <div class="clearfix"></div>
@@ -45,7 +45,7 @@ if ( is_user_logged_in() ) :
         <h2 class="h2"><?= $page_data['title'] ?></h2>
 <?php if ( isset( $page_data['modified'] ) ) : ?>
         <div class="header-meta pull-right">
-          <span><?= date( 'jS M Y', strtotime( $page_data['modified'] ) ) ?></span>
+          <span><?= date( 'M jS, Y', strtotime( $page_data['modified'] ) ) ?></span>
         </div>
 <?php endif; ?>
       </div>

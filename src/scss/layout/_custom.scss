@@ -1442,7 +1442,9 @@ span.section {
   border-bottom: 1px solid #e5e5e5;
 }
 .form-control {
+/*
   border-radius: 0;
+*/
   width: 100%;
 }
 .form-horizontal .control-label {
@@ -1633,64 +1635,6 @@ textarea:focus {
 
 
 
-/* *********  form tags input  **************************** */
-
-.tagsinput {
-  border: 1px solid #CCC;
-  background: #FFF;
-  padding: 6px 6px 0;
-  width: 300px;
-  overflow-y: auto;
-}
-span.tag {
-  -moz-border-radius: 2px;
-  -webkit-border-radius: 2px;
-  display: block;
-  float: left;
-  padding: 5px 9px;
-  text-decoration: none;
-  background: $global_active;
-  color: #F1F6F7;
-  margin-right: 5px;
-  font-weight: 500;
-  margin-bottom: 5px;
-  font-family: helvetica;
-}
-span.tag a {
-  color: #F1F6F7 !important;
-}
-.tagsinput span.tag a {
-  font-weight: bold;
-  color: #82ad2b;
-  text-decoration: none;
-  font-size: 11px;
-}
-.tagsinput input {
-  width: 80px;
-  margin: 0px;
-  font-family: helvetica;
-  font-size: 13px;
-  border: 1px solid transparent;
-  padding: 3px;
-  background: transparent;
-  color: #000;
-  outline: 0px;
-}
-.tagsinput div {
-  display: block;
-  float: left;
-}
-.tags_clear {
-  clear: both;
-  width: 100%;
-  height: 0px;
-}
-.not_valid {
-  background: #FBD8DB !important;
-  color: #90111A !important;
-}
-
-/* *********  /form tags input  **************************** */
 
 
 
@@ -1735,6 +1679,7 @@ ul.timeline li {
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+/*
 .tag {
   line-height: 1;
   background: $global_active;
@@ -1753,6 +1698,7 @@ ul.timeline li {
   border-bottom: 14px solid transparent;
   border-left: 11px solid $global_active;
 }
+*/
 .timeline h2.title {
   position: relative;
   font-size: 16px;

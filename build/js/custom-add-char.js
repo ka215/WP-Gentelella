@@ -6,7 +6,8 @@ $(document).ready(function() {
   
   var gf               = $("#character-creation"),
       wls              = window.localStorage,
-      currentPermalink = 'add-char';
+      currentPermalink = 'add-char',
+      maxTags          = 5;
   SUBMIT_BUTTONS       = [ 'create', 'update', 'remove', 'commit' ];
   
   // ----- 初期処理: sessionStorageを初期化 -----------------------------------------------------------
@@ -108,9 +109,9 @@ $(document).ready(function() {
         $middleName = $('#middle_name'),
         $lastName   = $('#last_name'),
         fullName    = '';
-    nameParts[Number( $firstName.attr('tabindex') )]  = $firstName.val();
-    nameParts[Number( $middleName.attr('tabindex') )] = $middleName.val();
-    nameParts[Number( $lastName.attr('tabindex') )]   = $lastName.val();
+    nameParts[Number( $firstName.attr('tabindex') )]  = strip_tags( $firstName.val() );
+    nameParts[Number( $middleName.attr('tabindex') )] = strip_tags( $middleName.val() );
+    nameParts[Number( $lastName.attr('tabindex') )]   = strip_tags( $lastName.val() );
     fullName = nameParts.join(' ').trim();
     if ( fullName.length > 0 ) {
       $('#full_name').val( fullName );
@@ -130,13 +131,13 @@ $(document).ready(function() {
     }
     $(this).queue(function(){
       if ( ! is_empty( $('#full_name').val() ) ) {
-        $(this).editableSelect( 'add', $('#full_name').val(), 1 );
+        $(this).editableSelect( 'add', strip_tags( $('#full_name').val() ), 1 );
       }
       if ( ! is_empty( $('#nickname').val() ) ) {
-        $(this).editableSelect( 'add', $('#nickname').val(), Number( $('#nickname').attr('tabindex') ) );
+        $(this).editableSelect( 'add', strip_tags( $('#nickname').val() ), Number( $('#nickname').attr('tabindex') ) );
       }
       if ( ! is_empty( $('#aliases').val() ) ) {
-        $(this).editableSelect( 'add', $('#aliases').val(), Number( $('#aliases').attr('tabindex') ) );
+        $(this).editableSelect( 'add', strip_tags( $('#aliases').val() ), Number( $('#aliases').attr('tabindex') ) );
       }
       $(this).dequeue();
     });
@@ -238,6 +239,31 @@ $(document).ready(function() {
   });
   
   /*
+   * Event handlers of tagsinput (:> タグ入力のイベントハンドラ
+   */
+  $('#tags').on('beforeItemAdd itemAdded itemRemoved', function(evt){
+    var tags = evt.target.value.split(',');
+    switch ( evt.type ) {
+      case 'beforeItemAdd':
+        var originTag = evt.item;
+        if ( /\x22|\x27|<|>/.test( originTag ) ) {
+          evt.cancel = true;
+        }
+        break;
+      case 'itemAdded':
+        if ( tags.length == maxTags ) {
+          $('.plt-tagsinput').hide();
+        }
+        break;
+      case 'itemRemoved':
+        if ( tags.length < maxTags ) {
+          $('.plt-tagsinput').show();
+        }
+        break;
+    }
+  });
+
+  /*
    * Clicked Cancel Edit button (:> キャンセルボタン押下時
    */
   $(document).on('click', '#btn-cancel', function(){
@@ -261,7 +287,19 @@ $(document).ready(function() {
     if ( ! validatePostData( postDataRaw ) ) {
       return false;
     }
-    if ( ! debugPostData( postDataRaw ) ) return false; /* ***** For debug, it shows summary on the console before posting data. ****** */
+    // if ( ! debugPostData( postDataRaw ) ) return false; /* ***** For debug, it shows summary on the console before posting data. ****** */
+    var post_data = JSON.stringify( postDataRaw );
+    showLoading();
+    // ajaxでpost
+    callAjax(
+      '/'+currentPermalink+'/',
+      'post',
+      post_data,
+      'json',
+      'application/json; charset=utf-8',
+      'notify',
+      true
+    );
     
   });
   
@@ -279,9 +317,17 @@ $(document).ready(function() {
   $('.panel_toolbox a').on('show.bs.tab', function(e) {
     if ( $(e.target).hasClass('readonly-mode') ) {
       $('#edit-char').find('.form-control, [type="hidden"]').each(function(){
+        var previewDoc = '';
         if ( $(this).attr('name') != undefined ) {
-          var previewStr = is_empty( $(this).val() ) ? '<span class="gray">'+$(this).attr('placeholder')+'</span>' : $(this).val();
-          $('#pv-'+$(this).attr('name')).html( previewStr );
+          if ( 'tags' === $(this).attr('name') && ! is_empty( $(this).val() ) ) {
+            var tags = $(this).val().split( ',' );
+            tags.forEach(function( tag ){
+              previewDoc += sprintf( '<span class="plt-tag">%s</span>', tag );
+            });
+          } else {
+            previewDoc = is_empty( $(this).val() ) ? '<span class="gray">'+$(this).attr('placeholder')+'</span>' : $(this).val();
+          }
+          $('#pv-'+$(this).attr('name')).html( previewDoc );
         }
       });
     }
@@ -339,6 +385,8 @@ $(document).ready(function() {
     } else {
       $('#role').closest('.form-group').removeClass('has-error');
     }
+    postData.publish = ! is_empty( postData.publish );
+    delete postData.full_name;
     return gf.find('.form-group.has-error').length == 0;
   }
   
@@ -351,9 +399,22 @@ $(document).ready(function() {
     
     $('.editable-select').editableSelect();
     
-    $('#birth_date').inputmask( '99/99/9999', { placeholder: 'dd/mm/yyyy' });
-    $('#died_date').inputmask( '99/99/9999', { placeholder: 'dd/mm/yyyy' });
+    // input-mask
+    $('#birth_date').inputmask( '99/99/9999', { placeholder: 'mm/dd/yyyy' });
+    $('#died_date').inputmask( '99/99/9999', { placeholder: 'mm/dd/yyyy' });
     
+    // bootstrap-tagsinput
+    var tagsinput = $('#tags').tagsinput( 'input' );
+    tagsinput.$input.addClass( 'plt-tagsinput' )
+      .attr( 'tabindex', tagsinput.$element.attr( 'tabindex' ) )
+      .attr( 'pattern', "[^\x22\x27]*" )
+      .removeAttr( 'size' );
+    $('#tags').tagsinput({
+      maxTags: maxTags,
+      trimValue: true,
+    });
+    
+    // jquery-UI sortable
     $('#settings .sortable-container').sortable({
       items: '.form-group:not(.disabled-sort)'
     });

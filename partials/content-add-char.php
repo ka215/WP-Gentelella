@@ -16,6 +16,7 @@ $max_upload_size   = size_format( @$_plotter['max_upload_size'] ?: 1024 * 1024 *
 
 $enable_toolbox = true;
 $default_active_tab = isset( $_GET['tab'] ) && in_array( (int) $_GET['tab'], [ 1, 2, 3 ], true ) ? (int) $_GET['tab'] : 2;
+$max_tags = 5;
 
 $sort_fields = [];
 $field_length = count( $current_journal );
@@ -155,11 +156,11 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                         <div class="item-birth_and_death form-group <?= get_attr( 'birth_and_death', 'visible', '', 1 ) ?>" <?= get_attr( 'birth_and_death', 'order', 10 ) ?>>
                           <label class="control-label col-md-2 col-sm-2 col-xs-6 <?= get_attr( 'birth_date', 'visible', '', 1 ) ?>"><?= get_attr( 'birth_date', 'label', __( 'Date of birth', WPGENT_DOMAIN ) ) ?></label>
                           <div class="col-md-4 col-sm-4 col-xs-6 <?= get_attr( 'birth_date', 'visible', '', 1 ) ?>">
-                            <p id="pv-birth_date" class="form-control">Day/Month/Year</p>
+                            <p id="pv-birth_date" class="form-control">Month/Day/Year</p>
                           </div>
                           <label class="control-label col-md-2 col-sm-2 col-xs-6 <?= get_attr( 'died_date', 'visible', '', 1 ) ?>"><?= get_attr( 'died_date', 'label', __( 'Date of death', WPGENT_DOMAIN ) ) ?></label>
                           <div class="col-md-4 col-sm-4 col-xs-6 <?= get_attr( 'died_date', 'visible', '', 1 ) ?>">
-                            <p id="pv-died_date" class="form-control">Day/Month/Year</p>
+                            <p id="pv-died_date" class="form-control">Month/Day/Year</p>
                           </div>
                         </div><!-- /.item-birth_and_death -->
                         <div class="form-group <?= get_attr( 'separator_line_2', 'visible', '', 1 ) ?>" <?= get_attr( 'separator_line_2', 'order', 11 ) ?>>
@@ -317,9 +318,9 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                           <div class="col-md-10 col-sm-10 col-xs-12">
                             <div class="input-group input-group-no-margin">
                               <select id="gender" name="gender" class="form-control editable-select width-fit" placeholder="<?= __( 'Choose gender or undefined', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'gender', 'order', 8, 2 ) ?>" autocomplete="nope">
-                                <option>&lt;i class="plt-male"&gt;&lt;/i&gt; <?= __( 'Male', WPGENT_DOMAIN ) ?></option>
-                                <option>&lt;i class="plt-female"&gt;&lt;/i&gt; <?= __( 'Female', WPGENT_DOMAIN ) ?></option>
-                                <option>&lt;i class="plt-question6"&gt;&lt;/i&gt; <?= __( 'Other', WPGENT_DOMAIN ) ?></option>
+                                <option value="male">&lt;i class="plt-male"&gt;&lt;/i&gt; <?= __( 'Male', WPGENT_DOMAIN ) ?></option>
+                                <option value="female">&lt;i class="plt-female"&gt;&lt;/i&gt; <?= __( 'Female', WPGENT_DOMAIN ) ?></option>
+                                <option value="other">&lt;i class="plt-question6"&gt;&lt;/i&gt; <?= __( 'Other', WPGENT_DOMAIN ) ?></option>
                               </select>
                               <span class="input-group-btn">
                                 <button type="button" class="btn btn-default btn-erase" disabled><i class="plt-cross2"></i></button>
@@ -336,11 +337,11 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                         <div class="item-birth_and_death form-group <?= get_attr( 'birth_and_death', 'visible', '', 2 ) ?>" <?= get_attr( 'birth_and_death', 'order', 10 ) ?>>
                           <label class="control-label col-md-2 col-sm-2 col-xs-6 <?= get_attr( 'birth_date', 'visible', '', 2 ) ?>" for="birth_date"><?= get_attr( 'birth_date', 'label', __( 'Date of birth', WPGENT_DOMAIN ) ) ?></label>
                           <div class="col-md-4 col-sm-4 col-xs-6 <?= get_attr( 'birth_date', 'visible', '', 2 ) ?>">
-                            <input type="text" id="birth_date" name="birth_date" class="form-control" placeholder="<?= __( 'Day/Month/Year', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'birth_and_death', 'order', 10, 2 ) ?>">
+                            <input type="text" id="birth_date" name="birth_date" class="form-control" placeholder="<?= __( 'Month/Day/Year', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'birth_and_death', 'order', 10, 2 ) ?>">
                           </div>
                           <label class="control-label col-md-2 col-sm-2 col-xs-6 <?= get_attr( 'died_date', 'visible', '', 2 ) ?>" for="died_date"><?= get_attr( 'died_date', 'label', __( 'Date of death', WPGENT_DOMAIN ) ) ?></label>
                           <div class="col-md-4 col-sm-4 col-xs-6 <?= get_attr( 'died_date', 'visible', '', 2 ) ?>">
-                            <input type="text" id="died_date" name="died_date" class="form-control" placeholder="<?= __( 'Day/Month/Year', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'birth_and_death', 'order', 10, 2 ) + 1 ?>">
+                            <input type="text" id="died_date" name="died_date" class="form-control" placeholder="<?= __( 'Month/Day/Year', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'birth_and_death', 'order', 10, 2 ) + 1 ?>">
                           </div>
                         </div><!-- /.item-birth_and_death -->
                         <div class="form-group <?= get_attr( 'separator_line_2', 'visible', '', 2 ) ?>" <?= get_attr( 'separator_line_2', 'order', 11 ) ?>>
@@ -382,7 +383,9 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                         <div class="item-tags form-group <?= get_attr( 'tags', 'visible', '', 2 ) ?>" style="order: 93">
                           <label class="control-label col-md-2 col-sm-2 col-xs-12" for="tags"><?= get_attr( 'tags', 'label', __( "Tags", WPGENT_DOMAIN ) ) ?></label>
                           <div class="col-md-10 col-sm-10 col-xs-12">
-                            <textarea id="tags" name="tags" class="form-control" rows="2" placeholder="<?= __( 'Tag keywords for distinguishable the character', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'tags', 'order', 93, 2 ) ?>"></textarea>
+                            <!-- textarea id="tags" name="tags" class="form-control" rows="2" placeholder="<?= __( 'Tag keywords for distinguishable the character', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'tags', 'order', 93, 2 ) ?>"></textarea -->
+                            <input type="text" id="tags" name="tags" class="form-control" placeholder="<?= __( 'Tag keywords for distinguishable the character', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'tags', 'order', 93, 2 ) ?>" />
+                            <p class="help-block"><?php printf( __( 'Up to %d tags can added per character.', WPGENT_DOMAIN ), $max_tags ) ?></p>
                           </div>
                         </div><!-- /.item-tags -->
                         <div class="item-publish form-group" style="order: 94">
