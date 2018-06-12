@@ -13,10 +13,61 @@ $current_user_id   = @$_plotter['current_user_id'] ?: null;
 $current_source_id = @$_plotter['current_source_id'] ?: null;
 $current_journal   = @$_plotter['current_journal'] ?: [];
 $max_upload_size   = size_format( @$_plotter['max_upload_size'] ?: 1024 * 1024 * 2 );
+$journal_item_ids  = @$_plotter['journal_item_ids'] ?: [];
+$journal_default_items = @$_plotter['journal_default_items'] ?: [];
 
+// Defines the variables for this page
 $enable_toolbox = true;
 $default_active_tab = isset( $_GET['tab'] ) && in_array( (int) $_GET['tab'], [ 1, 2, 3 ], true ) ? (int) $_GET['tab'] : 2;
+$define_char_roles = [
+  __( 'Protagonist', WPGENT_DOMAIN ),    // (:> 主人公
+  __( 'Hero', WPGENT_DOMAIN ),           // (:> ヒーロー
+  __( 'Heroine', WPGENT_DOMAIN ),        // (:> ヒロイン
+  __( 'Rival', WPGENT_DOMAIN ),          // (:> ライバル
+  __( 'Villain', WPGENT_DOMAIN ),        // (:> ヴィラン
+  __( 'Enemy', WPGENT_DOMAIN ),          // (:> 敵
+  __( 'Main Character', WPGENT_DOMAIN ), // (:> 主要キャラクター
+  __( 'Sub Character', WPGENT_DOMAIN ),  // (:> サブキャラクター
+  __( 'Regular', WPGENT_DOMAIN ),        // (:> レギュラー
+  __( 'Ally', WPGENT_DOMAIN ),           // (:> 仲間
+  __( 'Narrator', WPGENT_DOMAIN ),       // (:> ナレーター
+  __( 'Storyteller', WPGENT_DOMAIN ),    // (:> ストーリーテラー
+];
 $max_tags = 5;
+$items_order = [ 'created_at' => 'asc' ]; // default
+if ( isset( $_COOKIE['char_order'] ) ) {
+  $items_order = json_decode( stripslashes( $_COOKIE['char_order'] ), true );
+}
+reset( $items_order );
+
+if ( empty( $current_journal ) ) {
+  // Set default field settings
+  $current_journal = [
+    'name'             => [ 'order' => 1,  'label' => __( 'Name', WPGENT_DOMAIN ),                       'visible' => true  ],
+    'first_name'       => [ 'order' => 1,  'label' => __( 'First Name', WPGENT_DOMAIN )                                     ],
+    'middle_name'      => [ 'order' => 2,  'label' => __( 'Middle Name', WPGENT_DOMAIN )                                    ],
+    'last_name'        => [ 'order' => 3,  'label' => __( 'Last Name', WPGENT_DOMAIN )                                      ],
+    'nickname'         => [ 'order' => 2,  'label' => __( 'Nickname', WPGENT_DOMAIN ),                   'visible' => true  ],
+    'aliases'          => [ 'order' => 3,  'label' => __( 'Alias(es)', WPGENT_DOMAIN ),                  'visible' => true  ],
+    'display_name'     => [ 'order' => 4,  'label' => __( 'Display Name', WPGENT_DOMAIN ),               'visible' => true  ],
+    'separator_line_1' => [ 'order' => 5,                                                                'visible' => true  ],
+    'image'            => [ 'order' => 6,  'label' => __( 'Avatar Image', WPGENT_DOMAIN ),               'visible' => true  ],
+    'role'             => [ 'order' => 7,  'label' => __( 'Role', WPGENT_DOMAIN ),                       'visible' => true  ],
+    'gender'           => [ 'order' => 8,  'label' => __( 'Gender', WPGENT_DOMAIN ),                     'visible' => true  ],
+    'nationality'      => [ 'order' => 9,  'label' => __( 'Nationality', WPGENT_DOMAIN ),                'visible' => true  ],
+    'birth_and_death'  => [ 'order' => 10                                                                                   ],
+    'birth_date'       => [                'label' => __( 'Date of birth', WPGENT_DOMAIN ),              'visible' => true  ],
+    'died_date'        => [                'label' => __( 'Date of death', WPGENT_DOMAIN ),              'visible' => true  ],
+    'separator_line_2' => [ 'order' => 11,                                                               'visible' => true  ],
+    'standing'         => [ 'order' => 12, 'label' => __( 'Occupation / Standing', WPGENT_DOMAIN ),      'visible' => true  ],
+    'biography'        => [ 'order' => 13, 'label' => __( 'Biographical Summary', WPGENT_DOMAIN ),       'visible' => true  ],
+    'history'          => [ 'order' => 14, 'label' => __( 'More detailed life history', WPGENT_DOMAIN ), 'visible' => true  ],
+    'secret_info'      => [ 'order' => 15, 'label' => __( 'Secret Information', WPGENT_DOMAIN ),         'visible' => false ],
+    'note'             => [ 'order' => 16, 'label' => __( 'Creator&#039;s note', WPGENT_DOMAIN ),        'visible' => false ],
+    'tags'             => [ 'order' => 17, 'label' => __( 'Tags', WPGENT_DOMAIN ),                       'visible' => false ],
+    'publish'          => [ 'order' => 18, 'label' => __( 'Publish', WPGENT_DOMAIN )                                        ],
+  ];
+}
 
 $sort_fields = [];
 $field_length = count( $current_journal );
@@ -25,6 +76,9 @@ foreach( (array) $current_journal as $_field => $_opts ) {
 }
 array_multisort( $sort_fields, SORT_ASC, $current_journal );
 
+/*
+ * Retrieve attributes for specific field per tab (:> タブごとに指定フィールド用属性値を取得
+ */
 function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
   $_plotter = get_query_var( 'plotter', [] );
   $journal_options = @$_plotter['current_journal'] ?: [];
@@ -87,7 +141,7 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                 <form id="character-creation" class="form-horizontal form-label-left withValidator" method="post" autocomplete="off" novalidate>
                   <input type="hidden" name="from_page" value="<?= esc_attr( $page_name ) ?>">
                   <input type="hidden" name="source_id" value="<?= esc_attr( $current_source_id ) ?>">
-                  <input type="hidden" name="character_id" value="<?= esc_attr( '' ) ?>">
+                  <input type="hidden" name="character_id" value="">
                   <input type="hidden" name="post_action" id="<?= esc_attr( $page_name ) ?>-post-action" value="">
                   <?php wp_nonce_field( $page_name . '-creation_' . $current_user_id, '_token', true, true ); ?>
 
@@ -136,8 +190,8 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                         <div class="item-avatar_image form-group <?= get_attr( 'image', 'visible', '', 1 ) ?>" <?= get_attr( 'image', 'order', 7 ) ?>>
                           <label class="control-label col-md-2 col-sm-2 col-xs-6"><?= get_attr( 'image', 'label', __( 'Avatar Image', WPGENT_DOMAIN ) ) ?></label>
                           <div class="col-md-4 col-sm-4 col-xs-6">
-                            <span class="thumbnail">
-                              <img src="/assets/uploads/no-avatar.png" class="img-responsive img-raunded" />
+                            <span class="thumbnail current-view-image">
+                              <img src="/assets/uploads/no-avatar.png" class="img-responsive img-rounded" />
                             </span>
                           </div>
                         </div><!-- /.item-avatar -->
@@ -260,18 +314,9 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                           <div class="col-md-10 col-sm-10 col-xs-12">
                             <div class="input-group input-group-no-margin">
                               <select id="role" name="role" class="form-control editable-select" placeholder="<?= __( 'The role in this story', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'role', 'order', 5, 2 ) + 2 ?>">
-                                <option><?= __( 'Protagonist', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Hero', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Heroine', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Rival', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Villain', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Enemy', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Main Character', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Sub Character', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Regular', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Ally', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Narrator', WPGENT_DOMAIN ) ?></option>
-                                <option><?= __( 'Storyteller', WPGENT_DOMAIN ) ?></option>
+<?php foreach ( $define_char_roles as $_char_role ) : ?>
+                                <option><?= $_char_role ?></option>
+<?php endforeach; ?>
                               </select>
                               <span class="input-group-btn">
                                 <button type="button" class="btn btn-default btn-erase" disabled><i class="plt-cross2"></i></button>
@@ -287,29 +332,28 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                           <div id="image-uploader" class="col-md-10 col-sm-10 col-xs-12">
                             <div class="col-sm-6 image-preview-container">
                               <div class="thumbnail current-image-preview">
-                                <img src="/assets/uploads/no-avatar.png" class="img-responsive img-raunded" />
+                                <img src="/assets/uploads/no-avatar.png" class="img-responsive img-rounded" />
                               </div>
-                              <div class="arrow-right"></div>
-                              <div class="thumbnail new-image-preview">
-                                <img src="/assets/uploads/no-avatar.png" class="img-responsive img-raunded" />
+                              <div class="arrow-right hide"></div>
+                              <div class="thumbnail new-image-preview hide">
                               </div>
                             </div><!-- /.image-preview-container -->
                             <div class="col-sm-6 image-ctrl-container">
                               <div class="input-group">
                                 <label class="input-group-btn">
                                   <span id="upload-image" class="btn btn-default" title="<?= __( 'Choose File', WPGENT_DOMAIN ) ?>" tabindex="<?= get_attr( 'image', 'order', 7, 2 ) ?>">
-                                    <i class="plt-cloud-upload"></i><input type="file" name="assign_avatar" id="assign-avatar" class="hide" />
+                                    <i class="plt-cloud-upload"></i><input type="file" name="assign_image" id="assign-image" class="hide" />
                                   </span>
                                 </label>
                                 <input type="text" id="preview-upfile" class="form-control" readonly="readonly" placeholder="<?= __( 'Choose your local image', WPGENT_DOMAIN ); ?>" value="" disabled />
                               </div>
                               <p class="help-block"><?php printf( __( 'Uploadable max file size: %s', WPGENT_DOMAIN ), $max_upload_size ); ?></p>
                               <div class="image-ctrl-buttons">
-                                <button type="button" id="choose-image" name="choose_image" class="btn btn-default"><i class="plt-images3"></i> <?= __( 'Choose from Gallery', WPGENT_DOMAIN ) ?></button>
-                                <button type="button" id="crop-image" name="crop_image" class="btn btn-default"><i class="plt-crop2"></i> <?= __( 'Crop Image', WPGENT_DOMAIN ) ?></button>
-                                <button type="button" id="remove-image" name="remove_image" class="btn btn-default"><i class="plt-checkbox-unchecked2 gray"></i> <?= __( 'Remove', WPGENT_DOMAIN ) ?></button>
+                                <button type="button" id="choose-image" name="choose_image" class="btn btn-default hide"><i class="plt-images3"></i> <?= __( 'Choose from Gallery', WPGENT_DOMAIN ) ?></button>
+                                <button type="button" id="crop-image" name="crop_image" class="btn btn-default hide"><i class="plt-crop2"></i> <?= __( 'Crop Image', WPGENT_DOMAIN ) ?></button>
+                                <button type="button" id="remove-image" name="remove_image" class="btn btn-default hide"><i class="plt-checkbox-unchecked2 gray"></i> <?= __( 'Remove', WPGENT_DOMAIN ) ?></button>
                               </div>
-                              <input type="hidden" name="remove_image_action" id="remove-image-action" value="false" />
+                              <input type="hidden" name="remove_image_action" id="remove-image-action" value="1" disabled />
                             </div>
                           </div>
                         </div><!-- /.item-avatar -->
@@ -401,10 +445,11 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
                       <div class="ln_solid"></div>
                       <div class="form-group">
                         <div class="col-md-10 col-sm-10 col-xs-12 col-md-offset-2">
-                          <button type="button" id="btn-cancel" class="btn btn-default"><?= __( 'Cancel Edit', WPGENT_DOMAIN ) ?></button>
-                          <button type="button" id="btn-remove" class="btn btn-dark"><?= __( 'Remove Character', WPGENT_DOMAIN ) ?></button>
+                          <button type="button" id="btn-cancel" class="btn btn-default"><?= __( 'Cancel Creation', WPGENT_DOMAIN ) ?></button>
+                          <button type="button" id="btn-cancel-edit" class="btn btn-default hide"><?= __( 'Cancel Edit', WPGENT_DOMAIN ) ?></button>
+                          <button type="button" id="btn-remove" class="btn btn-dark hide"><?= __( 'Remove Character', WPGENT_DOMAIN ) ?></button>
                           <button type="button" id="btn-create" class="btn btn-primary"><?= __( 'Create Character', WPGENT_DOMAIN ) ?></button>
-                          <button type="button" id="btn-update" class="btn btn-primary"><?= __( 'Save Changes', WPGENT_DOMAIN ) ?></button>
+                          <button type="button" id="btn-update" class="btn btn-primary hide"><?= __( 'Save Changes', WPGENT_DOMAIN ) ?></button>
                         </div>
                       </div>
                     </div><!-- /#edit-char.tab-pane -->
@@ -692,10 +737,50 @@ function get_attr( $field_name, $attribute, $default, $var_type = 1 ) {
               </div>
               <div class="x_content">
                 <div class="char-list">
-                  <div class="help-block text-center"><?= __( 'None', WPGENT_DOMAIN ) ?></div>
-                  <div>
-                    
+<?php if ( empty( $journal_item_ids ) ) : ?>
+                  <div class="no-list text-center">
+                    <p class="help-block"><?= __( 'None', WPGENT_DOMAIN ) ?></p>
                   </div>
+<?php else : 
+        foreach ( $journal_default_items as $_item ) : ?>
+                  <div class="list-item<?php if ( $_item['publish'] ) : ?> item-published<?php else : ?> item-private<?php endif; ?>" data-item-id="<?= esc_attr( $_item['id'] ) ?>">
+                    <div class="thumbnail item-thumbnail">
+<?php     if ( isset( $_item['images'][0]['url'] ) && ! empty( $_item['images'][0]['url'] ) ) {
+            $thumb_src = $_item['images'][0]['url'];
+          } else {
+            $thumb_src = '/assets/uploads/no-avatar.png';
+          } ?>
+                      <img src="<?= esc_attr( $thumb_src ) ?>" class="img-responsive img-rounded" />
+                    </div>
+                    <div class="item-details">
+                      <label class="item-name"><?= esc_html( $_item['display_name'] ) ?></label>
+                      <div class="item-meta">
+                        <span class="label label-default hide"><?= esc_html( $_item['role'] ) ?></span>
+                        <span class="text-right"><?= __( 'Last Modified', WPGENT_DOMAIN ) ?>: <time class="last-updated" datetime="<?= esc_attr( $_item['updated_at'] ) ?>" title="<?= esc_attr( $_item['updated_at'] ) ?>"><?= esc_html( $_item['updated_at_htd'] ) ?></time></span>
+                      </div>
+                    </div>
+                  </div>
+<?php   endforeach;
+      endif; ?>
+                </div><!-- /.char-list -->
+                <div class="list-ctrl">
+<?php if ( count( $journal_item_ids ) > 10 ) : ?>
+                  <button type="button" class="btn btn-default btn-sm" id="btn-load-more" tabindex="-1"><i class="plt-more2"></i> <?= __( 'Load More', WPGENT_DOMAIN ) ?></button>
+<?php endif; ?>
+<?php if ( count( $journal_item_ids ) > 1 ) : ?>
+                  <span class="input-group input-group-sm input-group-no-margin">
+                    <select id="sort-item-list" name="sort_item_list" class="form-control" tabindex="-1">
+                      <option value="created"<?php if ( key( $items_order ) === 'created_at' ) : ?> selected="selected"<?php endif; ?>><?= __( 'Created', WPGENT_DOMAIN ) ?></option>
+                      <option value="last_modified"<?php if ( key( $items_order ) === 'updated_at' ) : ?> selected="selected"<?php endif; ?>><?= __( 'Last Modified', WPGENT_DOMAIN ) ?></option>
+                      <option value="name"<?php if ( key( $items_order ) === 'display_name' ) : ?> selected="selected"<?php endif; ?>><?= __( 'Name', WPGENT_DOMAIN ) ?></option>
+                    </select>
+                    <span class="input-group-btn">
+<?php   $to_order = current( $items_order ) === 'asc' ? 'desc' : 'asc';
+        $class_prefix = key( $items_order ) === 'display_name' ? 'plt-sort-alpha-' : ( $to_order === 'asc' ? 'plt-sort-numeric-' : 'plt-sort-numberic-' ); ?>
+                      <button type="button" class="btn btn-default btn-sm" id="btn-sort-item" data-sort-by="<?= $to_order ?>" title="<?= __( 'Sort by', WPGENT_DOMAIN ) ?>"><i class="<?= $class_prefix . $to_order ?>"></i></button>
+                    </span>
+                  </span>
+<?php endif; ?>
                 </div>
               </div><!-- /.x_content -->
             </div><!-- /.x_panel.panel-secondary -->
