@@ -31,21 +31,21 @@
   },
   "homepage": "https://github.com/puikinsh/gentelella#readme",
   "devDependencies": {
-    "animate.css": "^3.6.1",
     "browser-sync": "^2.18.13",
     "cssnano": "^3.10.0",
     "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^4.0.0",
+    "gulp-autoprefixer": "^5.0.0",
     "gulp-concat": "^2.6.1",
     "gulp-postcss": "^7.0.0",
     "gulp-rename": "^1.2.2",
-    "gulp-sass": "^3.1.0",
+    "gulp-sass": "^4.0.1",
     "gulp-sass-glob": "^1.0.8",
     "gulp-uglify": "^3.0.0",
-    "pnotify": "^4.0.0-alpha.2",
     "postcss-cssnext": "^3.0.2"
   },
   "dependencies": {
+    "animate.css": "^3.6.1",
+    "pnotify": "^4.0.0-alpha.2",
     "blueimp-md5": "^2.10.0"
   }
 }

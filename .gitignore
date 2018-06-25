@@ -1,6 +1,9 @@
+docs/
+production/
 nbproject
 npm-debug.log
 node_modules
+package-lock.json
 .sass-cache
 *.orig
 vendors/pnotify

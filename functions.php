@@ -164,7 +164,7 @@ function cache_hash( $resource_path ) {
 /**
  * Import the defined localize messages
  */
-require WPGENT_PATH .'/messages.php'; 
+require WPGENT_PATH .'messages.php'; 
 
 /**
  * Initialize theme
@@ -241,7 +241,7 @@ add_action( 'after_setup_theme', function() {
 add_action( 'wp_enqueue_scripts', function() {
   // $_pagename = __ctl( 'lib' )::get_pageinfo();
   $_plotter  = get_query_var( 'plotter' );
-  $_pagename = $_plotter['page_name'];
+  $_pagename = @$_plotter['page_name'] ?: '';
   if ( empty( $_pagename ) && is_front_page() ) {
     $_pagename = 'front-page';
   }
@@ -371,7 +371,7 @@ add_action( 'wp_enqueue_scripts', function() {
  */
 add_action( 'wp_enqueue_scripts', function() {
   $_plotter  = get_query_var( 'plotter' );
-  $_pagename = $_plotter['page_name'];
+  $_pagename = @$_plotter['page_name'] ?: '';
   if ( empty( $_pagename ) && is_front_page() ) {
     $_pagename = 'front-page';
   }
@@ -665,6 +665,7 @@ add_action( 'wp_footer', function() {
   if ( WP_DEBUG ) {
     global $template; // , $wp_query;
     $_plotter = get_query_var( 'plotter' );
+    $_pagename = @$_plotter['page_name'] ?: 'frontend';
     $template_name = basename( $template, '.php' );
     $log_style = [ "'color: red; font-weight: bold'", "'color: blue; font-weight: bold'" ];
     //$debug_logs[] = "logger.level = logger.LEVEL.FULL;";
@@ -675,11 +676,11 @@ add_action( 'wp_footer', function() {
       $page_type = __ctl( 'lib' )::get_pageinfo();
       $debug_logs[] = "logger.debug('Current Page Name: %c{$page_name}%c (GUID: %c{$post_guid}%c) | Page Type: %c{$page_type}', {$log_style[0]}, '', {$log_style[0]}, '', {$log_style[0]});";
     }
-    if ( file_exists( WPGENT_PATH . 'build/css/custom-'. $_plotter['page_name'] .'.css' ) ) {
-      $debug_logs[] = "logger.debug('Current Page Custom Style: %ccustom-{$_plotter['page_name']}.css', {$log_style[0]} );";
+    if ( file_exists( WPGENT_PATH . 'build/css/custom-'. $_pagename .'.css' ) ) {
+      $debug_logs[] = "logger.debug('Current Page Custom Style: %ccustom-{$_pagename}.css', {$log_style[0]} );";
     }
-    if ( file_exists( WPGENT_PATH . 'build/js/custom-'. $_plotter['page_name'] .'.js' ) ) {
-      $debug_logs[] = "logger.debug('Current Page Custom Script: %ccustom-{$_plotter['page_name']}.js', {$log_style[0]} );";
+    if ( file_exists( WPGENT_PATH . 'build/js/custom-'. $_pagename .'.js' ) ) {
+      $debug_logs[] = "logger.debug('Current Page Custom Script: %ccustom-{$_pagename}.js', {$log_style[0]} );";
     }
     if ( is_user_logged_in() ) {
       $current_user = wp_get_current_user();
