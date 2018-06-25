@@ -50,6 +50,12 @@ function __localize_messages( $page_name=null ) {
             'remove_dependent_storylines_msg' => __( 'All acts and sub storylines subordinate to this dependency storylines are removed (cannot restore after done).', 'plotter' ), // custom-edit-storyline.js: 147
             
         ],
+        '/\Aadd\-char\z/' => [
+            'loading_list' => __( 'Now Retrieving the Characters...', 'plotter' ), // custom-add-char.js: 
+            'last_modified' => __( 'Last Modified', 'plotter' ), // custom-add-char.js: 
+            'remove_character_ttl' => __( 'Remove the Character', 'plotter' ), // custom-add-char.js: 
+            'remove_character_msg' => __( 'This character are removed (cannot restore after done).', 'plotter' ), // custom-add-char.js: 
+        ],
         '/\Aidea\-note\z/' => [
             'loading_list' => __( 'Now Retrieving the Ideas...', 'plotter' ), // custom-idea-note.js: 348
             'remove_idea_ttl' => __( 'Remove the Idea', 'plotter' ), // custom-idea-note.js: 194

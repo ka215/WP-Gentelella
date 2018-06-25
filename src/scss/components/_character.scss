@@ -65,6 +65,16 @@
     
     img {
       max-width: 100%;
+      
+      &.img-rounded {
+        border-radius: 3px;
+      }
+    }
+    
+    &.current-view-image {
+      img {
+        max-width: 300px;
+      }
     }
   }
   
@@ -123,18 +133,26 @@
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: flex-start;
-    align-items: stretch;
+    align-items: flex-start;
     padding-left: 0;
     padding-right: 0;
     
     .current-image-preview {
       height: auto;
       margin-bottom: 0;
+      
+      img {
+        max-width: 144px;
+      }
     }
     
     .new-image-preview {
       height: auto;
       margin-bottom: 0;
+      
+      img {
+        max-width: 144px;
+      }
     }
     
     .arrow-right {
@@ -364,4 +382,108 @@
   #set-name {
     margin-bottom: 10px;
   }
+}
+/* list */
+.char-list {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-between;
+  
+  .no-list {
+    width: 100%;
+  }
+  
+  .list-item {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: flex-start;
+    width: 100%; /* calc( 50% - 8px ); */
+    padding-bottom: 9px;
+    margin-bottom: 9px;
+    border-bottom: dotted 1px $cloud;
+    cursor: pointer;
+    
+    .item-thumbnail {
+      max-height: 54px;
+      max-width: 54px;
+      margin-right: 14px;
+      padding: 2px;
+    }
+    
+    .item-details {
+      position: relative;
+      display: flex;
+      flex-flow: column nowrap;
+      justify-content: space-between;
+      align-content: space-between;
+      width: calc( 100% - 68px );
+      
+      .item-name {
+        padding-top: 15px;
+        margin-bottom: 0;
+        cursor: pointer;
+      }
+      
+      .item-meta {
+        text-align: right;
+        margin-bottom: 0;
+        font-size: 86%;
+        color: $gray;
+        
+        .last-updated {
+          color: $moss_gray;
+        }
+      }
+    }
+    
+    &.item-published .item-details:after {
+      content: "\ecae";
+      font-family: 'plotter' !important;
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      color: $global_active;
+    }
+    
+    &.item-private .item-details:after {
+      content: "\ecb1";
+      font-family: 'plotter' !important;
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      color: $moss_gray;
+    }
+    
+    &:hover {
+      background-color: $pearl_white;
+      
+      .item-thumbnail {
+        opacity: .85;
+      }
+      
+      .item-name {
+        color: $alink_color_hover;
+      }
+    }
+    
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+  
+  .loading-list {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-around;
+    align-items: center;
+    margin: 0 auto 10px;
+    padding: 10px 0;
+    color: $moss_gray;
+  }
+  
+}
+.list-ctrl {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
 }
